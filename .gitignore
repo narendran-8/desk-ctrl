@@ -1,0 +1,29 @@
+# Rust build outputs
+/agent/target/
+/agent/target-win/
+/agent/.git/
+
+# Flutter and Android generated state
+/mobile/.dart_tool/
+/mobile/build/
+/mobile/.flutter-plugins
+/mobile/.flutter-plugins-dependencies
+/mobile/android/.gradle/
+/mobile/android/local.properties
+
+# Build artifacts are reproducible; keep source and installer scripts in Git
+/output/desk_ctrl.apk
+/output/desk_ctrl_agent
+/output/desk_ctrl_agent.exe
+
+# Local full copy of the project; keep the requested memory notes versioned
+/back_dir/**
+!/back_dir/memory/
+/back_dir/memory/**
+!/back_dir/memory/*.md
+
+# Scratch captures, IDE state and OS files
+/.work/
+*.iml
+.DS_Store
+Thumbs.db

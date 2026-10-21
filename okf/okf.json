@@ -1,0 +1,203 @@
+{
+ "project": "DeskCtrl",
+ "generated": "2026-10-21",
+ "docs": [
+  {
+   "file": "AGENT.md",
+   "id": "agent",
+   "summary": "The Rust desktop agent - every module's job, environment variables, the window design, how to run it.",
+   "updated": "2026-10-21",
+   "sources": [
+    "agent/src/main.rs",
+    "agent/src/server.rs",
+    "agent/src/bluetooth.rs",
+    "agent/src/inject.rs",
+    "agent/src/hid.rs",
+    "agent/src/leds.rs",
+    "agent/src/levels.rs",
+    "agent/src/focus.rs",
+    "agent/src/usb.rs",
+    "agent/src/identity.rs",
+    "agent/src/portowner.rs",
+    "agent/src/gui.rs",
+    "agent/src/look.rs"
+   ],
+   "lines": 71,
+   "approx_tokens": 4012
+  },
+  {
+   "file": "ARCHITECTURE.md",
+   "id": "architecture",
+   "summary": "Components, data flow, threads, the three transports and how a computer is represented on the phone.",
+   "updated": "2026-10-19",
+   "sources": [
+    "agent/src/server.rs",
+    "agent/src/main.rs",
+    "mobile/lib/connection.dart",
+    "mobile/lib/links.dart",
+    "mobile/lib/main.dart"
+   ],
+   "lines": 46,
+   "approx_tokens": 919
+  },
+  {
+   "file": "CHANGELOG.md",
+   "id": "changelog",
+   "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
+   "updated": "2026-10-21",
+   "sources": [],
+   "lines": 231,
+   "approx_tokens": 4027
+  },
+  {
+   "file": "DECISIONS.md",
+   "id": "decisions",
+   "summary": "Design decisions with the reason, and the mistakes/gotchas that shaped the rules. Read before changing connection, pairing, auto-keyboard, menus or tests.",
+   "updated": "2026-10-19",
+   "sources": [
+    "mobile/lib/connection.dart",
+    "agent/src/usb.rs",
+    "agent/src/focus.rs",
+    "mobile/lib/edit_menu.dart",
+    "mobile/lib/settings_sheet.dart",
+    "agent/src/server.rs"
+   ],
+   "lines": 58,
+   "approx_tokens": 1663
+  },
+  {
+   "file": "FEATURES.md",
+   "id": "features",
+   "summary": "Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.",
+   "updated": "2026-10-21",
+   "sources": [
+    "mobile/lib/pad_screen.dart",
+    "mobile/lib/keyboard_screen.dart",
+    "mobile/lib/main.dart",
+    "mobile/lib/edit_menu.dart",
+    "mobile/lib/edge_zones.dart",
+    "mobile/lib/connection.dart",
+    "agent/src/focus.rs",
+    "agent/src/usb.rs"
+   ],
+   "lines": 65,
+   "approx_tokens": 2538
+  },
+  {
+   "file": "INDEX.md",
+   "id": "index",
+   "summary": "Start here. What DeskCtrl is, where things are, which file to read for which task, the update rules.",
+   "updated": "2026-10-21",
+   "sources": [],
+   "lines": 53,
+   "approx_tokens": 814
+  },
+  {
+   "file": "KNOWN.md",
+   "id": "known",
+   "summary": "Limits, unverified items, open problems and ideas. Update when something is fixed or discovered.",
+   "updated": "2026-10-19",
+   "sources": [],
+   "lines": 45,
+   "approx_tokens": 1704
+  },
+  {
+   "file": "LATEST.md",
+   "id": "latest",
+   "summary": "The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.",
+   "updated": "2026-10-21",
+   "sources": [],
+   "lines": 82,
+   "approx_tokens": 1714
+  },
+  {
+   "file": "MOBILE.md",
+   "id": "mobile",
+   "summary": "The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.",
+   "updated": "2026-10-21",
+   "sources": [
+    "mobile/lib/main.dart",
+    "mobile/lib/connection.dart",
+    "mobile/lib/links.dart",
+    "mobile/lib/pad_screen.dart",
+    "mobile/lib/edge_zones.dart",
+    "mobile/lib/edit_menu.dart",
+    "mobile/lib/settings_sheet.dart",
+    "mobile/lib/usb_pairing.dart",
+    "mobile/lib/motion_cursor.dart",
+    "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt"
+   ],
+   "lines": 49,
+   "approx_tokens": 1214
+  },
+  {
+   "file": "OKF.md",
+   "id": "okf",
+   "summary": "The OKF format - file anatomy, size budgets, and the exact steps to keep the knowledge base current.",
+   "updated": "2026-10-21",
+   "sources": [
+    "okf/okf.py"
+   ],
+   "lines": 55,
+   "approx_tokens": 746
+  },
+  {
+   "file": "OPERATIONS.md",
+   "id": "operations",
+   "summary": "Build, install, publish and run commands; paths; adb tricks; the laptop setup script.",
+   "updated": "2026-10-21",
+   "sources": [
+    "output/setup_laptop.sh",
+    "mobile/pubspec.yaml",
+    "agent/Cargo.toml"
+   ],
+   "lines": 47,
+   "approx_tokens": 1034
+  },
+  {
+   "file": "PROTOCOL.md",
+   "id": "protocol",
+   "summary": "Wire format phone<->agent for all transports, key code space, liveness and fail-over rules, USB pairing link, framing.",
+   "updated": "2026-10-18",
+   "sources": [
+    "agent/src/hid.rs",
+    "agent/src/server.rs",
+    "agent/src/bluetooth.rs",
+    "agent/src/identity.rs",
+    "agent/src/levels.rs",
+    "agent/src/focus.rs",
+    "agent/src/leds.rs",
+    "mobile/lib/links.dart"
+   ],
+   "lines": 51,
+   "approx_tokens": 986
+  },
+  {
+   "file": "SETTINGS.md",
+   "id": "settings",
+   "summary": "Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.",
+   "updated": "2026-10-21",
+   "sources": [
+    "mobile/lib/settings.dart",
+    "mobile/lib/settings_sheet.dart"
+   ],
+   "lines": 78,
+   "approx_tokens": 1432
+  },
+  {
+   "file": "TESTING.md",
+   "id": "testing",
+   "summary": "How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.",
+   "updated": "2026-10-21",
+   "sources": [
+    "mobile/test/fake_agent.dart",
+    "mobile/test/usb_test.dart",
+    "mobile/test/edit_menu_test.dart",
+    "mobile/test/pad_motion_test.dart",
+    "agent/src/usb.rs"
+   ],
+   "lines": 56,
+   "approx_tokens": 1613
+  }
+ ]
+}

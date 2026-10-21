@@ -1,0 +1,3 @@
+- [Auto-install APK](auto-install-apk.md) — build + adb install the app after every change, unasked
+- [Maintain OKF](okf-maintenance.md) — read okf/INDEX.md first; update okf/ (okf.py log + check) after every change
+- [Never run Needle locally](never-run-needle-locally.md) — voice models froze the user's PC twice; test on the SSH box or ask first

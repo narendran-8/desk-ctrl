@@ -1,0 +1,64 @@
+---
+id: features
+summary: Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.
+updated: 2026-10-21
+sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, agent/src/focus.rs, agent/src/usb.rs]
+---
+# Features (behaviour as shipped)
+
+## Connection
+- Desktop agent: Settings > Window > Minimize to tray keeps the server running when minimized or when the window's close button is pressed; right-click the tray for Show DeskCtrl or Close application (fully exits). The preference is remembered. With tray disabled or unavailable, closing the window exits normally.
+- Three links per computer, any combination, instant switching, automatic fail-over/failback (`PROTOCOL.md`). Several computers stay connected; tap one in the list to send input to it.
+- Add by QR (`PairInfo`), by hand (form), or **by plugging in** (USB, no QR). Duplicates are never added (`findSame`, merge, `dedupeAll` at start).
+- Offline (nothing connected) the whole app still opens (keyboard/pad/mouse screens, settings, edit menu); a red strip "Offline - tap to choose a computer" opens the Computers sheet (`DeviceListScreen` is no longer used by Home).
+- Status text per computer: "Connected - USB + Wi-Fi", "(Wi-Fi down)", "Connection lost - reconnecting...". Reconnects last computers at start (the agent keeps its token across restarts, so a once-paired phone stays paired; the strip says "Looking for <name>..." while it waits, or that the agent has a new pairing code when the token is rejected); if the agent is not running yet, the phone keeps looking every 4 s (`Session._waitForComputer`, only for computers connected last time and not disconnected by hand) and connects the moment the agent starts - no scan or cable.
+- USB: needs adb on the computer + USB debugging on the phone (allow once). Plug in -> app opens, pairs, connects. Over USB the agent sends Wi-Fi/BT details so those links appear too.
+
+## Keyboard screen
+Full layout; Shift legends highlight; Caps light follows the computer's real LED; optional F-row/Fn; joined Backspace/Del; arrow cluster (stacked up/down); key sound packs.
+
+## Trackpad (pad_screen.dart)
+| Gesture / area | Result |
+|---|---|
+| 1 finger move / tap / tap+drag | pointer (accelerated) / left click / drag |
+| 2 fingers | scroll (natural option), pinch = Ctrl+wheel zoom, tap = right click |
+| 3 fingers | tap = middle click; swipe left/right = Ctrl+Alt+Left/Right; up = Super; down = Print Screen (setting) |
+| Left strip (below top 25%) | slide = volume ±; tap = mute (icon becomes crossed speaker; follows the computer's real mute) |
+| Right strip | slide = brightness ±; message "not supported on this computer" when the computer cannot report/change it |
+| Top strip middle 60% | slide = forward/back (arrows) or next/previous track (`padTopMode`); centre tap = play/pause (icon flips ▶/⏸); end icons ⏮ ⏭ tap = track; hold ⏪ ⏩ = repeat seek; speed `seekSpeed` |
+| Bottom strip middle 60% | slide right = Alt+Tab, left = Alt+Shift+Tab; hold still 0.35 s = keep Alt down (switcher open) and move through windows; centre icon tap flips windows <-> browser tabs (Ctrl+Tab) |
+| Messages | volume/brightness show the computer's real percentage (agent `0x12`) |
+| Two-finger swipe Back / Forward (`padSwipeNav`, default on) | two fingers sideways >= 80 px and at least twice as far across as up/down: right to left = Back (Alt+Left), left to right = Forward (Alt+Right); fires when the first finger lifts; sideways two-finger scrolling is off while on; up/down scroll, pinch, two-finger tap (right click) unchanged |
+| Motion cursor (`padMotion`) | hold a finger and TILT the phone (accelerometer joystick like the Mouse screen: lean right = right, top away = up; further = faster; any orientation); `padMotionAlways` removes the finger requirement (a held tilt fades in ~2 s) |
+| Slim Left/Right bar | `padButtons` |
+`padEnabled` off = blank pad that ignores touches. Settings via the rail's tune icon (scoped sheet); no on-pad settings button.
+
+## Edit menu (edit_menu.dart) - corner button (first icon of the bar, top-left; top-right when the bar is on the right)
+Up to three (default three) black/white quarter rows (rings); **fully customisable in Settings > General (EditMenuEditor, `edit_menu_editor.dart`)**: add/remove/reorder options (22 in `editCatalog`: copy, cut, paste, undo, redo, select all, find, save, terminal copy/paste, enter, backspace, delete, escape, tab, refresh, home, end, page up/down, new/close tab, open terminal = Ctrl+Alt+T, close application = Alt+F4), up to 6 per row, add/remove/move rows, reset to standard; also hold-repeat on/off and idle-fold seconds (2-30). **Custom keys** (`custom_key.dart`): Settings > General > Custom keys, or "Add > Create a custom key..." in a row: a name (<= 12 chars), modifiers Ctrl/Shift/Alt/Super, one key (letters, digits, F1-F12, Enter/Esc/Tab/Space/Backspace, arrows, Home/End/Page, punctuation, media/brightness keys), optional repeat-while-held; up to 20; shown on the wedge as a small keycap (modifier initials over the key); edit/delete in the list (a deleted key also leaves the rows); also spoken by its name in Voice > Command. Default rows: opening toward the screen middle: inner = Copy, Cut, Paste, Undo, Select all (Ctrl+C/X/V/Z/A);
+middle = Terminal copy, Terminal paste (Ctrl+Shift+C/V), Enter, Backspace, Delete; outer = Refresh (F5), Open terminal (Ctrl+Alt+T), Close application (Alt+F4). `editRings` is rebuilt from `Settings.editLayout` (`applyEditLayout`) each time the menu opens;
+the options of a row share the whole quarter (fewer options = wider wedges). Rows are 80 px deep (reach 296 px) so they fit a portrait phone. **Tap** the button: menu opens and stays; tap options repeatedly;
+holding a finger on Enter/Backspace/Delete repeats (starts 350 ms, ~16/s then ~33/s); tap outside closes; idle `editMenuIdleSeconds` (6) closes; `editMenuStayOpen` off = closes after each option.
+**Hold** the button then drag onto an option and lift: runs it and closes; lift on the button = leaves it open; lift elsewhere = closes. Closes on rotation. While the menu is held or open the button is redrawn in the accent colour over the dimmed screen (`editButtonActive`).
+
+## USB cable removal (and the icon)
+The connection and computer buttons (`_TransportButton`, `_DeviceButton` in main.dart) listen to `Connection` themselves. In the side-bar layout they are `const` widgets, which a parent rebuild skips: that was why the icon stayed on USB.
+Android's `USB_STATE` broadcast (MainActivity EventChannel `deskctrl/usb/state`, `UsbPairing.watchCable`) drops the USB link the moment the cable goes away (`Session.usb.cableRemoved` -> declareDead); traffic and the connection icon move to Wi-Fi/Bluetooth at once. The heartbeat watchdog (3.5 s) remains the backup.
+
+## Copy on select (Connection._leftChanged, toast in Home)
+Setting `copyOnSelect`. Releasing the left button after a drag (>=24 px of movement) or on the 2nd/3rd press within 450 ms sends Ctrl+Insert (not Ctrl+C: that would interrupt a terminal program) and shows a 'Copied' message for 1.4 s. Applies to the pad, Left button and mouse screen alike (all go through `Connection.button`). The phone cannot know whether anything was really selected, so a drag over nothing also says 'Copied'.
+
+## Voice screen (mode "Voice": voice_screen.dart, voice.dart, voice_commands.dart; agent: voice.rs)
+Two round buttons, hold to talk (or tap-tap, `voiceHold`): **Dictate** types what you say (US layout, accents/emoji skipped, optional trailing space / Enter); **Command** runs an action: exact phrase table first ("copy", "please paste that", "open a terminal", "scroll down a bit", "turn the volume up", "press enter three times", "right click" ...), else Needle guesses on the computer and the phone asks "Did you mean ...?" (never runs a guess by itself). The phrase table covers every option of the round menu and of the touchpad: clicks (left/right/middle/double), hold/release (drag), scroll up/down/left/right/top/bottom, zoom in/out, workspace left/right, overview, screenshot, volume, brightness, play/pause, next/previous track, seek, next/previous window and tab, move the cursor, arrows, space, lock screen (~75 ids, `voicePhrases`). Closing a window ("close this window", Alt+F4) and locking the screen always ask first (`voiceConfirmRisky`). Needle guessing (`voiceAi`) is OFF by default. Recognition runs on the computer (Whistle, offline): without `setup_voice.sh` there the screen says "not installed". English only.
+
+## Auto keyboard (agent `focus.rs` + app `Home._textFocus`)
+Option 1 (default): focus on a typeable field -> keyboard screen; not typeable -> stay. While the window/tab slider is used the phone waits 700 ms and the final place decides.
+Option 2 (`autoKeyboardOnClick`): focus moving alone never opens it; a pointer click does (focus already typeable, or typeable event within 1.5 s of the click, 400 ms settle).
+
+## Screens, look
+Mode button (one tap = back to the previous screen, or the next one the first time; double tap = next screen in the order, again and again; long press = menu; order editable; a single tap acts 260 ms after the finger lifts, to tell it from a double tap). Notch bar: Auto (default) / On / Off (`notchBar`): around a camera notch the top bar becomes icons beside it (rail on the notch's edge in landscape, strip across the top in portrait); icons shrink from 48 to 36 dp around a wide notch and, if still too many, the rest go on a second line (`planNotchBar`); no icon ever lies under the notch. Themes soft/amoled/tinted + accent. Per-screen phone brightness.
+Settings sheet is sectioned and scoped to the current screen ("All settings" for the rest).
+
+## Agent window
+Settings > Start-up: **Start the agent when I log in** (XDG autostart file, 5 s delay) and **Start minimised** (on by default when switching autostart on). See AGENT.md.
+
+See `AGENT.md` (dashboard with QR, token, Bluetooth/USB badges, connected devices, Settings panel, Log tab).
