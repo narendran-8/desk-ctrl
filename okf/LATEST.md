@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-21 · Add readable build and usage README
+- files: README.md, okf/INDEX.md
+- docs: INDEX, OPERATIONS
+- tests: git diff --check passed; README commands and links reviewed
+- note: Root README now documents setup, compilation, pairing, usage, limitations, testing, and troubleshooting.
+
 ## 2026-10-21 · Upload project to private GitHub
 - files: .gitignore, .git, okf/LATEST.md
 - docs: INDEX, OPERATIONS
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES
 - tests: phone 229 pass; APK built, NOT installed (no phone attached)
 - note: a single tap now acts 260 ms late (double-tap window)
-
-## 2026-10-18 · Agent keeps its pairing token across restarts; phone says what it waits for
-- files: agent/src/tokenstore.rs, agent/src/main.rs, agent/src/gui.rs, agent/src/server.rs, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/wait_for_agent_test.dart, mobile/test/offline_explore_test.dart, output/desk_ctrl_agent
-- docs: AGENT, FEATURES, KNOWN
-- tests: agent 70 pass, phone 223 pass; APK built, NOT installed (no phone attached)
-- note: first start of the new agent creates ~/.config/deskctrl/token (new 16-char token): phones must pair once more; no IP discovery yet
 

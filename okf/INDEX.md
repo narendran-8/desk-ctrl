@@ -10,7 +10,7 @@ sources: []
 A desktop **agent** (Rust) receives the input over **Wi-Fi** (WebSocket), **Bluetooth** (RFCOMM) or a **USB cable**
 (adb reverse tunnel) and injects it through `/dev/uinput`. Links fail over to each other automatically.
 
-**Layout**: `agent/` Rust agent + window · `mobile/` Flutter app · `output/` built `desk_ctrl.apk`,
+**Layout**: `README.md` quick start and usage guide · `agent/` Rust agent + window · `mobile/` Flutter app · `output/` built `desk_ctrl.apk`,
 `desk_ctrl_agent` (Linux), `desk_ctrl_agent.exe` (Windows), `setup_laptop.sh` · `tools/` helper scripts · `okf/` this knowledge base.
 
 **Brand**: display names are ViL (phone) and ViL Agent (desktop). Approved artwork and generated icon files live in `branding/`; regenerate with `tools/prepare_branding.py`. Internal package/config/pairing identifiers and output filenames retain DeskCtrl for upgrade compatibility.
