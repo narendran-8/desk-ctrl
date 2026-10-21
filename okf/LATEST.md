@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-21 · Upload project to private GitHub
+- files: .gitignore, .git, okf/LATEST.md
+- docs: INDEX, OPERATIONS
+- tests: OKF check passed; private GitHub repository created and main pushed
+- note: Repository: https://github.com/narendran-8/desk-ctrl
+
 ## 2026-10-21 · Initialize local Git tracking for the full ViL project
 - files: .gitignore, agent, mobile, branding, tools, okf, output, back_dir/memory
 - docs: INDEX, OPERATIONS
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: AGENT, FEATURES, KNOWN
 - tests: agent 70 pass, phone 223 pass; APK built, NOT installed (no phone attached)
 - note: first start of the new agent creates ~/.config/deskctrl/token (new 16-char token): phones must pair once more; no IP discovery yet
-
-## 2026-10-18 · Trackpad: two-finger swipe = Back / Forward (setting)
-- files: mobile/lib/pad_screen.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/test/pad_swipe_nav_test.dart
-- docs: FEATURES, SETTINGS, DECISIONS
-- tests: phone 221 pass; APK built, NOT installed (no phone attached)
-- note: also fixed scroll-vs-pinch detection for side-by-side fingers; thresholds 80 px / 2:1 not tuned on a real phone
 
