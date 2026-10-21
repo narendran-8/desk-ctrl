@@ -7,6 +7,18 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-18 · Agent keeps its pairing token across restarts; phone says what it waits for
+- files: agent/src/tokenstore.rs, agent/src/main.rs, agent/src/gui.rs, agent/src/server.rs, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/wait_for_agent_test.dart, mobile/test/offline_explore_test.dart, output/desk_ctrl_agent
+- docs: AGENT, FEATURES, KNOWN
+- tests: agent 70 pass, phone 223 pass; APK built, NOT installed (no phone attached)
+- note: first start of the new agent creates ~/.config/deskctrl/token (new 16-char token): phones must pair once more; no IP discovery yet
+
+## 2026-10-18 · Trackpad: two-finger swipe = Back / Forward (setting)
+- files: mobile/lib/pad_screen.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/test/pad_swipe_nav_test.dart
+- docs: FEATURES, SETTINGS, DECISIONS
+- tests: phone 221 pass; APK built, NOT installed (no phone attached)
+- note: also fixed scroll-vs-pinch detection for side-by-side fingers; thresholds 80 px / 2:1 not tuned on a real phone
+
 ## 2026-10-18 · Round menu: custom keys (own name, modifiers, key, repeat)
 - files: mobile/lib/custom_key.dart, mobile/lib/edit_menu.dart, mobile/lib/edit_menu_editor.dart, mobile/lib/settings.dart, mobile/lib/voice_commands.dart, mobile/lib/voice.dart, mobile/test/custom_key_test.dart, mobile/test/voice_test.dart
 - docs: FEATURES, SETTINGS, MOBILE
