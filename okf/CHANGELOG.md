@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-18 · Round menu: custom keys (own name, modifiers, key, repeat)
+- files: mobile/lib/custom_key.dart, mobile/lib/edit_menu.dart, mobile/lib/edit_menu_editor.dart, mobile/lib/settings.dart, mobile/lib/voice_commands.dart, mobile/lib/voice.dart, mobile/test/custom_key_test.dart, mobile/test/voice_test.dart
+- docs: FEATURES, SETTINGS, MOBILE
+- tests: phone 216 pass; APK built, NOT installed (no phone attached)
+- note: not seen on a phone; keys are chosen from a fixed list, not captured from a keyboard
+
 ## 2026-10-18 · Agent: start when I log in (autostart) + start minimised
 - files: agent/src/autostart.rs, agent/src/gui.rs, agent/src/main.rs, output/desk_ctrl_agent
 - docs: AGENT, FEATURES
