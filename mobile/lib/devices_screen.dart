@@ -66,7 +66,7 @@ class DeviceListScreen extends StatelessWidget {
                             for (final d in s.devices)
                               DeviceRow(
                                 device: d,
-                                onTap: () => c.connectDevice(d.id),
+                                onTap: () => c.switchTo(d.id),
                               ),
                           ],
                         ),

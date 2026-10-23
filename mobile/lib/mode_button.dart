@@ -15,7 +15,7 @@ enum MenuSide { right, left, below }
 /// One button that stands for all modes. It shows the current mode.
 ///  - one tap: back to the mode you were on before (keyboard -> trackpad, tap again -> keyboard);
 ///    the very first time, the next mode
-///  - double tap: the next mode in your order, again and again (keyboard -> trackpad -> mouse ...)
+///  - double tap: the next mode in your order, again and again (keyboard -> trackpad -> mouse -> computer ...)
 ///  - long-press: a menu with the other modes opens; drag onto one and let go to pick it
 class ModeButton extends StatefulWidget {
   final Mode mode;

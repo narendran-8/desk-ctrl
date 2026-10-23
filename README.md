@@ -128,6 +128,7 @@ The phone provides these main modes:
 - **Keyboard** — type text, use modifier keys, navigation keys, function keys, media keys, and custom keys.
 - **Trackpad** — move the pointer, tap, drag, scroll, zoom, use multi-finger gestures, and optionally control the pointer with phone motion.
 - **Mouse** — use left, right, middle, double-click, drag, and scroll controls.
+- **Computer** — view saved computers and switch the active computer instantly while other connected computers stay ready.
 - **Voice** — dictate text or hold the command button to speak an action. Voice processing runs locally on the computer after the optional voice setup.
 - **Round action button** — open shortcuts such as copy, paste, terminal actions, refresh, open terminal, close application, and custom keys.
 

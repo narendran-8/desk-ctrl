@@ -175,7 +175,9 @@ void main() {
 
       await double(); // pad -> mouse
       expect(find.byType(MouseScreen), findsOneWidget);
-      await double(); // mouse -> voice
+      await double(); // mouse -> computer
+      expect(find.text('Your computers'), findsOneWidget);
+      await double(); // computer -> voice
       expect(find.byType(VoiceScreen), findsOneWidget);
       await double(); // voice -> keyboard (wraps)
       expect(find.byType(KeyboardScreen), findsOneWidget);

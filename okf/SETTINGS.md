@@ -1,7 +1,7 @@
 ---
 id: settings
 summary: Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: [mobile/lib/settings.dart, mobile/lib/settings_sheet.dart]
 ---
 # Settings (`Settings` singleton, SharedPreferences keys)
@@ -20,7 +20,7 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | `theme` | `soft` | `soft` / `amoled` (true black) / `tinted` ("Black lite") | Appearance |
 | `accent` | 0xFF4F8CFF | accent colour (8 swatches) | Appearance |
 | `brightKeyboard` `brightPad` `brightMouse` | 0 | phone screen brightness per screen, 0 = system, else 0.1-1.0 | Screen brightness |
-| `modeOrder`, `mouseTab`, `padTab` | keyboard,pad,mouse; true; true | order and availability of screens | Screens |
+| `modeOrder`, `mouseTab`, `padTab` | keyboard,pad,mouse,computers; true; true | order and availability of screens; Computer is always available and opens the saved-computer switcher | Screens |
 | `editMenu` | true | corner button with the edit fan | General + Keyboard |
 | `editMenuStayOpen` | true | a tapped fan stays open after an option (idle close 6 s) | General + Keyboard |
 | `copyOnSelect` | true | a left-button drag (>=24 px) or double/triple click, once released, sends Ctrl+Insert after 100 ms and shows a "Copied" toast | General + Trackpad |

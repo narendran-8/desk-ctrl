@@ -245,6 +245,7 @@ class _HomeState extends State<Home> {
                   Mode.mouse => const MouseScreen(),
                   Mode.pad => const PadScreen(),
                   Mode.voice => const VoiceScreen(),
+                  Mode.computers => const DeviceListScreen(),
                 },
               ),
             ],

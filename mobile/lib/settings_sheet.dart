@@ -22,6 +22,7 @@ enum SettingsScope {
     Mode.pad => pad,
     Mode.mouse => mouse,
     Mode.voice => voice,
+    Mode.computers => all,
   };
 
   String get title => switch (this) {
