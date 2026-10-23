@@ -7,31 +7,21 @@ void main() {
       Mode.keyboard,
       Mode.pad,
       Mode.mouse,
-      Mode.computers,
     ]);
-    expect(availableModes(mouse: false, pad: true), [
-      Mode.keyboard,
-      Mode.pad,
-      Mode.computers,
-    ]);
+    expect(availableModes(mouse: false, pad: true), [Mode.keyboard, Mode.pad]);
     expect(availableModes(mouse: true, pad: false), [
       Mode.keyboard,
       Mode.mouse,
-      Mode.computers,
     ]);
-    expect(availableModes(mouse: false, pad: false), [
-      Mode.keyboard,
-      Mode.computers,
-    ]);
+    expect(availableModes(mouse: false, pad: false), [Mode.keyboard]);
   });
 
   test('the order is the user\'s order', () {
-    const order = [Mode.mouse, Mode.keyboard, Mode.pad, Mode.computers];
+    const order = [Mode.mouse, Mode.keyboard, Mode.pad];
     expect(availableModes(mouse: true, pad: true, order: order), order);
     expect(availableModes(mouse: false, pad: true, order: order), [
       Mode.keyboard,
       Mode.pad,
-      Mode.computers,
     ]);
   });
 
@@ -40,14 +30,12 @@ void main() {
       Mode.pad,
       Mode.keyboard,
       Mode.mouse,
-      Mode.computers,
       Mode.voice,
     ]);
     expect(completeOrder(parseModeOrder(['mouse', 'nonsense'])), [
       Mode.mouse,
       Mode.keyboard,
       Mode.pad,
-      Mode.computers,
       Mode.voice,
     ]);
   });

@@ -173,20 +173,14 @@ void main() {
   ) async {
     await setUpApp(tester, home: const Home());
     expect(Mode.voice.label, 'Voice');
-    // The mode button cycles keyboard -> mousepad -> mouse -> computer -> voice.
+    // The mode button cycles keyboard -> mousepad -> mouse -> voice.
     final modes = availableModes(
       mouse: Settings.instance.mouseTab,
       pad: Settings.instance.padTab,
       voice: Settings.instance.voiceTab,
       order: Settings.instance.modeOrderList,
     );
-    expect(modes, [
-      Mode.keyboard,
-      Mode.pad,
-      Mode.mouse,
-      Mode.computers,
-      Mode.voice,
-    ]);
+    expect(modes, [Mode.keyboard, Mode.pad, Mode.mouse, Mode.voice]);
     Settings.instance.update(() => Settings.instance.voiceTab = false);
     expect(
       availableModes(

@@ -22,13 +22,12 @@ void main() {
   double y(WidgetTester tester, String label) =>
       tester.getCenter(find.text(label)).dy;
 
-  testWidgets('shows the default order: keyboard, mousepad, mouse, computer', (
+  testWidgets('shows the default order: keyboard, mousepad, mouse', (
     tester,
   ) async {
     await pump(tester);
     expect(y(tester, 'Keyboard'), lessThan(y(tester, 'Mousepad')));
     expect(y(tester, 'Mousepad'), lessThan(y(tester, 'Mouse')));
-    expect(y(tester, 'Mouse'), lessThan(y(tester, 'Computer')));
     expect(find.text('Starts here'), findsOneWidget);
   });
 
@@ -78,8 +77,7 @@ void main() {
       expect(
         switches,
         findsNWidgets(3),
-        reason:
-            'Keyboard and Computer have no switch; Mousepad, Mouse, Voice do',
+        reason: 'Keyboard has no switch, it is always on; Mousepad, Mouse, Voice do',
       );
 
       await tester.tap(switches.at(1)); // Mouse
@@ -96,7 +94,7 @@ void main() {
           pad: Settings.instance.padTab,
           order: Settings.instance.modeOrderList,
         ),
-        [Mode.keyboard, Mode.pad, Mode.computers],
+        [Mode.keyboard, Mode.pad],
       );
 
       await tester.tap(switches.at(1));

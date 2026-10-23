@@ -28,7 +28,7 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `mouse_screen.dart`, `mouse_widgets.dart` | tilt mouse screen (accelerometer joystick), buttons, scroll strip |
 | `devices_screen.dart`, `device_form.dart`, `scan_screen.dart` | computer list/rows, add/edit form (duplicate check), QR scanner + `PairInfo` parser |
 | `usb_pairing.dart` | `UsbPairing`: deep-link listener (`usb=1` only) |
-| `mode_button.dart`, `modes.dart`, `modes_editor.dart` | mode switch button (tap cycles, long-press menu), `Mode{keyboard,mouse,pad,computers,voice}`, order editor; Computer opens the saved-computer switcher |
+| `mode_button.dart`, `modes.dart`, `modes_editor.dart` | mode switch button (tap cycles, long-press menu), `Mode{keyboard,mouse,pad}`, order editor |
 | `app_theme.dart` | `AppTheme` (soft/amoled/tinted + accent), `DeskColors` extension, `context.desk` |
 | `key_sound.dart`, `window_mode.dart`, `notch_layout.dart` | click sounds, cutout/brightness channel, notch bar geometry (`iconsBeforeNotch`, `planNotchBar`: shrink, then a second line) |
 

@@ -25,7 +25,6 @@ class ModesEditor extends StatelessWidget {
       Mode.mouse => s.mouseTab,
       Mode.pad => s.padTab,
       Mode.voice => s.voiceTab,
-      Mode.computers => true,
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +55,7 @@ class ModesEditor extends StatelessWidget {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (order[i] != Mode.keyboard && order[i] != Mode.computers)
+                    if (order[i] != Mode.keyboard)
                       Switch(
                         value: enabled(order[i]),
                         onChanged: (v) => s.update(() {

@@ -7,12 +7,6 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
-## 2026-10-18 · Windows agent (desk_ctrl_agent.exe) - first port
-- files: agent/Cargo.toml, agent/src/main.rs, agent/src/inject.rs, agent/src/hid.rs, agent/src/leds.rs, agent/src/levels.rs, agent/src/identity.rs, agent/src/usb.rs, agent/src/server.rs, agent/src/voice.rs, agent/src/tokenstore.rs, agent/src/autostart_win.rs, agent/src/bluetooth_win.rs, agent/src/focus_win.rs, agent/src/portowner_win.rs, agent/src/winproc.rs, tools/windows/build_windows.sh, tools/windows/zigcc.py, output/desk_ctrl_agent.exe, output/README_windows.txt, output/allow_firewall.bat
-- docs: AGENT, OPERATIONS, TESTING, KNOWN, DECISIONS, INDEX
-- tests: agent 73 pass on Linux; 29 pass under Wine for the Windows build; headless exe smoke-tested over a websocket; GUI drawn under Xvfb+Wine
-- note: never run on a real Windows PC; Bluetooth, volume/brightness, auto-keyboard and voice are missing on Windows
-
 ## 2026-10-18 · Mode button: tap = previous screen, double tap = next screen
 - files: mobile/lib/mode_button.dart, mobile/lib/main.dart, mobile/test/mode_tap_test.dart
 - docs: FEATURES

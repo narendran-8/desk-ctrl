@@ -1,7 +1,7 @@
 ---
 id: features
 summary: Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.
-updated: 2026-10-23
+updated: 2026-10-21
 sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, agent/src/focus.rs, agent/src/usb.rs]
 ---
 # Features (behaviour as shipped)
@@ -10,7 +10,7 @@ sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/li
 - Desktop agent: Settings > Window > Minimize to tray keeps the server running when minimized or when the window's close button is pressed; right-click the tray for Show DeskCtrl or Close application (fully exits). The preference is remembered. With tray disabled or unavailable, closing the window exits normally.
 - Three links per computer, any combination, instant switching, automatic fail-over/failback (`PROTOCOL.md`). Several computers stay connected; tap one in the list to send input to it.
 - Add by QR (`PairInfo`), by hand (form), or **by plugging in** (USB, no QR). Duplicates are never added (`findSame`, merge, `dedupeAll` at start).
-- Offline (nothing connected) the whole app still opens (keyboard/pad/mouse/computer screens, settings, edit menu); the Computer screen lists saved computers and a red strip "Offline - tap to choose a computer" opens the Computers sheet.
+- Offline (nothing connected) the whole app still opens (keyboard/pad/mouse screens, settings, edit menu); a red strip "Offline - tap to choose a computer" opens the Computers sheet (`DeviceListScreen` is no longer used by Home).
 - Status text per computer: "Connected - USB + Wi-Fi", "(Wi-Fi down)", "Connection lost - reconnecting...". Reconnects last computers at start (the agent keeps its token across restarts, so a once-paired phone stays paired; the strip says "Looking for <name>..." while it waits, or that the agent has a new pairing code when the token is rejected); if the agent is not running yet, the phone keeps looking every 4 s (`Session._waitForComputer`, only for computers connected last time and not disconnected by hand) and connects the moment the agent starts - no scan or cable.
 - USB: needs adb on the computer + USB debugging on the phone (allow once). Plug in -> app opens, pairs, connects. Over USB the agent sends Wi-Fi/BT details so those links appear too.
 
@@ -55,7 +55,7 @@ Option 1 (default): focus on a typeable field -> keyboard screen; not typeable -
 Option 2 (`autoKeyboardOnClick`): focus moving alone never opens it; a pointer click does (focus already typeable, or typeable event within 1.5 s of the click, 400 ms settle).
 
 ## Screens, look
-Mode button (one tap = back to the previous screen, or the next one the first time; double tap = next screen in the order, again and again; long press = menu; order editable; a single tap acts 260 ms after the finger lifts, to tell it from a double tap). The default order is Keyboard -> Mousepad -> Mouse -> Computer; Voice follows when enabled. The Computer mode shows saved computers, and tapping a row switches the active computer immediately while keeping other connected computers ready. Notch bar: Auto (default) / On / Off (`notchBar`): around a camera notch the top bar becomes icons beside it (rail on the notch's edge in landscape, strip across the top in portrait); icons shrink from 48 to 36 dp around a wide notch and, if still too many, the rest go on a second line (`planNotchBar`); no icon ever lies under the notch. Themes soft/amoled/tinted + accent. Per-screen phone brightness.
+Mode button (one tap = back to the previous screen, or the next one the first time; double tap = next screen in the order, again and again; long press = menu; order editable; a single tap acts 260 ms after the finger lifts, to tell it from a double tap). Notch bar: Auto (default) / On / Off (`notchBar`): around a camera notch the top bar becomes icons beside it (rail on the notch's edge in landscape, strip across the top in portrait); icons shrink from 48 to 36 dp around a wide notch and, if still too many, the rest go on a second line (`planNotchBar`); no icon ever lies under the notch. Themes soft/amoled/tinted + accent. Per-screen phone brightness.
 Settings sheet is sectioned and scoped to the current screen ("All settings" for the rest).
 
 ## Agent window
