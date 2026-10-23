@@ -46,8 +46,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-23",
    "sources": [],
-   "lines": 255,
-   "approx_tokens": 4490
+   "lines": 261,
+   "approx_tokens": 4712
   },
   {
    "file": "DECISIONS.md",
@@ -69,7 +69,7 @@
    "file": "FEATURES.md",
    "id": "features",
    "summary": "Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [
     "mobile/lib/pad_screen.dart",
     "mobile/lib/keyboard_screen.dart",
@@ -108,7 +108,7 @@
    "updated": "2026-10-23",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1661
+   "approx_tokens": 1518
   },
   {
    "file": "MOBILE.md",
@@ -176,7 +176,7 @@
    "file": "SETTINGS.md",
    "id": "settings",
    "summary": "Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [
     "mobile/lib/settings.dart",
     "mobile/lib/settings_sheet.dart"
