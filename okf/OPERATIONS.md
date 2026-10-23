@@ -1,12 +1,12 @@
 ---
 id: operations
 summary: Build, install, publish and run commands; paths; adb tricks; the laptop setup script.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: [output/setup_laptop.sh, mobile/pubspec.yaml, agent/Cargo.toml]
 ---
 # Operations
 
-Branding is ViL / ViL Agent. `python3 tools/prepare_branding.py` regenerates launcher assets from the approved master in `branding/`. Ship `output/vil-icon.png` alongside the Linux installer; it installs the icon into hicolor and sets the launcher name to ViL Agent. Windows GNU builds require `x86_64-w64-mingw32-windres` (`WINDRES` override) for the executable icon. Output binary/APK filenames keep their existing DeskCtrl names.
+Branding is ViL / ViL Agent. `python3 tools/prepare_branding.py` regenerates transparent-background launcher assets from the approved master in `branding/`. Ship `output/vil-icon.png` alongside the Linux installer; it installs the icon into hicolor and sets the launcher name to ViL Agent. Windows GNU builds require `x86_64-w64-mingw32-windres` (`WINDRES` override) for the executable icon. Output binary/APK filenames keep their existing DeskCtrl names.
 
 ## Toolchain
 Flutter at `~/dev/flutter`, Android SDK `~/dev/android-sdk`: `export PATH=$HOME/dev/flutter/bin:$PATH ANDROID_HOME=$HOME/dev/android-sdk`. Rust stable (edition 2024). Python 3 (PIL, gi/Atspi, websockets 10 present).

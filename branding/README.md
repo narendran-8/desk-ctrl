@@ -1,6 +1,6 @@
 # ViL branding
 
-The owner selected `vil-icon.png`, a cyan/green binary bow and arrow joined by a string.
+The owner selected `vil-icon.png`, a cyan/green binary bow and arrow joined by a string. The master PNG has a transparent background so the mark can sit on the Android launcher, desktop, and tray backgrounds without a square.
 Display names: **ViL** (mobile), **ViL Agent** (desktop).
 
 Run `python3 tools/prepare_branding.py` to regenerate Android legacy/adaptive launcher images,

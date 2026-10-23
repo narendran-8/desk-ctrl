@@ -1,12 +1,12 @@
 {
  "project": "DeskCtrl",
- "generated": "2026-10-21",
+ "generated": "2026-10-23",
  "docs": [
   {
    "file": "AGENT.md",
    "id": "agent",
    "summary": "The Rust desktop agent - every module's job, environment variables, the window design, how to run it.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [
     "agent/src/main.rs",
     "agent/src/server.rs",
@@ -23,7 +23,7 @@
     "agent/src/look.rs"
    ],
    "lines": 71,
-   "approx_tokens": 4012
+   "approx_tokens": 4018
   },
   {
    "file": "ARCHITECTURE.md",
@@ -44,10 +44,10 @@
    "file": "CHANGELOG.md",
    "id": "changelog",
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [],
-   "lines": 249,
-   "approx_tokens": 4410
+   "lines": 255,
+   "approx_tokens": 4490
   },
   {
    "file": "DECISIONS.md",
@@ -105,16 +105,16 @@
    "file": "LATEST.md",
    "id": "latest",
    "summary": "The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1591
+   "approx_tokens": 1661
   },
   {
    "file": "MOBILE.md",
    "id": "mobile",
    "summary": "The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [
     "mobile/lib/main.dart",
     "mobile/lib/connection.dart",
@@ -128,7 +128,7 @@
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt"
    ],
    "lines": 49,
-   "approx_tokens": 1214
+   "approx_tokens": 1234
   },
   {
    "file": "OKF.md",
@@ -145,14 +145,14 @@
    "file": "OPERATIONS.md",
    "id": "operations",
    "summary": "Build, install, publish and run commands; paths; adb tricks; the laptop setup script.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [
     "output/setup_laptop.sh",
     "mobile/pubspec.yaml",
     "agent/Cargo.toml"
    ],
    "lines": 47,
-   "approx_tokens": 1034
+   "approx_tokens": 1040
   },
   {
    "file": "PROTOCOL.md",

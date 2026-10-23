@@ -1,11 +1,17 @@
 ---
 id: latest
 summary: The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: []
 ---
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
+
+## 2026-10-23 · Use transparent ViL icon on Android and desktop
+- files: branding, mobile/android/app/src/main/res, output/vil-icon.png
+- docs: MOBILE, AGENT, OPERATIONS
+- tests: Flutter tests: 238 passed; release APK built and installed successfully; Linux agent release build passed; adb device 863d0058304830363451066c2082bb installed APK; cargo test blocked by environment-dependent Bluetooth/port tests
+- note: Flutter analyze still reports 13 pre-existing curly-braces lint infos; no icon-related diagnostics. Master PNG and generated Android/desktop/Windows assets have alpha transparency.
 
 ## 2026-10-21 · Add readable build and usage README
 - files: README.md, okf/INDEX.md
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: AGENT, OPERATIONS, TESTING, KNOWN, DECISIONS, INDEX
 - tests: agent 73 pass on Linux; 29 pass under Wine for the Windows build; headless exe smoke-tested over a websocket; GUI drawn under Xvfb+Wine
 - note: never run on a real Windows PC; Bluetooth, volume/brightness, auto-keyboard and voice are missing on Windows
-
-## 2026-10-18 · Mode button: tap = previous screen, double tap = next screen
-- files: mobile/lib/mode_button.dart, mobile/lib/main.dart, mobile/test/mode_tap_test.dart
-- docs: FEATURES
-- tests: phone 229 pass; APK built, NOT installed (no phone attached)
-- note: a single tap now acts 260 ms late (double-tap window)
 

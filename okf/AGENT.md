@@ -1,12 +1,12 @@
 ---
 id: agent
 summary: The Rust desktop agent - every module's job, environment variables, the window design, how to run it.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: [agent/src/main.rs, agent/src/server.rs, agent/src/bluetooth.rs, agent/src/inject.rs, agent/src/hid.rs, agent/src/leds.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/usb.rs, agent/src/identity.rs, agent/src/portowner.rs, agent/src/gui.rs, agent/src/look.rs]
 ---
 # Agent (agent/, crate `agent`, binary published as `desk_ctrl_agent`)
 
-Display branding: **ViL Agent** in window title, header, tray tooltip and Linux launchers. Tray restore entry: Show ViL. Approved icon embedded from `branding/vil-icon-256.png` in window/tray; Windows GNU build embeds `branding/vil-icon.ico` via `build.rs`/`vil.rc` (requires windres). Existing config, registry and executable identifiers are retained for compatibility.
+Display branding: **ViL Agent** in window title, header, tray tooltip and Linux launchers. Tray restore entry: Show ViL. Approved transparent-background icon embedded from `branding/vil-icon-256.png` in window/tray; Windows GNU build embeds `branding/vil-icon.ico` via `build.rs`/`vil.rc` (requires windres). Existing config, registry and executable identifiers are retained for compatibility.
 
 Deps: eframe 0.36 (GUI), evdev, tokio + tokio-tungstenite, zbus 5 (BlueZ + AT-SPI), qrcode, libc. Linux only.
 Run: `./desk_ctrl_agent` (window) or `--headless` (prints token). Needs `/dev/uinput` access (`output/setup_laptop.sh`).

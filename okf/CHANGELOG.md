@@ -1,11 +1,17 @@
 ---
 id: changelog
 summary: Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: []
 ---
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
+
+## 2026-10-18 · Mode button: tap = previous screen, double tap = next screen
+- files: mobile/lib/mode_button.dart, mobile/lib/main.dart, mobile/test/mode_tap_test.dart
+- docs: FEATURES
+- tests: phone 229 pass; APK built, NOT installed (no phone attached)
+- note: a single tap now acts 260 ms late (double-tap window)
 
 ## 2026-10-18 · Agent keeps its pairing token across restarts; phone says what it waits for
 - files: agent/src/tokenstore.rs, agent/src/main.rs, agent/src/gui.rs, agent/src/server.rs, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/wait_for_agent_test.dart, mobile/test/offline_explore_test.dart, output/desk_ctrl_agent
