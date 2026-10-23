@@ -20,7 +20,7 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | `theme` | `soft` | `soft` / `amoled` (true black) / `tinted` ("Black lite") | Appearance |
 | `accent` | 0xFF4F8CFF | accent colour (8 swatches) | Appearance |
 | `brightKeyboard` `brightPad` `brightMouse` | 0 | phone screen brightness per screen, 0 = system, else 0.1-1.0 | Screen brightness |
-| `modeOrder`, `mouseTab`, `padTab` | keyboard,pad,mouse; true; true | order and availability of screens | Screens |
+| `modeOrder`, `mouseTab`, `padTab`, `voiceTab`, `mobileTab` | keyboard,mouse,pad,voice,mobile; true | order and availability of screens; keyboard is always enabled; old saved orders append newly added modes | Screens |
 | `editMenu` | true | corner button with the edit fan | General + Keyboard |
 | `editMenuStayOpen` | true | a tapped fan stays open after an option (idle close 6 s) | General + Keyboard |
 | `copyOnSelect` | true | a left-button drag (>=24 px) or double/triple click, once released, sends Ctrl+Insert after 100 ms and shows a "Copied" toast | General + Trackpad |
@@ -71,6 +71,9 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | Key | Default | Meaning |
 |---|---|---|
 | `voiceTab` | true | the Voice screen is one of the modes |
+
+## Mobile combined screen
+`mobileTab` (default true) shows a fifth mode with touchpad above the keyboard. It uses `padEnabled`, the existing touchpad gestures and edge controls, and the normal keyboard settings. The scoped Mobile settings sheet shows both Keyboard and Touchpad sections. `brightPad` is also used for this screen.
 | `voiceHold` | true | hold the button to talk (off: tap to start, tap to stop) |
 | `voiceAi` | false | unknown commands are guessed by Needle on the computer, always asked first |
 | `voiceEnter` | false | press Enter after dictated text |

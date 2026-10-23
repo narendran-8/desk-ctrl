@@ -204,6 +204,7 @@ class Settings extends ChangeNotifier {
     'keyboard' => brightKeyboard,
     'pad' => brightPad,
     'mouse' => brightMouse,
+    'mobile' => brightPad,
     _ => 0,
   };
 
@@ -219,6 +220,7 @@ class Settings extends ChangeNotifier {
 
   /// The Voice screen (microphone: dictate text, speak commands).
   bool voiceTab = true;
+  bool mobileTab = true;
 
   /// Hold the button while talking (off: tap once to start, once to stop).
   bool voiceHold = true;
@@ -335,6 +337,7 @@ class Settings extends ChangeNotifier {
         [for (final m in defaultModeOrder) m.name];
     padTab = _p.getBool('padTab') ?? true;
     voiceTab = _p.getBool('voiceTab') ?? true;
+    mobileTab = _p.getBool('mobileTab') ?? true;
     voiceHold = _p.getBool('voiceHold') ?? true;
     voiceAi = _p.getBool('voiceAi') ?? false;
     voiceEnter = _p.getBool('voiceEnter') ?? false;
@@ -422,6 +425,7 @@ class Settings extends ChangeNotifier {
     _p.setStringList('modeOrder', modeOrder);
     _p.setBool('padTab', padTab);
     _p.setBool('voiceTab', voiceTab);
+    _p.setBool('mobileTab', mobileTab);
     _p.setBool('voiceHold', voiceHold);
     _p.setBool('voiceAi', voiceAi);
     _p.setBool('voiceEnter', voiceEnter);

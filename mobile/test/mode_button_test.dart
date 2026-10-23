@@ -58,13 +58,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       expect(
-        find.text('Mousepad'),
+        find.text('Trackpad'),
         findsOneWidget,
         reason: 'the others are listed',
       );
       expect(
         find.ancestor(
-          of: find.text('Mousepad'),
+          of: find.text('Trackpad'),
           matching: find.byType(Material),
         ),
         findsWidgets,
@@ -80,7 +80,7 @@ void main() {
 
       // The trackpad comes first, then the mouse (the order from Settings).
       expect(
-        tester.getCenter(find.text('Mousepad')).dy,
+        tester.getCenter(find.text('Trackpad')).dy,
         lessThan(tester.getCenter(find.text('Mouse')).dy),
       );
 
@@ -89,7 +89,7 @@ void main() {
       await g.up();
       await tester.pump();
       expect(picked, [Mode.mouse]);
-      expect(find.text('Mousepad'), findsNothing, reason: 'the menu closes');
+      expect(find.text('Trackpad'), findsNothing, reason: 'the menu closes');
     },
   );
 
@@ -141,7 +141,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('Keyboard'), findsOneWidget);
     expect(find.text('Mouse'), findsOneWidget);
-    expect(find.text('Mousepad'), findsNothing);
+    expect(find.text('Trackpad'), findsNothing);
     await g.up();
     await tester.pump();
   });

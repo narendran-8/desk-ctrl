@@ -25,6 +25,7 @@ class ModesEditor extends StatelessWidget {
       Mode.mouse => s.mouseTab,
       Mode.pad => s.padTab,
       Mode.voice => s.voiceTab,
+      Mode.mobile => s.mobileTab,
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,6 +63,7 @@ class ModesEditor extends StatelessWidget {
                           if (order[i] == Mode.mouse) s.mouseTab = v;
                           if (order[i] == Mode.pad) s.padTab = v;
                           if (order[i] == Mode.voice) s.voiceTab = v;
+                          if (order[i] == Mode.mobile) s.mobileTab = v;
                         }),
                       ),
                     ReorderableDragStartListener(

@@ -22,22 +22,25 @@ void main() {
   double y(WidgetTester tester, String label) =>
       tester.getCenter(find.text(label)).dy;
 
-  testWidgets('shows the default order: keyboard, mousepad, mouse', (
-    tester,
-  ) async {
-    await pump(tester);
-    expect(y(tester, 'Keyboard'), lessThan(y(tester, 'Mousepad')));
-    expect(y(tester, 'Mousepad'), lessThan(y(tester, 'Mouse')));
-    expect(find.text('Starts here'), findsOneWidget);
-  });
+  testWidgets(
+    'shows the default order: keyboard, mouse, trackpad, voice, mobile',
+    (tester) async {
+      await pump(tester);
+      expect(y(tester, 'Keyboard'), lessThan(y(tester, 'Mouse')));
+      expect(y(tester, 'Mouse'), lessThan(y(tester, 'Trackpad')));
+      expect(y(tester, 'Trackpad'), lessThan(y(tester, 'Voice')));
+      expect(y(tester, 'Voice'), lessThan(y(tester, 'Mobile')));
+      expect(find.text('Starts here'), findsOneWidget);
+    },
+  );
 
   testWidgets(
     'dragging a handle reorders the list, redraws it, and saves the order',
     (tester) async {
       await pump(tester);
-      // Drag Mousepad's handle up above Keyboard.
-      final handle = find.byIcon(Icons.drag_handle).at(1);
-      await tester.drag(handle, const Offset(0, -140));
+      // Drag Trackpad's handle up above Keyboard.
+      final handle = find.byIcon(Icons.drag_handle).at(2);
+      await tester.drag(handle, const Offset(0, -240));
       await tester.pumpAndSettle();
 
       expect(
@@ -46,7 +49,7 @@ void main() {
         reason: 'the order is saved',
       );
       expect(
-        y(tester, 'Mousepad'),
+        y(tester, 'Trackpad'),
         lessThan(y(tester, 'Keyboard')),
         reason: 'and the list redraws',
       );
@@ -54,37 +57,37 @@ void main() {
       expect(
         tester.getCenter(find.text('Starts here')).dy,
         closeTo(
-          y(tester, 'Mousepad') +
+          y(tester, 'Trackpad') +
               (tester.getCenter(find.text('Starts here')).dy -
-                  y(tester, 'Mousepad')),
+                  y(tester, 'Trackpad')),
           0.1,
         ),
       );
-      expect(y(tester, 'Starts here') > y(tester, 'Mousepad') - 1, isTrue);
+      expect(y(tester, 'Starts here') > y(tester, 'Trackpad') - 1, isTrue);
       expect(
         y(tester, 'Starts here') < y(tester, 'Keyboard'),
         isTrue,
-        reason: 'it is under Mousepad now',
+        reason: 'it is under Trackpad now',
       );
     },
   );
 
   testWidgets(
-    'the switches turn Mouse and Mousepad on and off, and the list updates',
+    'the switches turn Mouse and Trackpad on and off, and the list updates',
     (tester) async {
       await pump(tester);
       final switches = find.byType(Switch);
       expect(
         switches,
-        findsNWidgets(3),
-        reason: 'Keyboard has no switch, it is always on; Mousepad, Mouse, Voice do',
+        findsNWidgets(4),
+        reason: 'Keyboard has no switch; Mouse, Trackpad, Voice, Mobile do',
       );
 
-      await tester.tap(switches.at(1)); // Mouse
+      await tester.tap(switches.at(0)); // Mouse
       await tester.pump();
       expect(Settings.instance.mouseTab, isFalse);
       expect(
-        tester.widget<Switch>(switches.at(1)).value,
+        tester.widget<Switch>(switches.at(0)).value,
         isFalse,
         reason: 'the switch redraws',
       );
@@ -97,10 +100,10 @@ void main() {
         [Mode.keyboard, Mode.pad],
       );
 
-      await tester.tap(switches.at(1));
+      await tester.tap(switches.at(0));
       await tester.pump();
       expect(Settings.instance.mouseTab, isTrue);
-      expect(tester.widget<Switch>(switches.at(1)).value, isTrue);
+      expect(tester.widget<Switch>(switches.at(0)).value, isTrue);
     },
   );
 }

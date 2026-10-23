@@ -18,11 +18,12 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `device_color.dart` | stable computer icon colour from saved-list position; shared by rail/top bar and the Computers sheet |
 | `links.dart` | `Transport{wifi,bluetooth,usb}`, `Link`, `WifiLink`, `UsbLink`, `BtLink` (+`BtDevice`) |
 | `settings.dart` | `Device` model + `Settings` singleton (see SETTINGS.md); `findSame` |
-| `settings_sheet.dart` | `openSettings(context, scope)`, `SettingsScope{all,keyboard,pad,mouse}`, collapsible `_Section`s |
+| `settings_sheet.dart` | `openSettings(context, scope)`, scoped sheets including `mobile` (keyboard + pad settings), collapsible `_Section`s |
 | `keyboard_screen.dart` | full keyboard (F-row optional, Fn, join Backspace/Del, shift legends, caps light, arrow cluster) |
 | `voice_screen.dart`, `voice.dart`, `voice_commands.dart` | Voice mode: screen (Dictate / Command buttons), `VoiceController` (mic -> frames -> answer -> type or run), phrase table + typing (US layout) |
 | `Mic.kt` (android) | 16 kHz mono microphone, channels `deskctrl/mic`, `deskctrl/mic/audio`; permission RECORD_AUDIO |
 | `pad_screen.dart` | `PadScreen` + `TouchPad`: gestures, edge zones, HUD, window/tab slider, motion cursor |
+| `mobile_screen.dart` | compact combined screen: top 2/5 touchpad, bottom 3/5 full keyboard; touchpad edge marks scale to fit short heights |
 | `phone_media.dart` | Android MethodChannel for local media keys, media volume/mute, and window brightness; volume/brightness return 0-100 percentages for TouchPad HUD |
 | `edge_zones.dart` | `EdgeZones` geometry/keys/labels, `EdgeZoneMarks` painter, `SwitchGuard`, `TopEdgeMode` |
 | `edit_menu.dart` | `EditMenuButton` + `EditFan` (three-row black/white fan), `editActions`/`terminalActions`/`refreshActions`/`editRings` |
@@ -30,7 +31,7 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `mouse_screen.dart`, `mouse_widgets.dart` | tilt mouse screen (accelerometer joystick), buttons, scroll strip |
 | `devices_screen.dart`, `device_form.dart`, `scan_screen.dart` | computer list/rows, add/edit form (duplicate check), QR scanner + `PairInfo` parser |
 | `usb_pairing.dart` | `UsbPairing`: deep-link listener (`usb=1` only) |
-| `mode_button.dart`, `modes.dart`, `modes_editor.dart` | mode switch button (tap cycles, long-press menu), `Mode{keyboard,mouse,pad}`, order editor |
+| `mode_button.dart`, `modes.dart`, `modes_editor.dart` | mode switch button (single tap previous, double tap next, long-press menu), `Mode{keyboard,mouse,pad,voice,mobile}`, order editor and per-mode switches; default order Keyboard, Mouse, Trackpad, Voice, Mobile |
 | `app_theme.dart` | `AppTheme` (soft/amoled/tinted + accent), `DeskColors` extension, `context.desk` |
 | `key_sound.dart`, `window_mode.dart`, `notch_layout.dart` | click sounds, cutout/brightness channel, notch bar geometry (`iconsBeforeNotch`, `planNotchBar`: shrink, then a second line) |
 

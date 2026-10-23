@@ -17,6 +17,7 @@ import 'keyboard_screen.dart';
 import 'mode_button.dart';
 import 'modes.dart';
 import 'mouse_screen.dart';
+import 'mobile_screen.dart';
 import 'notch_layout.dart';
 import 'pad_screen.dart';
 import 'voice_screen.dart';
@@ -81,6 +82,7 @@ class _HomeState extends State<Home> {
       mouse: st.mouseTab,
       pad: st.padTab,
       voice: st.voiceTab,
+      mobile: st.mobileTab,
       order: st.modeOrderList,
     ).first;
     Connection.instance.onTextFocus = _textFocus;
@@ -102,8 +104,9 @@ class _HomeState extends State<Home> {
   }
 
   void _openKeyboard() {
-    if (mounted && _mode != Mode.keyboard)
+    if (mounted && _mode != Mode.keyboard && _mode != Mode.mobile) {
       setState(() => _mode = Mode.keyboard);
+    }
   }
 
   /// The computer says where the focus is now.
@@ -230,6 +233,7 @@ class _HomeState extends State<Home> {
           mouse: st.mouseTab,
           pad: st.padTab,
           voice: st.voiceTab,
+          mobile: st.mobileTab,
           order: st.modeOrderList,
         );
         // A tab that was switched off in Settings falls back to the keyboard.
@@ -246,6 +250,7 @@ class _HomeState extends State<Home> {
                   Mode.mouse => const MouseScreen(),
                   Mode.pad => const PadScreen(),
                   Mode.voice => const VoiceScreen(),
+                  Mode.mobile => const MobileScreen(),
                 },
               ),
             ],

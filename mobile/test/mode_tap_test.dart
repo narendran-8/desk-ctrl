@@ -2,6 +2,7 @@ import 'package:deskctrl/keyboard_screen.dart';
 import 'package:deskctrl/main.dart';
 import 'package:deskctrl/mode_button.dart';
 import 'package:deskctrl/modes.dart';
+import 'package:deskctrl/mobile_screen.dart';
 import 'package:deskctrl/mouse_screen.dart';
 import 'package:deskctrl/pad_screen.dart';
 import 'package:deskctrl/settings.dart';
@@ -167,20 +168,22 @@ void main() {
 
       expect(find.byType(KeyboardScreen), findsOneWidget);
       await single(); // no previous mode yet: the next one
-      expect(find.byType(PadScreen), findsOneWidget);
+      expect(find.byType(MouseScreen), findsOneWidget);
       await single(); // back
       expect(find.byType(KeyboardScreen), findsOneWidget);
       await single(); // and forth
-      expect(find.byType(PadScreen), findsOneWidget);
-
-      await double(); // pad -> mouse
       expect(find.byType(MouseScreen), findsOneWidget);
-      await double(); // mouse -> voice
+
+      await double(); // mouse -> trackpad
+      expect(find.byType(PadScreen), findsOneWidget);
+      await double(); // trackpad -> voice
       expect(find.byType(VoiceScreen), findsOneWidget);
-      await double(); // voice -> keyboard (wraps)
+      await double(); // voice -> mobile
+      expect(find.byType(MobileScreen), findsOneWidget);
+      await double(); // mobile -> keyboard (wraps)
       expect(find.byType(KeyboardScreen), findsOneWidget);
       await single(); // back to where the last double tap came from
-      expect(find.byType(VoiceScreen), findsOneWidget);
+      expect(find.byType(MobileScreen), findsOneWidget);
       await tester.pumpWidget(const SizedBox());
     },
   );

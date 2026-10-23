@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-21 · Window close hides to tray; tray Close application exits
+- files: agent/src/gui.rs, agent/src/tray.rs, tools/tray_smoke.py, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
+- docs: AGENT, FEATURES, TESTING
+- tests: Linux and Windows release builds pass; isolated Linux minimize/show/window-close/show/full-exit test passes
+- note: Enable Minimize to tray in Settings. Native Windows tray behavior remains unverified.
+
 ## 2026-10-21 · Desktop agent: optional minimize to tray
 - files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/gui.rs, agent/src/tray.rs, tools/tray_smoke.py, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
 - docs: AGENT, FEATURES, SETTINGS, TESTING

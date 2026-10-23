@@ -205,18 +205,21 @@ class EdgeZoneMarks extends StatelessWidget {
     ),
   );
 
-  Widget _slider(IconData icon) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      const Text('+', style: TextStyle(color: _c, fontSize: 14)),
-      Container(width: 1.5, height: 26, color: _c),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Icon(icon, size: 18, color: _c),
-      ),
-      Container(width: 1.5, height: 26, color: _c),
-      const Text('-', style: TextStyle(color: _c, fontSize: 14)),
-    ],
+  Widget _slider(IconData icon) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('+', style: TextStyle(color: _c, fontSize: 14)),
+        Container(width: 1.5, height: 26, color: _c),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Icon(icon, size: 18, color: _c),
+        ),
+        Container(width: 1.5, height: 26, color: _c),
+        const Text('-', style: TextStyle(color: _c, fontSize: 14)),
+      ],
+    ),
   );
 
   @override

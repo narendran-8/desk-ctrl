@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Add combined Mobile keyboard and touchpad screen
+- files: mobile/lib/mobile_screen.dart, mobile/lib/modes.dart, mobile/lib/modes_editor.dart, mobile/lib/main.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, mobile/test/modes_test.dart, mobile/test/modes_editor_test.dart, mobile/test/mode_tap_test.dart, mobile/test/mode_button_test.dart, mobile/test/voice_screen_test.dart, mobile/test/auto_keyboard_test.dart, README.md
+- docs: INDEX, MOBILE, SETTINGS, FEATURES, TESTING
+- tests: Flutter 244 passed; APK built and installed; Mobile layout and settings checked on phone; analyze has 12 existing style infos
+- note: Combined screen uses existing touchpad and keyboard controls; old saved mode orders append Mobile.
+
 ## 2026-10-23 · Show phone volume and brightness percentages
 - files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
 - docs: FEATURES, MOBILE, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, MOBILE, AGENT, OPERATIONS
 - tests: 238 phone tests pass; 7 autostart tests pass; ViL tray integration passes; Android/Linux/Windows releases built; APK label ViL verified; Windows icon resource present
 - note: APK not installed: no phone connected. Existing package/config/pairing IDs and output filenames retained for compatibility. Windows native icon appearance not checked on a Windows PC.
-
-## 2026-10-21 · Window close hides to tray; tray Close application exits
-- files: agent/src/gui.rs, agent/src/tray.rs, tools/tray_smoke.py, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
-- docs: AGENT, FEATURES, TESTING
-- tests: Linux and Windows release builds pass; isolated Linux minimize/show/window-close/show/full-exit test passes
-- note: Enable Minimize to tray in Settings. Native Windows tray behavior remains unverified.
 

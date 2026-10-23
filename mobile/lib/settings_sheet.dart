@@ -15,13 +15,15 @@ enum SettingsScope {
   keyboard,
   pad,
   mouse,
-  voice;
+  voice,
+  mobile;
 
   static SettingsScope forMode(Mode m) => switch (m) {
     Mode.keyboard => keyboard,
     Mode.pad => pad,
     Mode.mouse => mouse,
     Mode.voice => voice,
+    Mode.mobile => mobile,
   };
 
   String get title => switch (this) {
@@ -30,6 +32,7 @@ enum SettingsScope {
     pad => 'Touchpad settings',
     mouse => 'Mouse settings',
     voice => 'Voice settings',
+    mobile => 'Mobile settings',
   };
 }
 
@@ -96,7 +99,8 @@ class SettingsSheet extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
               children: [
                 if (scope == SettingsScope.all ||
-                    scope == SettingsScope.keyboard)
+                    scope == SettingsScope.keyboard ||
+                    scope == SettingsScope.mobile)
                   _Section(
                     icon: Icons.keyboard_outlined,
                     title: 'Keyboard',
@@ -188,12 +192,16 @@ class SettingsSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-                if (scope == SettingsScope.all || scope == SettingsScope.pad)
+                if (scope == SettingsScope.all ||
+                    scope == SettingsScope.pad ||
+                    scope == SettingsScope.mobile)
                   _Section(
                     icon: Icons.touch_app_outlined,
                     title: 'Touchpad',
                     summary: 'Speed, taps, buttons, gestures',
-                    initiallyExpanded: scope == SettingsScope.pad,
+                    initiallyExpanded:
+                        scope == SettingsScope.pad ||
+                        scope == SettingsScope.mobile,
                     children: [
                       _slider(
                         'Pointer speed',
@@ -287,7 +295,9 @@ class SettingsSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-                if (scope == SettingsScope.all || scope == SettingsScope.pad)
+                if (scope == SettingsScope.all ||
+                    scope == SettingsScope.pad ||
+                    scope == SettingsScope.mobile)
                   _Section(
                     icon: Icons.tune,
                     title: 'Touchpad edges',
@@ -508,7 +518,8 @@ class SettingsSheet extends StatelessWidget {
                         (v) => s.brightKeyboard = v,
                       ),
                     if (scope == SettingsScope.all ||
-                        scope == SettingsScope.pad)
+                        scope == SettingsScope.pad ||
+                        scope == SettingsScope.mobile)
                       _brightness(
                         'Touchpad',
                         s.brightPad,

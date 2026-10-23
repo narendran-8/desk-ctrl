@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// The screens the phone can show. The keyboard is always available.
-enum Mode { keyboard, mouse, pad, voice }
+enum Mode { keyboard, mouse, pad, voice, mobile }
 
 extension ModeInfo on Mode {
   IconData get icon => switch (this) {
@@ -9,18 +9,26 @@ extension ModeInfo on Mode {
     Mode.mouse => Icons.mouse,
     Mode.pad => Icons.touch_app,
     Mode.voice => Icons.mic,
+    Mode.mobile => Icons.smartphone,
   };
 
   String get label => switch (this) {
     Mode.keyboard => 'Keyboard',
     Mode.mouse => 'Mouse',
-    Mode.pad => 'Mousepad',
+    Mode.pad => 'Trackpad',
     Mode.voice => 'Voice',
+    Mode.mobile => 'Mobile',
   };
 }
 
-/// Keyboard first, then the touchpad, then the tilt mouse.
-const defaultModeOrder = [Mode.keyboard, Mode.pad, Mode.mouse];
+/// Initial mode order; users can rearrange it in Settings.
+const defaultModeOrder = [
+  Mode.keyboard,
+  Mode.mouse,
+  Mode.pad,
+  Mode.voice,
+  Mode.mobile,
+];
 
 /// [order] with any mode it lacks added at the end, so a mode is never lost.
 List<Mode> completeOrder(List<Mode> order) => [
@@ -34,13 +42,15 @@ List<Mode> availableModes({
   required bool mouse,
   required bool pad,
   bool voice = false,
+  bool mobile = false,
   List<Mode> order = defaultModeOrder,
 }) => [
   for (final m in completeOrder(order))
     if (m == Mode.keyboard ||
         (m == Mode.mouse && mouse) ||
         (m == Mode.pad && pad) ||
-        (m == Mode.voice && voice))
+        (m == Mode.voice && voice) ||
+        (m == Mode.mobile && mobile))
       m,
 ];
 

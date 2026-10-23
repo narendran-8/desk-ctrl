@@ -2,6 +2,7 @@ import 'package:deskctrl/connection.dart';
 import 'package:deskctrl/edge_zones.dart';
 import 'package:deskctrl/keyboard_screen.dart';
 import 'package:deskctrl/main.dart';
+import 'package:deskctrl/mobile_screen.dart';
 import 'package:deskctrl/pad_screen.dart';
 import 'package:deskctrl/settings.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +14,17 @@ import 'fake_agent.dart';
 void main() {
   late FakeAgent agent;
 
-  Future<void> start(WidgetTester tester, {bool auto = true}) async {
+  Future<void> start(
+    WidgetTester tester, {
+    bool auto = true,
+    bool mobile = false,
+  }) async {
     SharedPreferences.setMockInitialValues({});
     await Settings.instance.load();
     Settings.instance.update(() {
-      Settings.instance.modeOrder = ['pad', 'keyboard', 'mouse'];
+      Settings.instance.modeOrder = mobile
+          ? ['mobile', 'pad', 'keyboard', 'mouse']
+          : ['pad', 'keyboard', 'mouse'];
       Settings.instance.padTab = true;
       Settings.instance.autoKeyboard = auto;
     });
@@ -75,6 +82,17 @@ void main() {
       agent.textFocus();
       await wait(tester, 300);
       expect(onKeyboard(), isTrue);
+    });
+
+    testWidgets('typeable focus keeps the combined Mobile screen', (
+      tester,
+    ) async {
+      await start(tester, mobile: true);
+      expect(find.byType(MobileScreen), findsOneWidget);
+      agent.textFocus();
+      await wait(tester, 300);
+      expect(find.byType(MobileScreen), findsOneWidget);
+      expect(find.byType(KeyboardScreen), findsOneWidget);
     });
 
     testWidgets('not typeable -> stays on the touchpad', (tester) async {

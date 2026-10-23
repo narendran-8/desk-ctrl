@@ -5,8 +5,8 @@ void main() {
   test('tabs follow the Settings switches, the keyboard is always there', () {
     expect(availableModes(mouse: true, pad: true), [
       Mode.keyboard,
-      Mode.pad,
       Mode.mouse,
+      Mode.pad,
     ]);
     expect(availableModes(mouse: false, pad: true), [Mode.keyboard, Mode.pad]);
     expect(availableModes(mouse: true, pad: false), [
@@ -23,6 +23,17 @@ void main() {
       Mode.keyboard,
       Mode.pad,
     ]);
+    expect(availableModes(mouse: true, pad: true, voice: true, mobile: true), [
+      Mode.keyboard,
+      Mode.mouse,
+      Mode.pad,
+      Mode.voice,
+      Mode.mobile,
+    ]);
+    expect(
+      availableModes(mouse: true, pad: true, voice: true, mobile: false),
+      isNot(contains(Mode.mobile)),
+    );
   });
 
   test('a mode missing from a saved order is not lost', () {
@@ -31,12 +42,14 @@ void main() {
       Mode.keyboard,
       Mode.mouse,
       Mode.voice,
+      Mode.mobile,
     ]);
     expect(completeOrder(parseModeOrder(['mouse', 'nonsense'])), [
       Mode.mouse,
       Mode.keyboard,
       Mode.pad,
       Mode.voice,
+      Mode.mobile,
     ]);
   });
 
