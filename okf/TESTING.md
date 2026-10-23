@@ -17,7 +17,7 @@ Sensors: mock `EventChannel('dev.fluttercommunity.plus/sensors/{gyroscope,accele
 | Area | Files |
 |---|---|
 | links/fail-over | `failover_test`, `multi_device_test`, `device_status_test`, `bt_message_test` |
-| computer button gestures | `computer_button_test` (previous/next live target, offline skip, long-press sheet) |
+| computer button gestures | `computer_button_test` (previous/next live target, offline skip, long-press sheet, distinct computer colours, unchanged Wi-Fi icon when switching Wi-Fi computers) |
 | USB, ids, dedupe | `usb_test`, `device_form_duplicate_test`, `pair_info_test` |
 | trackpad | `pad_zones_test`, `pad_buttons_test`, `pad_motion_test`, `motion_cursor_test`, `edge_zones_test`, `screenshot_gesture_test` |
 | menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test` |

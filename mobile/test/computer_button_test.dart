@@ -1,4 +1,5 @@
 import 'package:deskctrl/connection.dart';
+import 'package:deskctrl/device_color.dart';
 import 'package:deskctrl/devices_screen.dart';
 import 'package:deskctrl/main.dart';
 import 'package:deskctrl/settings.dart';
@@ -42,15 +43,31 @@ void main() {
       await tester.runAsync(c.connectAll);
       await tester.runAsync(() => c.switchTo('b'));
       await tester.pumpWidget(const MaterialApp(home: Home()));
-    final button = find.ancestor(
-      of: find.byIcon(Icons.computer),
-      matching: find.byType(InkWell),
-    );
+      final button = find.ancestor(
+        of: find.byIcon(Icons.computer),
+        matching: find.byType(InkWell),
+      );
       expect(button, findsOneWidget);
+      expect(
+        tester.widget<Icon>(find.byIcon(Icons.computer)).color,
+        deviceColor('b'),
+      );
+      expect(find.byIcon(Icons.wifi), findsOneWidget);
+      expect(deviceColor('a'), isNot(deviceColor('b')));
+      expect(deviceColor('b'), isNot(deviceColor('c')));
 
       await tester.tap(button);
       await tester.pump(const Duration(milliseconds: 350));
       expect(c.activeId, 'a');
+      expect(
+        tester.widget<Icon>(find.byIcon(Icons.computer)).color,
+        deviceColor('a'),
+      );
+      expect(
+        find.byIcon(Icons.wifi),
+        findsOneWidget,
+        reason: 'switching Wi-Fi computers does not change the medium icon',
+      );
       await tester.tap(button);
       await tester.pump(const Duration(milliseconds: 350));
       expect(
@@ -58,12 +75,22 @@ void main() {
         'b',
         reason: 'single taps alternate with the previous',
       );
+      expect(
+        tester.widget<Icon>(find.byIcon(Icons.computer)).color,
+        deviceColor('b'),
+      );
+      expect(find.byIcon(Icons.wifi), findsOneWidget);
 
       await tester.tap(button);
       await tester.pump(const Duration(milliseconds: 100));
       await tester.tap(button);
       await tester.pump(const Duration(milliseconds: 350));
       expect(c.activeId, 'c', reason: 'double tap advances in saved order');
+      expect(
+        tester.widget<Icon>(find.byIcon(Icons.computer)).color,
+        deviceColor('c'),
+      );
+      expect(find.byIcon(Icons.wifi), findsOneWidget);
 
       await tester.runAsync(() => c.disconnectDevice('a'));
       await tester.pump();

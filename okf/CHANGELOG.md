@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-19 · Notch bar: automatic, fits any camera hole (smaller icons, second line)
+- files: mobile/lib/notch_layout.dart, mobile/lib/main.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/test/notch_matrix_test.dart, mobile/test/notch_auto_test.dart, mobile/test/notch_layout_test.dart
+- docs: FEATURES, SETTINGS, DECISIONS, KNOWN
+- tests: phone 238 pass; APK built, NOT installed (no phone attached)
+- note: layout verified by tests and rendered pictures for 8 hole shapes, not on a real second phone
+
 ## 2026-10-19 · Agent window: clean alignment (one grid, equal pills, shared table columns, scrolling Settings)
 - files: agent/src/gui.rs, agent/src/look.rs, agent/src/main.rs, agent/src/autostart.rs, agent/src/autostart_win.rs, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
 - docs: AGENT, KNOWN, TESTING

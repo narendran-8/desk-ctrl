@@ -8,6 +8,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'app_theme.dart';
 import 'connection.dart';
+import 'device_color.dart';
 import 'edge_zones.dart';
 import 'edit_menu.dart';
 import 'devices_screen.dart';
@@ -582,6 +583,10 @@ class _DeviceButton extends StatelessWidget {
   Widget _content(BuildContext context) {
     final c = Connection.instance;
     final count = c.activeCount;
+    final current = c.active;
+    final color = current?.phase == Phase.active
+        ? deviceColor(current!.device.id)
+        : Colors.white54;
     void open() => showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -590,7 +595,9 @@ class _DeviceButton extends StatelessWidget {
     final icon = Badge(
       label: Text('$count'),
       isLabelVisible: count > 1,
-      child: const Icon(Icons.computer, size: 20),
+      backgroundColor: color,
+      textColor: Colors.black,
+      child: Icon(Icons.computer, size: 20, color: color),
     );
     return Semantics(
       label: 'Computers',

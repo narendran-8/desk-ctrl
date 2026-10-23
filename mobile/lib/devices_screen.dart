@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
 import 'connection.dart';
+import 'device_color.dart';
 import 'device_form.dart';
 import 'settings.dart';
 
@@ -198,7 +199,7 @@ class DeviceRow extends StatelessWidget {
     }
 
     final color = connected
-        ? (isActive ? Colors.greenAccent : Colors.lightBlueAccent)
+        ? deviceColor(device.id)
         : s.phase == Phase.connecting
         ? Colors.orangeAccent
         : Colors.white38;

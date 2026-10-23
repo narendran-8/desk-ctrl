@@ -46,8 +46,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-23",
    "sources": [],
-   "lines": 267,
-   "approx_tokens": 4859
+   "lines": 273,
+   "approx_tokens": 4992
   },
   {
    "file": "DECISIONS.md",
@@ -80,8 +80,8 @@
     "agent/src/focus.rs",
     "agent/src/usb.rs"
    ],
-   "lines": 65,
-   "approx_tokens": 2641
+   "lines": 66,
+   "approx_tokens": 2754
   },
   {
    "file": "INDEX.md",
@@ -108,7 +108,7 @@
    "updated": "2026-10-23",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1475
+   "approx_tokens": 1457
   },
   {
    "file": "MOBILE.md",
@@ -127,8 +127,8 @@
     "mobile/lib/motion_cursor.dart",
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt"
    ],
-   "lines": 49,
-   "approx_tokens": 1275
+   "lines": 51,
+   "approx_tokens": 1335
   },
   {
    "file": "OKF.md",
@@ -197,7 +197,7 @@
     "agent/src/usb.rs"
    ],
    "lines": 57,
-   "approx_tokens": 1654
+   "approx_tokens": 1674
   }
  ]
 }

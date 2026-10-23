@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Identify connected computers by icon colour
+- files: mobile/lib/device_color.dart, mobile/lib/main.dart, mobile/lib/devices_screen.dart, mobile/test/computer_button_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 239 passed; targeted gesture/icon test passed; APK built and installed; analyze has 13 pre-existing info lints
+- note: Computer icon reflects active device; transport icon still reflects the active device medium.
+
 ## 2026-10-23 · Computer button switches live devices by tap gestures
 - files: mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/computer_button_test.dart
 - docs: INDEX, FEATURES, MOBILE, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES
 - tests: phone 238 pass; APK built, NOT installed (no phone attached)
 - note: nothing of it is left in the code; the notch bar (Auto / On / Off) from the previous entry stays
-
-## 2026-10-19 · Notch bar: automatic, fits any camera hole (smaller icons, second line)
-- files: mobile/lib/notch_layout.dart, mobile/lib/main.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/test/notch_matrix_test.dart, mobile/test/notch_auto_test.dart, mobile/test/notch_layout_test.dart
-- docs: FEATURES, SETTINGS, DECISIONS, KNOWN
-- tests: phone 238 pass; APK built, NOT installed (no phone attached)
-- note: layout verified by tests and rendered pictures for 8 hole shapes, not on a real second phone
 
