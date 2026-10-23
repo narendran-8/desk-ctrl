@@ -46,8 +46,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-23",
    "sources": [],
-   "lines": 261,
-   "approx_tokens": 4712
+   "lines": 267,
+   "approx_tokens": 4859
   },
   {
    "file": "DECISIONS.md",
@@ -81,13 +81,13 @@
     "agent/src/usb.rs"
    ],
    "lines": 65,
-   "approx_tokens": 2538
+   "approx_tokens": 2641
   },
   {
    "file": "INDEX.md",
    "id": "index",
    "summary": "Start here. What DeskCtrl is, where things are, which file to read for which task, the update rules.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [],
    "lines": 53,
    "approx_tokens": 825
@@ -108,7 +108,7 @@
    "updated": "2026-10-23",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1518
+   "approx_tokens": 1475
   },
   {
    "file": "MOBILE.md",
@@ -128,7 +128,7 @@
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt"
    ],
    "lines": 49,
-   "approx_tokens": 1234
+   "approx_tokens": 1275
   },
   {
    "file": "OKF.md",
@@ -188,7 +188,7 @@
    "file": "TESTING.md",
    "id": "testing",
    "summary": "How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.",
-   "updated": "2026-10-21",
+   "updated": "2026-10-23",
    "sources": [
     "mobile/test/fake_agent.dart",
     "mobile/test/usb_test.dart",
@@ -196,8 +196,8 @@
     "mobile/test/pad_motion_test.dart",
     "agent/src/usb.rs"
    ],
-   "lines": 56,
-   "approx_tokens": 1613
+   "lines": 57,
+   "approx_tokens": 1654
   }
  ]
 }

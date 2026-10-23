@@ -1,14 +1,14 @@
 ---
 id: testing
 summary: How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: [mobile/test/fake_agent.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/usb.rs]
 ---
 # Testing
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 162 tests, agent 45, all pass. Run: `cd mobile && flutter test` (~40 s) · `cd agent && cargo test` (~5 s).
+State: phone 239 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -17,6 +17,7 @@ Sensors: mock `EventChannel('dev.fluttercommunity.plus/sensors/{gyroscope,accele
 | Area | Files |
 |---|---|
 | links/fail-over | `failover_test`, `multi_device_test`, `device_status_test`, `bt_message_test` |
+| computer button gestures | `computer_button_test` (previous/next live target, offline skip, long-press sheet) |
 | USB, ids, dedupe | `usb_test`, `device_form_duplicate_test`, `pair_info_test` |
 | trackpad | `pad_zones_test`, `pad_buttons_test`, `pad_motion_test`, `motion_cursor_test`, `edge_zones_test`, `screenshot_gesture_test` |
 | menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test` |

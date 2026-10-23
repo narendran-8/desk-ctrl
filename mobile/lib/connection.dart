@@ -464,6 +464,7 @@ class Connection extends ChangeNotifier {
 
   final Map<String, Session> _sessions = {};
   String? activeId;
+  String? _previousActiveId;
 
   // Mouse deltas are coalesced and flushed at ~120 Hz.
   int _pdx = 0, _pdy = 0;
@@ -522,6 +523,33 @@ class Connection extends ChangeNotifier {
 
   int get activeCount =>
       _sessions.values.where((s) => s.phase == Phase.active).length;
+
+  /// Connected computers in the same order as the saved computer list.
+  List<String> get connectedDeviceIds => [
+    for (final d in Settings.instance.devices)
+      if (_sessions[d.id]?.phase == Phase.active) d.id,
+  ];
+
+  /// A tap goes back to the previous live computer, then alternates between them.
+  /// If that computer went offline, use the next live one instead.
+  Future<void> switchToPreviousConnected() async {
+    final ids = connectedDeviceIds;
+    if (ids.length < 2) return;
+    final previous = _previousActiveId;
+    if (previous != null && previous != activeId && ids.contains(previous)) {
+      await switchTo(previous);
+    } else {
+      await switchToNextConnected();
+    }
+  }
+
+  /// A double tap cycles through every currently connected computer.
+  Future<void> switchToNextConnected() async {
+    final ids = connectedDeviceIds;
+    if (ids.length < 2) return;
+    final index = ids.indexOf(activeId ?? '');
+    await switchTo(ids[(index + 1) % ids.length]);
+  }
 
   void _changed() {
     // Remember every computer that is up, for the next start.
@@ -781,6 +809,7 @@ class Connection extends ChangeNotifier {
     if (activeId == id) return;
     _releaseHeld();
     _pdx = _pdy = 0;
+    _previousActiveId = activeId;
     activeId = id;
     final st = Settings.instance;
     if (st.lastActiveId != id) st.update(() => st.lastActiveId = id);

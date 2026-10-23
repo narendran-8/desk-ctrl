@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-19 · Agent window: clean alignment (one grid, equal pills, shared table columns, scrolling Settings)
+- files: agent/src/gui.rs, agent/src/look.rs, agent/src/main.rs, agent/src/autostart.rs, agent/src/autostart_win.rs, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
+- docs: AGENT, KNOWN, TESTING
+- tests: agent 74 pass (Linux), 29 pass (Windows build under Wine); window checked by screenshots: default, devices, settings, log, port-busy
+- note: autostart refresh no longer lets a demo copy hijack the entry (it had: repaired); copy/paste investigation interrupted, see KNOWN
+
 ## 2026-10-18 · Windows agent (desk_ctrl_agent.exe) - first port
 - files: agent/Cargo.toml, agent/src/main.rs, agent/src/inject.rs, agent/src/hid.rs, agent/src/leds.rs, agent/src/levels.rs, agent/src/identity.rs, agent/src/usb.rs, agent/src/server.rs, agent/src/voice.rs, agent/src/tokenstore.rs, agent/src/autostart_win.rs, agent/src/bluetooth_win.rs, agent/src/focus_win.rs, agent/src/portowner_win.rs, agent/src/winproc.rs, tools/windows/build_windows.sh, tools/windows/zigcc.py, output/desk_ctrl_agent.exe, output/README_windows.txt, output/allow_firewall.bat
 - docs: AGENT, OPERATIONS, TESTING, KNOWN, DECISIONS, INDEX

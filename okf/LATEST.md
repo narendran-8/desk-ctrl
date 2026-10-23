@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Computer button switches live devices by tap gestures
+- files: mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/computer_button_test.dart
+- docs: INDEX, FEATURES, MOBILE, TESTING
+- tests: Flutter 239 passed; release APK built and installed; analyze 13 pre-existing info lints; git diff --check passed
+- note: Gestures switch only connected computers; long press opens the Computers sheet.
+
 ## 2026-10-23 · Revert Computer mode update
 - files: mobile/lib, mobile/test, README.md
 - docs: FEATURES, MOBILE, SETTINGS
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, SETTINGS, DECISIONS, KNOWN
 - tests: phone 238 pass; APK built, NOT installed (no phone attached)
 - note: layout verified by tests and rendered pictures for 8 hole shapes, not on a real second phone
-
-## 2026-10-19 · Agent window: clean alignment (one grid, equal pills, shared table columns, scrolling Settings)
-- files: agent/src/gui.rs, agent/src/look.rs, agent/src/main.rs, agent/src/autostart.rs, agent/src/autostart_win.rs, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
-- docs: AGENT, KNOWN, TESTING
-- tests: agent 74 pass (Linux), 29 pass (Windows build under Wine); window checked by screenshots: default, devices, settings, log, port-busy
-- note: autostart refresh no longer lets a demo copy hijack the entry (it had: repaired); copy/paste investigation interrupted, see KNOWN
 

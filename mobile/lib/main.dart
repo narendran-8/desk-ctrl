@@ -592,18 +592,36 @@ class _DeviceButton extends StatelessWidget {
       isLabelVisible: count > 1,
       child: const Icon(Icons.computer, size: 20),
     );
-    if (compact) {
-      return IconButton(tooltip: 'Computers', icon: icon, onPressed: open);
-    }
-    return TextButton.icon(
-      onPressed: open,
-      icon: icon,
-      label: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 140),
-        child: Text(
-          c.active?.device.title ?? 'Computers',
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
+    return Semantics(
+      label: 'Computers',
+      button: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: c.switchToPreviousConnected,
+        onDoubleTap: c.switchToNextConnected,
+        onLongPress: open,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 12 : 8,
+            vertical: 12,
+          ),
+          child: compact
+              ? icon
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icon,
+                    const SizedBox(width: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 140),
+                      child: Text(
+                        c.active?.device.title ?? 'Computers',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );

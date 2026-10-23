@@ -1,7 +1,7 @@
 ---
 id: index
 summary: Start here. What DeskCtrl is, where things are, which file to read for which task, the update rules.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: []
 ---
 # DeskCtrl - OKF index (read this first; then read only what the task needs)
@@ -15,7 +15,7 @@ A desktop **agent** (Rust) receives the input over **Wi-Fi** (WebSocket), **Blue
 
 **Brand**: display names are ViL (phone) and ViL Agent (desktop). Approved artwork and generated icon files live in `branding/`; regenerate with `tools/prepare_branding.py`. Internal package/config/pairing identifiers and output filenames retain DeskCtrl for upgrade compatibility.
 
-**State now**: phone tests 229, agent tests 73 on Linux (29 more run the Windows build under Wine), all passing. Newest changes: `LATEST.md` (read it second, it is short).
+**State now**: phone tests 239, agent tests 73 on Linux (29 more run the Windows build under Wine), all passing. Newest changes: `LATEST.md` (read it second, it is short).
 
 ## Which file for which task
 | Task | Read |
