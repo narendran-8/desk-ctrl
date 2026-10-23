@@ -107,11 +107,28 @@ void main() {
         expect(phoneMedia, findsOneWidget);
         expect(tester.getSize(rotate), const Size(36, 36));
         expect(tester.getSize(phoneMedia), const Size(36, 36));
-        expect(tester.getCenter(phoneMedia).dx, tester.getCenter(rotate).dx);
-        expect(
-          tester.getTopLeft(phoneMedia).dy,
-          greaterThan(tester.getBottomLeft(rotate).dy),
-        );
+        final pad = find.byType(TouchPad);
+        if (compact) {
+          expect(tester.getCenter(phoneMedia).dx, tester.getCenter(rotate).dx);
+          expect(
+            tester.getCenter(rotate).dx - tester.getTopLeft(pad).dx,
+            lessThan(40),
+          );
+          expect(
+            tester.getTopLeft(phoneMedia).dy,
+            greaterThan(tester.getBottomLeft(rotate).dy),
+          );
+        } else {
+          expect(tester.getCenter(phoneMedia).dy, tester.getCenter(rotate).dy);
+          expect(
+            tester.getTopLeft(phoneMedia).dx,
+            greaterThan(tester.getTopRight(rotate).dx),
+          );
+          expect(
+            tester.getTopLeft(rotate).dy - tester.getTopLeft(pad).dy,
+            lessThanOrEqualTo(32),
+          );
+        }
         expect(
           tester.getBottomLeft(find.byType(TouchPad)).dy,
           lessThanOrEqualTo(tester.getTopLeft(find.byType(KeyboardScreen)).dy),

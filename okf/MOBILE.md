@@ -23,7 +23,7 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `voice_screen.dart`, `voice.dart`, `voice_commands.dart` | Voice mode: screen (Dictate / Command buttons), `VoiceController` (mic -> frames -> answer -> type or run), phrase table + typing (US layout) |
 | `Mic.kt` (android) | 16 kHz mono microphone, channels `deskctrl/mic`, `deskctrl/mic/audio`; permission RECORD_AUDIO |
 | `pad_screen.dart` | `PadScreen` + `TouchPad`: gestures, edge zones, HUD, window/tab slider, motion cursor |
-| `mobile_screen.dart` | combined screen: landscape top 2/5 touchpad, bottom 3/5 full keyboard; portrait touchpad (short gesture help) above a 5-row compact keyboard (up to 360 dp tall); 36 dp rotate and phone-media buttons stacked top left, away from edge gestures (phone media off by default); restores landscape lock on exit |
+| `mobile_screen.dart` | combined screen: landscape top 2/5 touchpad, bottom 3/5 full keyboard; portrait touchpad (short gesture help) above a 5-row compact keyboard (up to 360 dp tall); 36 dp rotate and phone-media buttons vertical beside the volume strip in portrait, horizontal at top left in landscape (phone media off by default); restores landscape lock on exit |
 | `phone_media.dart` | Android MethodChannel for local media keys, media volume/mute, and window brightness; volume/brightness return 0-100 percentages for TouchPad HUD |
 | `edge_zones.dart` | `EdgeZones` geometry/keys/labels, `EdgeZoneMarks` painter, `SwitchGuard`, `TopEdgeMode` |
 | `edit_menu.dart` | `EditMenuButton` + `EditFan` (three-row black/white fan), `editActions`/`terminalActions`/`refreshActions`/`editRings` |

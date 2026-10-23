@@ -64,9 +64,10 @@ class _MobileScreenState extends State<MobileScreen> {
               ),
             ),
             Positioned(
-              top: 44,
-              left: 42,
-              child: Column(
+              top: compact ? 32 : 24,
+              left: compact ? 0 : 42,
+              child: Flex(
+                direction: compact ? Axis.vertical : Axis.horizontal,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
@@ -84,7 +85,7 @@ class _MobileScreenState extends State<MobileScreen> {
                     onPressed: _rotate,
                   ),
                   if (Settings.instance.padPhoneMediaButton) ...[
-                    const SizedBox(height: 4),
+                    SizedBox(height: compact ? 4 : 0, width: compact ? 0 : 4),
                     IconButton(
                       tooltip: _phoneMedia
                           ? 'Mobile media on'

@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-21 · Add readable build and usage README
+- files: README.md, okf/INDEX.md
+- docs: INDEX, OPERATIONS
+- tests: git diff --check passed; README commands and links reviewed
+- note: Root README now documents setup, compilation, pairing, usage, limitations, testing, and troubleshooting.
+
 ## 2026-10-21 · Upload project to private GitHub
 - files: .gitignore, .git, okf/LATEST.md
 - docs: INDEX, OPERATIONS

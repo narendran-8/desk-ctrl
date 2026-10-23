@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Align Mobile controls by orientation
+- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 247 passed; focused 4 passed; release APK built and installed; portrait and landscape screenshots checked; analyze 12 existing infos
+- note: Portrait buttons align with the left volume strip; landscape buttons sit side by side at top left
+
 ## 2026-10-23 · Fix Mobile media controls and align Mobile buttons
 - files: README.md, mobile/lib/edge_zones.dart, mobile/lib/mobile_screen.dart, mobile/lib/pad_screen.dart, mobile/test/mobile_screen_test.dart, mobile/test/pad_zones_test.dart
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: MOBILE, AGENT, OPERATIONS
 - tests: Flutter tests: 238 passed; release APK built and installed successfully; Linux agent release build passed; adb device 863d0058304830363451066c2082bb installed APK; cargo test blocked by environment-dependent Bluetooth/port tests
 - note: Flutter analyze still reports 13 pre-existing curly-braces lint infos; no icon-related diagnostics. Master PNG and generated Android/desktop/Windows assets have alpha transparency.
-
-## 2026-10-21 · Add readable build and usage README
-- files: README.md, okf/INDEX.md
-- docs: INDEX, OPERATIONS
-- tests: git diff --check passed; README commands and links reviewed
-- note: Root README now documents setup, compilation, pairing, usage, limitations, testing, and troubleshooting.
 
