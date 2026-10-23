@@ -20,7 +20,9 @@ Sensors: mock `EventChannel('dev.fluttercommunity.plus/sensors/{gyroscope,accele
 | computer button gestures | `computer_button_test` (previous/next live target, offline skip, long-press sheet, distinct computer colours, stable link glyph when switching Wi-Fi/Bluetooth computers, actual target medium in sheet) |
 | USB, ids, dedupe | `usb_test`, `device_form_duplicate_test`, `pair_info_test` |
 | trackpad | `pad_zones_test`, `pad_buttons_test`, `pad_motion_test`, `motion_cursor_test`, `edge_zones_test`, `screenshot_gesture_test` |
-| phone media mode | `phone_media_test` mocks `deskctrl/phone_media` and checks toggle/routing and Settings hiding the button |
+| phone media mode | `phone_media_test` mocks `deskctrl/phone_media` and checks toggle/routing, phone volume/brightness percentages, and Settings hiding the button |
+
+On-phone percentage check (2026-10-23): Mobile mode on, one left-edge volume step showed `Phone volume 46%`; one right-edge decrease showed `Phone brightness 95%`. Reversed the steps (volume returned to 40%, window brightness stepped back up) and switched Mobile mode off.
 | menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test` |
 | auto keyboard | `auto_keyboard_test` |
 | keyboard | `arrow_cluster_test`, `delete_switch_test`, `shift_highlight_test` |

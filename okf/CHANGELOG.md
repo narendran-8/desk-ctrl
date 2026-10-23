@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-21 · Desktop agent: optional minimize to tray
+- files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/gui.rs, agent/src/tray.rs, tools/tray_smoke.py, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
+- docs: AGENT, FEATURES, SETTINGS, TESTING
+- tests: 75 Linux tests pass (74 together plus isolated retry); Linux tray hide/restore/quit integration passes; Linux and Windows release builds pass
+- note: Windows notification area not tested on a real PC. Linux requires a StatusNotifier tray host. Close still quits; backup in back_dir is unchanged.
+
 ## 2026-10-21 · Project backup created in back_dir
 - files: back_dir, memory
 - docs: OKF

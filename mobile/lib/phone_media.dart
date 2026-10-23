@@ -6,9 +6,9 @@ class PhoneMedia {
 
   static Future<void> action(String name) =>
       channel.invokeMethod('action', name);
-  static Future<void> volume(int direction) =>
-      channel.invokeMethod('volume', direction);
+  static Future<int?> volume(int direction) =>
+      channel.invokeMethod<int>('volume', direction);
   static Future<void> mute() => channel.invokeMethod('mute');
-  static Future<void> brightness(int direction) =>
-      channel.invokeMethod('brightness', direction);
+  static Future<int?> brightness(int direction) =>
+      channel.invokeMethod<int>('brightness', direction);
 }

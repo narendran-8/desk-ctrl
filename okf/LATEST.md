@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Show phone volume and brightness percentages
+- files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 241 passed; Android release APK built and installed; phone showed volume 46% and brightness 95%; analyze only 13 existing style infos
+- note: Brightness percentage is for the ViL window; test adjustments were reversed and Mobile mode left off.
+
 ## 2026-10-23 · Trackpad Mobile media controls
 - files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: AGENT, FEATURES, TESTING
 - tests: Linux and Windows release builds pass; isolated Linux minimize/show/window-close/show/full-exit test passes
 - note: Enable Minimize to tray in Settings. Native Windows tray behavior remains unverified.
-
-## 2026-10-21 · Desktop agent: optional minimize to tray
-- files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/gui.rs, agent/src/tray.rs, tools/tray_smoke.py, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
-- docs: AGENT, FEATURES, SETTINGS, TESTING
-- tests: 75 Linux tests pass (74 together plus isolated retry); Linux tray hide/restore/quit integration passes; Linux and Windows release builds pass
-- note: Windows notification area not tested on a real PC. Linux requires a StatusNotifier tray host. Close still quits; backup in back_dir is unchanged.
 

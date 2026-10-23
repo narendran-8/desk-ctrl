@@ -375,26 +375,46 @@ class _TouchPadState extends State<TouchPad> {
       }
       if (Settings.instance.haptic) HapticFeedback.selectionClick();
     }
-    _showHud(
-      EdgeZones.label(_zone, positive: positive, top: top),
-      zone: _zone,
-    );
+    if (!widget.phoneMedia || _zone == EdgeZone.media) {
+      _showHud(
+        EdgeZones.label(_zone, positive: positive, top: top),
+        zone: _zone,
+      );
+    }
   }
 
-  void _phoneEdge(EdgeZone zone, bool positive, TopEdgeMode top) {
-    switch (zone) {
-      case EdgeZone.volume:
-        PhoneMedia.volume(positive ? 1 : -1);
-      case EdgeZone.brightness:
-        PhoneMedia.brightness(positive ? 1 : -1);
-      case EdgeZone.media:
-        PhoneMedia.action(
-          top == TopEdgeMode.track
-              ? (positive ? 'next' : 'previous')
-              : (positive ? 'forward' : 'backward'),
+  int _phoneLevelSerial = 0;
+
+  Future<void> _phoneEdge(EdgeZone zone, bool positive, TopEdgeMode top) async {
+    final serial = ++_phoneLevelSerial;
+    try {
+      int? percent;
+      switch (zone) {
+        case EdgeZone.volume:
+          percent = await PhoneMedia.volume(positive ? 1 : -1);
+        case EdgeZone.brightness:
+          percent = await PhoneMedia.brightness(positive ? 1 : -1);
+        case EdgeZone.media:
+          await PhoneMedia.action(
+            top == TopEdgeMode.track
+                ? (positive ? 'next' : 'previous')
+                : (positive ? 'forward' : 'backward'),
+          );
+        default:
+          break;
+      }
+      if (percent != null &&
+          mounted &&
+          widget.phoneMedia &&
+          serial == _phoneLevelSerial) {
+        _showHud(
+          '${zone == EdgeZone.volume ? 'Phone volume' : 'Phone brightness'} $percent%',
         );
-      default:
-        break;
+      }
+    } catch (_) {
+      if (mounted && widget.phoneMedia && serial == _phoneLevelSerial) {
+        _showHud('Phone control unavailable');
+      }
     }
   }
 

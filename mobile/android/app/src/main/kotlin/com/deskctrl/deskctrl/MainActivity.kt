@@ -14,6 +14,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.WindowManager
 import android.view.KeyEvent
 import io.flutter.embedding.android.FlutterActivity
@@ -96,7 +97,8 @@ class MainActivity : FlutterActivity() {
                         val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
                         audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                             if (direction > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER, 0)
-                        result.success(null)
+                        val max = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1)
+                        result.success((audio.getStreamVolume(AudioManager.STREAM_MUSIC) * 100.0 / max).toInt())
                     }
                     "mute" -> {
                         val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -107,11 +109,13 @@ class MainActivity : FlutterActivity() {
                     "brightness" -> {
                         val direction = (call.arguments as? Number)?.toInt() ?: 0
                         val attrs = window.attributes
-                        val current = if (attrs.screenBrightness < 0f) 0.5f else attrs.screenBrightness
+                        val current = if (attrs.screenBrightness < 0f)
+                            Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, 128) / 255f
+                        else attrs.screenBrightness
                         attrs.screenBrightness = (current + if (direction > 0) 0.05f else -0.05f)
                             .coerceIn(0.05f, 1f)
                         window.attributes = attrs
-                        result.success(null)
+                        result.success((attrs.screenBrightness * 100).toInt())
                     }
                     else -> result.notImplemented()
                 }

@@ -19,7 +19,11 @@ void main() {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(PhoneMedia.channel, (call) async {
       calls.add('${call.method}:${call.arguments}');
-      return null;
+      return switch (call.method) {
+        'volume' => 42,
+        'brightness' => 63,
+        _ => null,
+      };
     });
     addTearDown(
       () => messenger.setMockMethodCallHandler(PhoneMedia.channel, null),
@@ -39,6 +43,17 @@ void main() {
     await g.up();
     await tester.pump();
     expect(calls, contains('volume:1'));
+    expect(find.text('Phone volume 42%'), findsOneWidget);
+
+    final brightness = await tester.startGesture(
+      rect.topRight + const Offset(-12, 200),
+    );
+    await brightness.moveBy(const Offset(0, -48));
+    await tester.pump();
+    await brightness.up();
+    await tester.pump();
+    expect(calls, contains('brightness:1'));
+    expect(find.text('Phone brightness 63%'), findsOneWidget);
 
     Settings.instance.update(
       () => Settings.instance.padPhoneMediaButton = false,
