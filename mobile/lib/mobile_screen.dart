@@ -1,39 +1,98 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_theme.dart';
 import 'keyboard_screen.dart';
 import 'pad_screen.dart';
 import 'settings.dart';
 
-/// A compact laptop layout: touchpad above the full keyboard.
-class MobileScreen extends StatelessWidget {
+/// A compact laptop layout that can rotate between wide and upright keyboards.
+class MobileScreen extends StatefulWidget {
   const MobileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Expanded(
-        flex: 2,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(6, 4, 6, 0),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.desk.body,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white24),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+  State<MobileScreen> createState() => _MobileScreenState();
+}
+
+class _MobileScreenState extends State<MobileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+  }
+
+  void _rotate() {
+    final portrait = MediaQuery.orientationOf(context) == Orientation.portrait;
+    SystemChrome.setPreferredOrientations([
+      portrait ? DeviceOrientation.landscapeLeft : DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.dispose();
+  }
+
+  Widget _touchpad(bool compact) => Padding(
+    padding: const EdgeInsets.fromLTRB(6, 4, 6, 0),
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: context.desk.body,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            Positioned.fill(
               child: ListenableBuilder(
                 listenable: Settings.instance,
-                builder: (context, _) =>
-                    TouchPad(enabled: Settings.instance.padEnabled),
+                builder: (context, _) => TouchPad(
+                  enabled: Settings.instance.padEnabled,
+                  compact: compact,
+                ),
               ),
             ),
-          ),
+            Positioned(
+              top: 32,
+              left: 42,
+              child: IconButton(
+                tooltip: 'Rotate Mobile screen',
+                icon: const Icon(Icons.screen_rotation, color: Colors.white70),
+                onPressed: _rotate,
+              ),
+            ),
+          ],
         ),
       ),
-      const Expanded(flex: 3, child: KeyboardScreen()),
-    ],
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) {
+      final portrait = box.maxHeight > box.maxWidth;
+      return Column(
+        children: [
+          if (portrait) ...[
+            Expanded(child: _touchpad(true)),
+            SizedBox(
+              height: math.min(360, box.maxHeight * 0.52),
+              child: const KeyboardScreen(compact: true),
+            ),
+          ] else ...[
+            Expanded(flex: 2, child: _touchpad(false)),
+            const Expanded(flex: 3, child: KeyboardScreen()),
+          ],
+        ],
+      );
+    },
   );
 }

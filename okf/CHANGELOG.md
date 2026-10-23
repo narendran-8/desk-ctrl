@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-21 · ViL name and approved binary bow icon applied
+- files: branding, tools/prepare_branding.py, tools/tray_smoke.py, mobile/lib/main.dart, mobile/android/app/src/main/AndroidManifest.xml, mobile/android/app/src/main/res, agent/build.rs, agent/vil.rc, agent/src/main.rs, agent/src/gui.rs, agent/src/tray.rs, agent/src/autostart.rs, agent/src/bluetooth.rs, agent/src/usb.rs, agent/src/portowner.rs, agent/src/portowner_win.rs, output/setup_laptop.sh, output/vil-icon.png, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
+- docs: INDEX, MOBILE, AGENT, OPERATIONS
+- tests: 238 phone tests pass; 7 autostart tests pass; ViL tray integration passes; Android/Linux/Windows releases built; APK label ViL verified; Windows icon resource present
+- note: APK not installed: no phone connected. Existing package/config/pairing IDs and output filenames retained for compatibility. Windows native icon appearance not checked on a Windows PC.
+
 ## 2026-10-21 · Window close hides to tray; tray Close application exits
 - files: agent/src/gui.rs, agent/src/tray.rs, tools/tray_smoke.py, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
 - docs: AGENT, FEATURES, TESTING

@@ -8,7 +8,7 @@ sources: [mobile/test/fake_agent.dart, mobile/test/usb_test.dart, mobile/test/ed
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 244 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
+State: phone 245 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -23,7 +23,8 @@ Sensors: mock `EventChannel('dev.fluttercommunity.plus/sensors/{gyroscope,accele
 | phone media mode | `phone_media_test` mocks `deskctrl/phone_media` and checks toggle/routing, phone volume/brightness percentages, and Settings hiding the button |
 
 On-phone percentage check (2026-10-23): Mobile mode on, one left-edge volume step showed `Phone volume 46%`; one right-edge decrease showed `Phone brightness 95%`. Reversed the steps (volume returned to 40%, window brightness stepped back up) and switched Mobile mode off.
-On-phone combined-screen check (2026-10-23): release APK installed; the mode button reached the new Mobile screen, showing a compact touchpad above all six keyboard rows with no clipped controls. Its scoped Settings sheet showed Keyboard controls. Only the mode and Settings buttons were touched; no input was sent to the computer.
+On-phone combined-screen check (2026-10-23): release APK installed; the mode button reached the new Mobile screen, showing a compact touchpad above all six keyboard rows with no clipped controls. Its scoped Settings sheet showed Keyboard controls. Only the mode and Settings buttons were touched; no input was sent to the computer. `mobile_screen_test` now also checks the portrait 5-row layout without overflow, alongside landscape.
+Portrait Mobile check (2026-10-23): an intermediate release APK was installed and the phone showed a portrait touchpad above five readable keyboard rows with the rotate button. Its gesture help was crowded, so a shorter portrait-only message was added and all 245 tests passed. The final APK is at `output/desk_ctrl.apk`; the phone disconnected before the final install.
 | menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test`, `mobile_screen_test` (combined layout, persisted switch, scoped settings) |
 | auto keyboard | `auto_keyboard_test` |
 | keyboard | `arrow_cluster_test`, `delete_switch_test`, `shift_highlight_test` |

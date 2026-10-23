@@ -268,8 +268,32 @@ List<List<KeyDef>> layoutFor({
   ];
 }
 
+/// Wider touch targets for the combined screen when the phone is upright.
+/// Keep letters, numbers, modifiers, navigation and Backspace/Del available.
+final portraitKeyboardLayout = <List<KeyDef>>[
+  kLayout[1].sublist(1, 11), // 1–0
+  kLayout[2].sublist(1, 11), // Q–P
+  [...kLayout[3].sublist(1, 10), const KeyDef('Enter', 0x28, flex: 1.5)],
+  [
+    const KeyDef('Shift', 0xE1, flex: 1.4),
+    ...kLayout[4].sublist(1, 8),
+    const KeyDef('Backspace', _backspaceHid, flex: 1.8, isDeleteSwitch: true),
+  ],
+  const [
+    KeyDef('Esc', 0x29),
+    KeyDef('Ctrl', 0xE0),
+    KeyDef('Alt', 0xE2),
+    KeyDef('', 0x2C, flex: 3, kind: KeyKind.space),
+    KeyDef('←', 0x50),
+    KeyDef('↓', 0x51),
+    KeyDef('↑', 0x52),
+    KeyDef('→', 0x4F),
+  ],
+];
+
 class KeyboardScreen extends StatefulWidget {
-  const KeyboardScreen({super.key});
+  final bool compact;
+  const KeyboardScreen({super.key, this.compact = false});
 
   @override
   State<KeyboardScreen> createState() => _KeyboardScreenState();
@@ -317,11 +341,14 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
           padding: const EdgeInsets.fromLTRB(6, 4, 6, 6),
           child: Column(
             children: [
-              for (final row in layoutFor(
-                functionRow: functionRow,
-                joinDelete: joinDelete,
-                showFn: fnEnabled,
-              ))
+              for (final row
+                  in widget.compact
+                      ? portraitKeyboardLayout
+                      : layoutFor(
+                          functionRow: functionRow,
+                          joinDelete: joinDelete,
+                          showFn: fnEnabled,
+                        ))
                 Expanded(
                   child: Row(
                     children: [

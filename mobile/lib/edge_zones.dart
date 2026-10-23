@@ -284,7 +284,7 @@ class EdgeZoneMarks extends StatelessWidget {
                 // (outer boxes) never overlap the seek ends (inner boxes).
                 child: Row(
                   children: [
-                    if (top == TopEdgeMode.seek)
+                    if (top == TopEdgeMode.seek && box.maxWidth >= 450)
                       _box(Icons.skip_previous, 22, Colors.white38),
                     _box(
                       top == TopEdgeMode.seek
@@ -308,7 +308,7 @@ class EdgeZoneMarks extends StatelessWidget {
                       18,
                       _c,
                     ),
-                    if (top == TopEdgeMode.seek)
+                    if (top == TopEdgeMode.seek && box.maxWidth >= 450)
                       _box(Icons.skip_next, 22, Colors.white38),
                   ],
                 ),

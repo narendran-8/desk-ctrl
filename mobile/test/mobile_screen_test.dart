@@ -10,26 +10,38 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('mobile screen fits a landscape phone with pad above keys', (
-    tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    await Settings.instance.load();
-    tester.view.physicalSize = const Size(1640, 720);
-    tester.view.devicePixelRatio = 2;
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: MobileScreen())),
+  for (final (size, compact) in [
+    (const Size(1640, 720), false),
+    (const Size(720, 1640), true),
+  ]) {
+    testWidgets(
+      'mobile screen fits ${compact ? 'portrait' : 'landscape'} with pad above keys',
+      (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        await Settings.instance.load();
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 2;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          const MaterialApp(home: Scaffold(body: MobileScreen())),
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.byType(TouchPad), findsOneWidget);
+        expect(find.byType(KeyboardScreen), findsOneWidget);
+        expect(
+          tester.widget<KeyboardScreen>(find.byType(KeyboardScreen)).compact,
+          compact,
+        );
+        expect(find.byTooltip('Rotate Mobile screen'), findsOneWidget);
+        expect(
+          tester.getBottomLeft(find.byType(TouchPad)).dy,
+          lessThanOrEqualTo(tester.getTopLeft(find.byType(KeyboardScreen)).dy),
+        );
+        expect(find.text('Enter'), findsOneWidget);
+        expect(find.text('Q'), findsOneWidget);
+      },
     );
-    expect(tester.takeException(), isNull);
-    expect(find.byType(TouchPad), findsOneWidget);
-    expect(find.byType(KeyboardScreen), findsOneWidget);
-    expect(
-      tester.getBottomLeft(find.byType(TouchPad)).dy,
-      lessThanOrEqualTo(tester.getTopLeft(find.byType(KeyboardScreen)).dy),
-    );
-    expect(find.text('Enter'), findsOneWidget);
-  });
+  }
 
   testWidgets(
     'mobile mode switch persists and its settings show both controls',

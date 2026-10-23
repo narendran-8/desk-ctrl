@@ -120,7 +120,13 @@ enum _TwoFinger { undecided, scroll, zoom }
 class TouchPad extends StatefulWidget {
   final bool enabled;
   final bool phoneMedia;
-  const TouchPad({super.key, required this.enabled, this.phoneMedia = false});
+  final bool compact;
+  const TouchPad({
+    super.key,
+    required this.enabled,
+    this.phoneMedia = false,
+    this.compact = false,
+  });
 
   @override
   State<TouchPad> createState() => _TouchPadState();
@@ -778,11 +784,15 @@ class _TouchPadState extends State<TouchPad> {
               Center(
                 child: Text(
                   widget.enabled
-                      ? '1 finger: move · tap: click · tap + drag: drag\n'
-                            '2 fingers: scroll · pinch: zoom · tap: right click${Settings.instance.padSwipeNav ? ' · swipe sideways = back / forward' : ''}\n'
-                            '3 fingers: tap = middle click · swipe left / right = workspace\n'
-                            'swipe up = overview${Settings.instance.screenshotSwipe ? ' · swipe down = screenshot' : ''}'
-                            '${Settings.instance.padMotion ? (Settings.instance.padMotionAlways ? '\ntilt the phone: the cursor follows (a finger works too)' : '\nhold a finger and tilt the phone: the cursor follows') : ''}'
+                      ? widget.compact
+                            ? 'Drag: move · tap: click\n'
+                                  '2 fingers: scroll · pinch: zoom\n'
+                                  'Edges: media, volume, brightness'
+                            : '1 finger: move · tap: click · tap + drag: drag\n'
+                                  '2 fingers: scroll · pinch: zoom · tap: right click${Settings.instance.padSwipeNav ? ' · swipe sideways = back / forward' : ''}\n'
+                                  '3 fingers: tap = middle click · swipe left / right = workspace\n'
+                                  'swipe up = overview${Settings.instance.screenshotSwipe ? ' · swipe down = screenshot' : ''}'
+                                  '${Settings.instance.padMotion ? (Settings.instance.padMotionAlways ? '\ntilt the phone: the cursor follows (a finger works too)' : '\nhold a finger and tilt the phone: the cursor follows') : ''}'
                       : 'Touchpad off',
                   textAlign: TextAlign.center,
                   style: const TextStyle(

@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Support portrait in combined Mobile mode
+- files: mobile/lib/mobile_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, TESTING
+- tests: Flutter 245 passed; portrait APK built; intermediate build checked on phone; final APK install pending because adb device disappeared; analyze has 12 existing style infos
+- note: Rotate icon switches orientation; portrait keyboard keeps phone-sized QWERTY and shortcuts.
+
 ## 2026-10-23 · Add combined Mobile keyboard and touchpad screen
 - files: mobile/lib/mobile_screen.dart, mobile/lib/modes.dart, mobile/lib/modes_editor.dart, mobile/lib/main.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, mobile/test/modes_test.dart, mobile/test/modes_editor_test.dart, mobile/test/mode_tap_test.dart, mobile/test/mode_button_test.dart, mobile/test/voice_screen_test.dart, mobile/test/auto_keyboard_test.dart, README.md
 - docs: INDEX, MOBILE, SETTINGS, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, OPERATIONS
 - tests: Git index reviewed: source/docs/assets and four memory notes staged; builds and scratch excluded
 - note: Root repository on main; no earlier usable project history existed. An empty agent/.git metadata directory was preserved; output APK and agent executables are ignored as reproducible build artifacts.
-
-## 2026-10-21 · ViL name and approved binary bow icon applied
-- files: branding, tools/prepare_branding.py, tools/tray_smoke.py, mobile/lib/main.dart, mobile/android/app/src/main/AndroidManifest.xml, mobile/android/app/src/main/res, agent/build.rs, agent/vil.rc, agent/src/main.rs, agent/src/gui.rs, agent/src/tray.rs, agent/src/autostart.rs, agent/src/bluetooth.rs, agent/src/usb.rs, agent/src/portowner.rs, agent/src/portowner_win.rs, output/setup_laptop.sh, output/vil-icon.png, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
-- docs: INDEX, MOBILE, AGENT, OPERATIONS
-- tests: 238 phone tests pass; 7 autostart tests pass; ViL tray integration passes; Android/Linux/Windows releases built; APK label ViL verified; Windows icon resource present
-- note: APK not installed: no phone connected. Existing package/config/pairing IDs and output filenames retained for compatibility. Windows native icon appearance not checked on a Windows PC.
 
