@@ -1,7 +1,7 @@
 ---
 id: settings
 summary: Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: [mobile/lib/settings.dart, mobile/lib/settings_sheet.dart]
 ---
 # Settings (`Settings` singleton, SharedPreferences keys)

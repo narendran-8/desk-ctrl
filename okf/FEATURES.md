@@ -1,7 +1,7 @@
 ---
 id: features
 summary: Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.
-updated: 2026-10-21
+updated: 2026-10-23
 sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, agent/src/focus.rs, agent/src/usb.rs]
 ---
 # Features (behaviour as shipped)
