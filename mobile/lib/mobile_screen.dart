@@ -64,7 +64,7 @@ class _MobileScreenState extends State<MobileScreen> {
               ),
             ),
             Positioned(
-              top: compact ? 32 : 24,
+              top: compact ? 32 : 0,
               left: compact ? 0 : 42,
               child: Flex(
                 direction: compact ? Axis.vertical : Axis.horizontal,
@@ -72,12 +72,12 @@ class _MobileScreenState extends State<MobileScreen> {
                 children: [
                   IconButton(
                     tooltip: 'Rotate Mobile screen',
-                    constraints: const BoxConstraints.tightFor(
-                      width: 36,
-                      height: 36,
+                    constraints: BoxConstraints.tightFor(
+                      width: compact ? 36 : 28,
+                      height: compact ? 36 : 28,
                     ),
                     padding: EdgeInsets.zero,
-                    iconSize: 20,
+                    iconSize: compact ? 20 : 14,
                     icon: const Icon(
                       Icons.screen_rotation,
                       color: Colors.white70,
@@ -90,12 +90,12 @@ class _MobileScreenState extends State<MobileScreen> {
                       tooltip: _phoneMedia
                           ? 'Mobile media on'
                           : 'Mobile media off',
-                      constraints: const BoxConstraints.tightFor(
-                        width: 36,
-                        height: 36,
+                      constraints: BoxConstraints.tightFor(
+                        width: compact ? 36 : 28,
+                        height: compact ? 36 : 28,
                       ),
                       padding: EdgeInsets.zero,
-                      iconSize: 20,
+                      iconSize: compact ? 20 : 14,
                       icon: Icon(
                         Icons.smartphone,
                         color: _phoneMedia

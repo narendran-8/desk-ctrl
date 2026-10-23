@@ -105,8 +105,24 @@ void main() {
         final rotate = find.byTooltip('Rotate Mobile screen');
         final phoneMedia = find.byTooltip('Mobile media off');
         expect(phoneMedia, findsOneWidget);
-        expect(tester.getSize(rotate), const Size(36, 36));
-        expect(tester.getSize(phoneMedia), const Size(36, 36));
+        expect(tester.getSize(rotate), Size.square(compact ? 36 : 28));
+        expect(tester.getSize(phoneMedia), Size.square(compact ? 36 : 28));
+        final rotateButton = find.ancestor(
+          of: rotate,
+          matching: find.byType(IconButton),
+        );
+        final phoneMediaButton = find.ancestor(
+          of: phoneMedia,
+          matching: find.byType(IconButton),
+        );
+        expect(
+          tester.widget<IconButton>(rotateButton).iconSize,
+          compact ? 20 : 14,
+        );
+        expect(
+          tester.widget<IconButton>(phoneMediaButton).iconSize,
+          compact ? 20 : 14,
+        );
         final pad = find.byType(TouchPad);
         if (compact) {
           expect(tester.getCenter(phoneMedia).dx, tester.getCenter(rotate).dx);
@@ -126,7 +142,7 @@ void main() {
           );
           expect(
             tester.getTopLeft(rotate).dy - tester.getTopLeft(pad).dy,
-            lessThanOrEqualTo(32),
+            lessThanOrEqualTo(12),
           );
         }
         expect(

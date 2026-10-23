@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Move Mobile landscape controls to top edge
+- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 247 passed; focused 4 passed; release APK built and installed; landscape and portrait screenshots checked; analyzer 12 existing infos
+- note: Landscape uses 28 dp controls with 14 dp icons; portrait layout unchanged
+
 ## 2026-10-23 · Align Mobile controls by orientation
 - files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: FEATURES, MOBILE, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, SETTINGS
 - tests: Flutter tests: 238 passed; reverted APK built and installed successfully
 - note: The mode switcher is restored to the previous Keyboard, Mousepad, Mouse, and optional Voice behavior.
-
-## 2026-10-23 · Use transparent ViL icon on Android and desktop
-- files: branding, mobile/android/app/src/main/res, output/vil-icon.png
-- docs: MOBILE, AGENT, OPERATIONS
-- tests: Flutter tests: 238 passed; release APK built and installed successfully; Linux agent release build passed; adb device 863d0058304830363451066c2082bb installed APK; cargo test blocked by environment-dependent Bluetooth/port tests
-- note: Flutter analyze still reports 13 pre-existing curly-braces lint infos; no icon-related diagnostics. Master PNG and generated Android/desktop/Windows assets have alpha transparency.
 

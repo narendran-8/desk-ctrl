@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Use transparent ViL icon on Android and desktop
+- files: branding, mobile/android/app/src/main/res, output/vil-icon.png
+- docs: MOBILE, AGENT, OPERATIONS
+- tests: Flutter tests: 238 passed; release APK built and installed successfully; Linux agent release build passed; adb device 863d0058304830363451066c2082bb installed APK; cargo test blocked by environment-dependent Bluetooth/port tests
+- note: Flutter analyze still reports 13 pre-existing curly-braces lint infos; no icon-related diagnostics. Master PNG and generated Android/desktop/Windows assets have alpha transparency.
+
 ## 2026-10-21 · Add readable build and usage README
 - files: README.md, okf/INDEX.md
 - docs: INDEX, OPERATIONS
