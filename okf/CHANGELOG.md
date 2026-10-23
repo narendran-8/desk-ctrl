@@ -7,6 +7,18 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-21 · Upload project to private GitHub
+- files: .gitignore, .git, okf/LATEST.md
+- docs: INDEX, OPERATIONS
+- tests: OKF check passed; private GitHub repository created and main pushed
+- note: Repository: https://github.com/narendran-8/desk-ctrl
+
+## 2026-10-21 · Initialize local Git tracking for the full ViL project
+- files: .gitignore, agent, mobile, branding, tools, okf, output, back_dir/memory
+- docs: INDEX, OPERATIONS
+- tests: Git index reviewed: source/docs/assets and four memory notes staged; builds and scratch excluded
+- note: Root repository on main; no earlier usable project history existed. An empty agent/.git metadata directory was preserved; output APK and agent executables are ignored as reproducible build artifacts.
+
 ## 2026-10-21 · ViL name and approved binary bow icon applied
 - files: branding, tools/prepare_branding.py, tools/tray_smoke.py, mobile/lib/main.dart, mobile/android/app/src/main/AndroidManifest.xml, mobile/android/app/src/main/res, agent/build.rs, agent/vil.rc, agent/src/main.rs, agent/src/gui.rs, agent/src/tray.rs, agent/src/autostart.rs, agent/src/bluetooth.rs, agent/src/usb.rs, agent/src/portowner.rs, agent/src/portowner_win.rs, output/setup_laptop.sh, output/vil-icon.png, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
 - docs: INDEX, MOBILE, AGENT, OPERATIONS

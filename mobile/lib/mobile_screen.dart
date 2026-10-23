@@ -17,6 +17,7 @@ class MobileScreen extends StatefulWidget {
 }
 
 class _MobileScreenState extends State<MobileScreen> {
+  bool _phoneMedia = false;
   @override
   void initState() {
     super.initState();
@@ -57,16 +58,54 @@ class _MobileScreenState extends State<MobileScreen> {
                 builder: (context, _) => TouchPad(
                   enabled: Settings.instance.padEnabled,
                   compact: compact,
+                  phoneMedia:
+                      _phoneMedia && Settings.instance.padPhoneMediaButton,
                 ),
               ),
             ),
             Positioned(
-              top: 32,
+              top: 44,
               left: 42,
-              child: IconButton(
-                tooltip: 'Rotate Mobile screen',
-                icon: const Icon(Icons.screen_rotation, color: Colors.white70),
-                onPressed: _rotate,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: 'Rotate Mobile screen',
+                    constraints: const BoxConstraints.tightFor(
+                      width: 36,
+                      height: 36,
+                    ),
+                    padding: EdgeInsets.zero,
+                    iconSize: 20,
+                    icon: const Icon(
+                      Icons.screen_rotation,
+                      color: Colors.white70,
+                    ),
+                    onPressed: _rotate,
+                  ),
+                  if (Settings.instance.padPhoneMediaButton) ...[
+                    const SizedBox(height: 4),
+                    IconButton(
+                      tooltip: _phoneMedia
+                          ? 'Mobile media on'
+                          : 'Mobile media off',
+                      constraints: const BoxConstraints.tightFor(
+                        width: 36,
+                        height: 36,
+                      ),
+                      padding: EdgeInsets.zero,
+                      iconSize: 20,
+                      icon: Icon(
+                        Icons.smartphone,
+                        color: _phoneMedia
+                            ? context.desk.accent
+                            : Colors.white70,
+                      ),
+                      onPressed: () =>
+                          setState(() => _phoneMedia = !_phoneMedia),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],

@@ -224,8 +224,7 @@ class _TouchPadState extends State<TouchPad> {
           Settings.instance.padTabSwitch &&
           EdgeZones.isSwitchToggle(e.localPosition, size!);
       _skip =
-          _zone == EdgeZone.media &&
-              parseTopEdgeMode(Settings.instance.padTopMode) == TopEdgeMode.seek
+          _zone == EdgeZone.media
           ? EdgeZones.skipButton(e.localPosition, size!)
           : 0;
       _stopHold();

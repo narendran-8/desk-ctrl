@@ -647,6 +647,40 @@ void main() {
   });
 
   testWidgets(
+    'in track mode a tap on the skip buttons skips a track',
+    (tester) async {
+      await setUpPad(tester);
+      Settings.instance.update(() => Settings.instance.padTopMode = 'track');
+      await tester.pump();
+      final r = padRect(tester);
+      final left = r.width * EdgeZones.topFrom,
+          right = r.width * EdgeZones.topTo;
+      // Tap next-track icon (right end of strip).
+      final g = await tester.startGesture(r.topLeft + Offset(right - 15, 20));
+      await tester.pump(const Duration(milliseconds: 50));
+      await g.up();
+      await tester.pump();
+      await deliver(tester);
+      expect(keys(agent.received), ['1,128,181', '2,128,181'],
+          reason: 'next track');
+      expect(find.text('Next track'), findsOneWidget);
+      agent.received.clear();
+      await tester.pump(const Duration(seconds: 2));
+      // Tap previous-track icon (left end of strip).
+      final g2 =
+          await tester.startGesture(r.topLeft + Offset(left + 15, 20));
+      await tester.pump(const Duration(milliseconds: 50));
+      await g2.up();
+      await tester.pump();
+      await deliver(tester);
+      expect(keys(agent.received), ['1,128,182', '2,128,182'],
+          reason: 'previous track');
+      expect(find.text('Previous track'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+    },
+  );
+
+  testWidgets(
     'a tap on the play / pause icon plays or pauses; a tap elsewhere on the strip clicks',
     (tester) async {
       await setUpPad(tester);

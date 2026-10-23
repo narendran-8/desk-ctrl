@@ -7,6 +7,18 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Fix Mobile media controls and align Mobile buttons
+- files: README.md, mobile/lib/edge_zones.dart, mobile/lib/mobile_screen.dart, mobile/lib/pad_screen.dart, mobile/test/mobile_screen_test.dart, mobile/test/pad_zones_test.dart
+- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 247 passed; targeted 26 passed; APK built and installed; portrait/landscape visually checked; analyze 12 existing infos
+- note: Real computer media playback was not exercised; routing verified against recording fake agent and Android channel mock
+
+## 2026-10-23 · Fix track-mode skip-button tap on trackpad top strip
+- files: mobile/lib/pad_screen.dart, mobile/test/pad_zones_test.dart
+- docs: MOBILE, TESTING
+- tests: Flutter 246 passed
+- note: In track mode the _skip flag was never set so tapping the skip_previous/skip_next icons did nothing; removing the TopEdgeMode.seek guard fixes it for both modes
+
 ## 2026-10-23 · Support portrait in combined Mobile mode
 - files: mobile/lib/mobile_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, TESTING
@@ -66,16 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, OPERATIONS
 - tests: git diff --check passed; README commands and links reviewed
 - note: Root README now documents setup, compilation, pairing, usage, limitations, testing, and troubleshooting.
-
-## 2026-10-21 · Upload project to private GitHub
-- files: .gitignore, .git, okf/LATEST.md
-- docs: INDEX, OPERATIONS
-- tests: OKF check passed; private GitHub repository created and main pushed
-- note: Repository: https://github.com/narendran-8/desk-ctrl
-
-## 2026-10-21 · Initialize local Git tracking for the full ViL project
-- files: .gitignore, agent, mobile, branding, tools, okf, output, back_dir/memory
-- docs: INDEX, OPERATIONS
-- tests: Git index reviewed: source/docs/assets and four memory notes staged; builds and scratch excluded
-- note: Root repository on main; no earlier usable project history existed. An empty agent/.git metadata directory was preserved; output APK and agent executables are ignored as reproducible build artifacts.
 

@@ -288,7 +288,9 @@ class EdgeZoneMarks extends StatelessWidget {
                       _box(Icons.skip_previous, 22, Colors.white38),
                     _box(
                       top == TopEdgeMode.seek
-                          ? Icons.fast_rewind
+                          ? (box.maxWidth < 450
+                                ? Icons.skip_previous
+                                : Icons.fast_rewind)
                           : Icons.skip_previous,
                       18,
                       _c,
@@ -303,7 +305,9 @@ class EdgeZoneMarks extends StatelessWidget {
                     _line,
                     _box(
                       top == TopEdgeMode.seek
-                          ? Icons.fast_forward
+                          ? (box.maxWidth < 450
+                                ? Icons.skip_next
+                                : Icons.fast_forward)
                           : Icons.skip_next,
                       18,
                       _c,
