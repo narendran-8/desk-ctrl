@@ -129,6 +129,7 @@ class Settings extends ChangeNotifier {
 
   /// The touchpad reacts to touches. Off: the pad is blank and ignores them.
   bool padEnabled = true;
+  bool padPhoneMediaButton = true;
 
   /// The bottom strip of the pad switches windows (Alt+Tab).
   bool padWindows = true;
@@ -303,6 +304,7 @@ class Settings extends ChangeNotifier {
     screenshotSwipe = _p.getBool('screenshotSwipe') ?? true;
     padZones = _p.getBool('padZones') ?? true;
     padEnabled = _p.getBool('padEnabled') ?? true;
+    padPhoneMediaButton = _p.getBool('padPhoneMediaButton') ?? true;
     padWindows = _p.getBool('padWindows') ?? true;
     padMotion = _p.getBool('padMotion') ?? false;
     padMotionSpeed = (_p.getDouble('padMotionSpeed') ?? 900).clamp(200, 2500);
@@ -392,6 +394,7 @@ class Settings extends ChangeNotifier {
     _p.setBool('screenshotSwipe', screenshotSwipe);
     _p.setBool('padZones', padZones);
     _p.setBool('padEnabled', padEnabled);
+    _p.setBool('padPhoneMediaButton', padPhoneMediaButton);
     _p.setBool('padWindows', padWindows);
     _p.setBool('padMotion', padMotion);
     _p.setDouble('padMotionSpeed', padMotionSpeed);

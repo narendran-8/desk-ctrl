@@ -43,6 +43,7 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | Key | Default | Meaning |
 |---|---|---|
 | `padEnabled` | true | the pad reacts to touches |
+| `padPhoneMediaButton` | true | show the top-left Mobile media toggle on the touchpad; local media mode starts off and routes edge media actions to Android when toggled on |
 | `pointerSpeed` | 1.5 | finger pointer speed (0.5-4) |
 | `tapToClick`, `naturalScroll` | true, true | taps click; scroll direction |
 | `padButtons` | true | slim Left/Right bar under the pad |

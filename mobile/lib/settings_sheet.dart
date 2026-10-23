@@ -294,6 +294,12 @@ class SettingsSheet extends StatelessWidget {
                     summary: 'Volume, brightness, forward / back, play',
                     children: [
                       _switch(
+                        'Phone media button',
+                        'Show the Mobile switch at the top-left of the touchpad. When on, edge controls adjust media and brightness on this phone.',
+                        s.padPhoneMediaButton,
+                        (v) => s.padPhoneMediaButton = v,
+                      ),
+                      _switch(
                         'Edge controls',
                         'Left edge: volume. Right edge: brightness. Top edge: forward / back, '
                             'and a tap on the middle plays or pauses.',

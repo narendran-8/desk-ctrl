@@ -23,6 +23,7 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `voice_screen.dart`, `voice.dart`, `voice_commands.dart` | Voice mode: screen (Dictate / Command buttons), `VoiceController` (mic -> frames -> answer -> type or run), phrase table + typing (US layout) |
 | `Mic.kt` (android) | 16 kHz mono microphone, channels `deskctrl/mic`, `deskctrl/mic/audio`; permission RECORD_AUDIO |
 | `pad_screen.dart` | `PadScreen` + `TouchPad`: gestures, edge zones, HUD, window/tab slider, motion cursor |
+| `phone_media.dart` | Android MethodChannel for local media keys, media volume/mute, and window brightness; used when TouchPad Mobile mode is on |
 | `edge_zones.dart` | `EdgeZones` geometry/keys/labels, `EdgeZoneMarks` painter, `SwitchGuard`, `TopEdgeMode` |
 | `edit_menu.dart` | `EditMenuButton` + `EditFan` (three-row black/white fan), `editActions`/`terminalActions`/`refreshActions`/`editRings` |
 | `motion_cursor.dart` | `MotionCursor` accelerometer tilt joystick (axes from gravity at engage) |
@@ -46,5 +47,6 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 
 ## Kotlin (`MainActivity.kt`)
 Channels: `deskctrl/bt` + `deskctrl/bt/events` (RFCOMM per address), `deskctrl/window` (`setCutout`, `setBrightness`),
+`deskctrl/phone_media` (`action`, `volume`, `mute`, `brightness`: Android media keys/audio stream/window brightness),
 `deskctrl/link` + `/events` (deep link `deskctrl://pair/...`, initial + `onNewIntent`). Manifest: INTERNET, CAMERA, BLUETOOTH perms,
 VIEW intent filter for `deskctrl://pair`, `launchMode=singleTop`.

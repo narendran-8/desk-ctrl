@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-21 · Project backup created in back_dir
+- files: back_dir, memory
+- docs: OKF
+- tests: backup verified: 225 files, 144M
+- note: Generated build caches and Git metadata were excluded; source, output, tools, OKF, and four memory files were copied
+
 ## 2026-10-19 · Camera side (flip left/right) tried and reverted at the owner's request
 - files: mobile/lib/settings.dart, mobile/lib/main.dart, mobile/lib/mouse_screen.dart, mobile/lib/settings_sheet.dart
 - docs: FEATURES

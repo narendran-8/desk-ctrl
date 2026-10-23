@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Trackpad Mobile media controls
+- files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
+- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 241 passed; Android release APK built and installed; phone toggle visually checked; analyze only 13 existing style infos
+- note: Android media keys target the active phone media session; browser seek support varies. Brightness adjusts the ViL window, not system-wide brightness.
+
 ## 2026-10-23 · Separate computer switching from the transport glyph
 - files: mobile/lib/main.dart, mobile/test/computer_button_test.dart
 - docs: INDEX, FEATURES, MOBILE, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: AGENT, FEATURES, SETTINGS, TESTING
 - tests: 75 Linux tests pass (74 together plus isolated retry); Linux tray hide/restore/quit integration passes; Linux and Windows release builds pass
 - note: Windows notification area not tested on a real PC. Linux requires a StatusNotifier tray host. Close still quits; backup in back_dir is unchanged.
-
-## 2026-10-21 · Project backup created in back_dir
-- files: back_dir, memory
-- docs: OKF
-- tests: backup verified: 225 files, 144M
-- note: Generated build caches and Git metadata were excluded; source, output, tools, OKF, and four memory files were copied
 

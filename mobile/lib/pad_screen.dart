@@ -12,6 +12,7 @@ import 'connection.dart';
 import 'edge_zones.dart';
 import 'mouse_widgets.dart';
 import 'motion_cursor.dart';
+import 'phone_media.dart';
 import 'settings.dart';
 
 /// Laptop-style touchpad: a large touch zone, left/right buttons underneath
@@ -24,6 +25,8 @@ class PadScreen extends StatefulWidget {
 }
 
 class _PadScreenState extends State<PadScreen> {
+  bool _phoneMedia = false;
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -45,8 +48,31 @@ class _PadScreenState extends State<PadScreen> {
                   child: Stack(
                     children: [
                       Positioned.fill(
-                        child: TouchPad(enabled: Settings.instance.padEnabled),
+                        child: TouchPad(
+                          enabled: Settings.instance.padEnabled,
+                          phoneMedia:
+                              _phoneMedia &&
+                              Settings.instance.padPhoneMediaButton,
+                        ),
                       ),
+                      if (Settings.instance.padPhoneMediaButton)
+                        Positioned(
+                          top: 4,
+                          left: 4,
+                          child: IconButton(
+                            tooltip: _phoneMedia
+                                ? 'Mobile media on'
+                                : 'Mobile media off',
+                            icon: Icon(
+                              Icons.smartphone,
+                              color: _phoneMedia
+                                  ? context.desk.accent
+                                  : Colors.white54,
+                            ),
+                            onPressed: () =>
+                                setState(() => _phoneMedia = !_phoneMedia),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -93,7 +119,8 @@ enum _TwoFinger { undecided, scroll, zoom }
 
 class TouchPad extends StatefulWidget {
   final bool enabled;
-  const TouchPad({super.key, required this.enabled});
+  final bool phoneMedia;
+  const TouchPad({super.key, required this.enabled, this.phoneMedia = false});
 
   @override
   State<TouchPad> createState() => _TouchPadState();
@@ -340,14 +367,35 @@ class _TouchPadState extends State<TouchPad> {
     if (_zone == EdgeZone.volume && _muted)
       setState(() => _muted = false); // volume keys unmute
     for (var i = 0; i < math.min(steps.abs(), 6); i++) {
-      Connection.instance.key(hid, true);
-      Connection.instance.key(hid, false);
+      if (widget.phoneMedia) {
+        _phoneEdge(_zone, positive, top);
+      } else {
+        Connection.instance.key(hid, true);
+        Connection.instance.key(hid, false);
+      }
       if (Settings.instance.haptic) HapticFeedback.selectionClick();
     }
     _showHud(
       EdgeZones.label(_zone, positive: positive, top: top),
       zone: _zone,
     );
+  }
+
+  void _phoneEdge(EdgeZone zone, bool positive, TopEdgeMode top) {
+    switch (zone) {
+      case EdgeZone.volume:
+        PhoneMedia.volume(positive ? 1 : -1);
+      case EdgeZone.brightness:
+        PhoneMedia.brightness(positive ? 1 : -1);
+      case EdgeZone.media:
+        PhoneMedia.action(
+          top == TopEdgeMode.track
+              ? (positive ? 'next' : 'previous')
+              : (positive ? 'forward' : 'backward'),
+        );
+      default:
+        break;
+    }
   }
 
   // The window switcher on the bottom edge: Alt stays down while the finger is on the strip,
@@ -402,8 +450,12 @@ class _TouchPadState extends State<TouchPad> {
     final hid = EdgeZones.key(EdgeZone.media, positive: forward, top: top);
     final label = EdgeZones.label(EdgeZone.media, positive: forward, top: top);
     void step() {
-      Connection.instance.key(hid, true);
-      Connection.instance.key(hid, false);
+      if (widget.phoneMedia) {
+        _phoneEdge(EdgeZone.media, forward, top);
+      } else {
+        Connection.instance.key(hid, true);
+        Connection.instance.key(hid, false);
+      }
       if (Settings.instance.haptic) HapticFeedback.selectionClick();
       _showHud(label);
     }
@@ -428,6 +480,7 @@ class _TouchPadState extends State<TouchPad> {
 
   /// The message with the computer's real percentage when it is known.
   String _hudText() {
+    if (widget.phoneMedia) return _hud ?? '';
     final c = Connection.instance;
     switch (_hudZone) {
       case EdgeZone.volume:
@@ -447,7 +500,9 @@ class _TouchPadState extends State<TouchPad> {
     if (!mounted) return;
     final c = Connection.instance;
     // The computer says whether it is muted: believe it over our own guess.
-    if (c.levelsKnown && c.muted != _muted) setState(() => _muted = c.muted);
+    if (!widget.phoneMedia && c.levelsKnown && c.muted != _muted) {
+      setState(() => _muted = c.muted);
+    }
     if (_hud != null && _hudZone != null) _showHud(_hud!, zone: _hudZone);
   }
 
@@ -608,8 +663,12 @@ class _TouchPadState extends State<TouchPad> {
         _lastTapUp = null;
       } else if (wasTap && onPlayPause && _maxFingers == 1) {
         // A tap on the play / pause icon (not a click).
-        Connection.instance.key(EdgeZones.playPauseKey, true);
-        Connection.instance.key(EdgeZones.playPauseKey, false);
+        if (widget.phoneMedia) {
+          PhoneMedia.action('playPause');
+        } else {
+          Connection.instance.key(EdgeZones.playPauseKey, true);
+          Connection.instance.key(EdgeZones.playPauseKey, false);
+        }
         if (Settings.instance.haptic) HapticFeedback.selectionClick();
         _playing = !_playing;
         _showHud(_playing ? 'Play' : 'Pause');
@@ -626,16 +685,24 @@ class _TouchPadState extends State<TouchPad> {
         );
       } else if (wasTap && onVolume && _maxFingers == 1) {
         // A tap on the volume strip: mute / unmute.
-        Connection.instance.key(EdgeZones.muteKey, true);
-        Connection.instance.key(EdgeZones.muteKey, false);
+        if (widget.phoneMedia) {
+          PhoneMedia.mute();
+        } else {
+          Connection.instance.key(EdgeZones.muteKey, true);
+          Connection.instance.key(EdgeZones.muteKey, false);
+        }
         if (Settings.instance.haptic) HapticFeedback.selectionClick();
         setState(() => _muted = !_muted);
         _showHud(_muted ? 'Muted' : 'Unmuted');
       } else if (wasTap && skip != 0 && _maxFingers == 1) {
         // A tap on the next / previous track button.
         final key = skip > 0 ? EdgeZones.nextKey : EdgeZones.previousKey;
-        Connection.instance.key(key, true);
-        Connection.instance.key(key, false);
+        if (widget.phoneMedia) {
+          PhoneMedia.action(skip > 0 ? 'next' : 'previous');
+        } else {
+          Connection.instance.key(key, true);
+          Connection.instance.key(key, false);
+        }
         if (Settings.instance.haptic) HapticFeedback.selectionClick();
         _showHud(skip > 0 ? 'Next track' : 'Previous track');
       } else if (wasTap && Settings.instance.tapToClick && !_swiped) {

@@ -10,10 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
+import android.view.KeyEvent
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -71,6 +73,52 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val messenger = flutterEngine.dartExecutor.binaryMessenger
+
+        MethodChannel(messenger, "deskctrl/phone_media").setMethodCallHandler { call, result ->
+            try {
+                when (call.method) {
+                    "action" -> {
+                        val key = when (call.arguments as? String) {
+                            "playPause" -> KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+                            "next" -> KeyEvent.KEYCODE_MEDIA_NEXT
+                            "previous" -> KeyEvent.KEYCODE_MEDIA_PREVIOUS
+                            "forward" -> KeyEvent.KEYCODE_MEDIA_FAST_FORWARD
+                            "backward" -> KeyEvent.KEYCODE_MEDIA_REWIND
+                            else -> throw IllegalArgumentException("Unknown media action")
+                        }
+                        val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audio.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, key))
+                        audio.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, key))
+                        result.success(null)
+                    }
+                    "volume" -> {
+                        val direction = (call.arguments as? Number)?.toInt() ?: 0
+                        val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                            if (direction > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER, 0)
+                        result.success(null)
+                    }
+                    "mute" -> {
+                        val audio = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_TOGGLE_MUTE, 0)
+                        result.success(null)
+                    }
+                    "brightness" -> {
+                        val direction = (call.arguments as? Number)?.toInt() ?: 0
+                        val attrs = window.attributes
+                        val current = if (attrs.screenBrightness < 0f) 0.5f else attrs.screenBrightness
+                        attrs.screenBrightness = (current + if (direction > 0) 0.05f else -0.05f)
+                            .coerceIn(0.05f, 1f)
+                        window.attributes = attrs
+                        result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            } catch (e: Exception) {
+                result.error("phone_media", e.message, null)
+            }
+        }
 
         initialLink = intent?.data?.toString()
         MethodChannel(messenger, "deskctrl/link").setMethodCallHandler { call, result ->
