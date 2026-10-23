@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-23 · Separate computer switching from the transport glyph
+- files: mobile/lib/main.dart, mobile/test/computer_button_test.dart
+- docs: INDEX, FEATURES, MOBILE, TESTING
+- tests: Flutter 240 passed; targeted mixed-medium and single-device failover tests passed; APK built, installed, and checked on phone; analyze only 13 pre-existing style infos
+- note: With multiple connected computers the link glyph stays stable; actual medium remains in its tooltip and sheet.
+
 ## 2026-10-23 · Identify connected computers by icon colour
 - files: mobile/lib/device_color.dart, mobile/lib/main.dart, mobile/lib/devices_screen.dart, mobile/test/computer_button_test.dart
 - docs: FEATURES, MOBILE, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: OKF
 - tests: backup verified: 225 files, 144M
 - note: Generated build caches and Git metadata were excluded; source, output, tools, OKF, and four memory files were copied
-
-## 2026-10-19 · Camera side (flip left/right) tried and reverted at the owner's request
-- files: mobile/lib/settings.dart, mobile/lib/main.dart, mobile/lib/mouse_screen.dart, mobile/lib/settings_sheet.dart
-- docs: FEATURES
-- tests: phone 238 pass; APK built, NOT installed (no phone attached)
-- note: nothing of it is left in the code; the notch bar (Auto / On / Off) from the previous entry stays
 

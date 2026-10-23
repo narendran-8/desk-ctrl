@@ -13,7 +13,7 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 ## lib/ file map
 | File | Contents |
 |---|---|
-| `main.dart` | `DeskCtrlApp` (themed MaterialApp), `Home` (mode switch, auto-keyboard `_textFocus`/`_clicked`, brightness per screen), `_NotchLayout` rail / `_TopBar`, `_DeviceButton` (tap previous, double tap next, long press Computers sheet), `_TransportButton`+`TransportSheet`, startup: `Settings.load`, `dedupeAll`, `restoreLast`, `UsbPairing.start` |
+| `main.dart` | `DeskCtrlApp` (themed MaterialApp), `Home` (mode switch, auto-keyboard `_textFocus`/`_clicked`, brightness per screen), `_NotchLayout` rail / `_TopBar`, `_DeviceButton` (tap previous, double tap next, long press Computers sheet), `_TransportButton` (stable link glyph with multiple live computers; actual medium glyph with one)+`TransportSheet`, startup: `Settings.load`, `dedupeAll`, `restoreLast`, `UsbPairing.start` |
 | `connection.dart` | `Session`, `Connection` (see ARCHITECTURE), ordered `connectedDeviceIds`, `switchToPreviousConnected`/`switchToNextConnected` (live computers only), `pairOverUsb`, `mergeInto`/`mergeFields`/`dedupeAll` (merges serialized by `_exclusive`) |
 | `device_color.dart` | stable computer icon colour from saved-list position; shared by rail/top bar and the Computers sheet |
 | `links.dart` | `Transport{wifi,bluetooth,usb}`, `Link`, `WifiLink`, `UsbLink`, `BtLink` (+`BtDevice`) |

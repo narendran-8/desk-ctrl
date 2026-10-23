@@ -15,7 +15,7 @@ A desktop **agent** (Rust) receives the input over **Wi-Fi** (WebSocket), **Blue
 
 **Brand**: display names are ViL (phone) and ViL Agent (desktop). Approved artwork and generated icon files live in `branding/`; regenerate with `tools/prepare_branding.py`. Internal package/config/pairing identifiers and output filenames retain DeskCtrl for upgrade compatibility.
 
-**State now**: phone tests 239, agent tests 73 on Linux (29 more run the Windows build under Wine), all passing. Newest changes: `LATEST.md` (read it second, it is short).
+**State now**: phone tests 240, agent tests 73 on Linux (29 more run the Windows build under Wine), all passing. Newest changes: `LATEST.md` (read it second, it is short).
 
 ## Which file for which task
 | Task | Read |

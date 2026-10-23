@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-19 · Camera side (flip left/right) tried and reverted at the owner's request
+- files: mobile/lib/settings.dart, mobile/lib/main.dart, mobile/lib/mouse_screen.dart, mobile/lib/settings_sheet.dart
+- docs: FEATURES
+- tests: phone 238 pass; APK built, NOT installed (no phone attached)
+- note: nothing of it is left in the code; the notch bar (Auto / On / Off) from the previous entry stays
+
 ## 2026-10-19 · Notch bar: automatic, fits any camera hole (smaller icons, second line)
 - files: mobile/lib/notch_layout.dart, mobile/lib/main.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/test/notch_matrix_test.dart, mobile/test/notch_auto_test.dart, mobile/test/notch_layout_test.dart
 - docs: FEATURES, SETTINGS, DECISIONS, KNOWN

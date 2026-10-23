@@ -648,7 +648,8 @@ class _TransportButton extends StatelessWidget {
   );
 
   Widget _content(BuildContext context) {
-    final s = Connection.instance.active;
+    final c = Connection.instance;
+    final s = c.active;
     if (s == null) return const SizedBox.shrink();
     final eff = s.effective;
     final color = eff == null
@@ -656,7 +657,14 @@ class _TransportButton extends StatelessWidget {
         : s.usingFallback
         ? Colors.orangeAccent
         : Colors.greenAccent;
-    final icon = eff == null
+    // With several live computers, a transport glyph would change whenever the
+    // user picked a different computer (USB on one, Wi-Fi on another). Keep this
+    // control visually separate from the computer switch; the sheet names the
+    // active computer and shows its real links. With one computer, the glyph
+    // still follows USB/Wi-Fi/Bluetooth fail-over as before.
+    final icon = c.activeCount > 1
+        ? Icons.link
+        : eff == null
         ? Icons.sync_problem
         : switch (eff.transport) {
             Transport.bluetooth => Icons.bluetooth,
@@ -670,7 +678,7 @@ class _TransportButton extends StatelessWidget {
     );
     if (compact) {
       return IconButton(
-        tooltip: 'Connection',
+        tooltip: 'Connection: ${eff?.transport.label ?? 'Offline'}',
         icon: Icon(icon, size: 20, color: color),
         onPressed: open,
       );

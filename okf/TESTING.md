@@ -8,7 +8,7 @@ sources: [mobile/test/fake_agent.dart, mobile/test/usb_test.dart, mobile/test/ed
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 239 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
+State: phone 240 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -17,7 +17,7 @@ Sensors: mock `EventChannel('dev.fluttercommunity.plus/sensors/{gyroscope,accele
 | Area | Files |
 |---|---|
 | links/fail-over | `failover_test`, `multi_device_test`, `device_status_test`, `bt_message_test` |
-| computer button gestures | `computer_button_test` (previous/next live target, offline skip, long-press sheet, distinct computer colours, unchanged Wi-Fi icon when switching Wi-Fi computers) |
+| computer button gestures | `computer_button_test` (previous/next live target, offline skip, long-press sheet, distinct computer colours, stable link glyph when switching Wi-Fi/Bluetooth computers, actual target medium in sheet) |
 | USB, ids, dedupe | `usb_test`, `device_form_duplicate_test`, `pair_info_test` |
 | trackpad | `pad_zones_test`, `pad_buttons_test`, `pad_motion_test`, `motion_cursor_test`, `edge_zones_test`, `screenshot_gesture_test` |
 | menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test` |
@@ -52,5 +52,6 @@ Agent: fake shell helper (`voice::fake_engine`) over Wi-Fi and Bluetooth; never 
 4. Drive the UI with `adb shell input tap/swipe` only after a screenshot confirms the screen (rail side: count bright pixels top-left vs top-right; screen = keyboard if >55% of sampled pixels are lit).
 5. Clean up: Forget ZZfake (⋮ at the row, Forget, confirm - check the dialog title), re-activate the user's computer, kill the fake by PID (`ss -ltnp`), `adb reverse --remove tcp:8793`, delete temp files.
 Coordinates (landscape 1640x720 px, rail on the LEFT; mirrored x ≈ 1640-52 when the phone is turned): edit button (52,48), computers (52,143), transport (52,240), mode (52,576), settings tune (52,672).
+2026-10-23 phone observation: two live computers ("Computer 2" USB + Wi-Fi, "box" Wi-Fi). Before the fix, tapping the computer icon changed the neighbouring USB glyph to Wi-Fi; after the fix, the computer icon changed teal/blue and the link glyph stayed fixed. The original computer was reselected after checking. No keys/clicks were sent to a computer.
 Computers sheet: Add (1370,~102), row ⋮ at x=1332. `am start -n com.deskctrl.deskctrl/.MainActivity` (not `monkey`, it hangs). Rotation: `settings put system user_rotation 1|3` (restore `accelerometer_rotation 1`, `user_rotation 0`).
 Desktop side checks: pointer position via Gdk (`Gdk.Display.get_default().get_default_seat().get_pointer().get_position()`), synthetic clicks via `Atspi.generate_mouse_event`, `wmctrl -a "title"` to switch windows, `xprop`.
