@@ -1,6 +1,6 @@
 {
  "project": "DeskCtrl",
- "generated": "2026-10-23",
+ "generated": "2026-10-24",
  "docs": [
   {
    "file": "AGENT.md",
@@ -44,10 +44,10 @@
    "file": "CHANGELOG.md",
    "id": "changelog",
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
-   "updated": "2026-10-23",
+   "updated": "2026-10-24",
    "sources": [],
-   "lines": 327,
-   "approx_tokens": 6061
+   "lines": 333,
+   "approx_tokens": 6140
   },
   {
    "file": "DECISIONS.md",
@@ -69,7 +69,7 @@
    "file": "FEATURES.md",
    "id": "features",
    "summary": "Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.",
-   "updated": "2026-10-23",
+   "updated": "2026-10-24",
    "sources": [
     "mobile/lib/pad_screen.dart",
     "mobile/lib/keyboard_screen.dart",
@@ -81,7 +81,7 @@
     "agent/src/usb.rs"
    ],
    "lines": 69,
-   "approx_tokens": 3311
+   "approx_tokens": 3339
   },
   {
    "file": "INDEX.md",
@@ -105,16 +105,16 @@
    "file": "LATEST.md",
    "id": "latest",
    "summary": "The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.",
-   "updated": "2026-10-23",
+   "updated": "2026-10-24",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1573
+   "approx_tokens": 1586
   },
   {
    "file": "MOBILE.md",
    "id": "mobile",
    "summary": "The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.",
-   "updated": "2026-10-23",
+   "updated": "2026-10-24",
    "sources": [
     "mobile/lib/main.dart",
     "mobile/lib/connection.dart",
@@ -128,7 +128,7 @@
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt"
    ],
    "lines": 54,
-   "approx_tokens": 1599
+   "approx_tokens": 1616
   },
   {
    "file": "OKF.md",
@@ -176,19 +176,19 @@
    "file": "SETTINGS.md",
    "id": "settings",
    "summary": "Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.",
-   "updated": "2026-10-23",
+   "updated": "2026-10-24",
    "sources": [
     "mobile/lib/settings.dart",
     "mobile/lib/settings_sheet.dart"
    ],
    "lines": 82,
-   "approx_tokens": 1589
+   "approx_tokens": 1624
   },
   {
    "file": "TESTING.md",
    "id": "testing",
    "summary": "How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.",
-   "updated": "2026-10-23",
+   "updated": "2026-10-24",
    "sources": [
     "mobile/test/fake_agent.dart",
     "mobile/test/usb_test.dart",
@@ -196,8 +196,8 @@
     "mobile/test/pad_motion_test.dart",
     "agent/src/usb.rs"
    ],
-   "lines": 65,
-   "approx_tokens": 2335
+   "lines": 66,
+   "approx_tokens": 2437
   }
  ]
 }

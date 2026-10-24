@@ -18,6 +18,8 @@ class MobileScreen extends StatefulWidget {
 
 class _MobileScreenState extends State<MobileScreen> {
   bool _phoneMedia = false;
+  bool _keyboardFirst = false;
+
   @override
   void initState() {
     super.initState();
@@ -106,6 +108,21 @@ class _MobileScreenState extends State<MobileScreen> {
                           setState(() => _phoneMedia = !_phoneMedia),
                     ),
                   ],
+                  SizedBox(height: compact ? 4 : 0, width: compact ? 0 : 4),
+                  IconButton(
+                    tooltip: _keyboardFirst
+                        ? 'Move trackpad to top'
+                        : 'Move keyboard to top',
+                    constraints: BoxConstraints.tightFor(
+                      width: compact ? 36 : 28,
+                      height: compact ? 36 : 28,
+                    ),
+                    padding: EdgeInsets.zero,
+                    iconSize: compact ? 20 : 14,
+                    icon: const Icon(Icons.swap_vert, color: Colors.white70),
+                    onPressed: () =>
+                        setState(() => _keyboardFirst = !_keyboardFirst),
+                  ),
                 ],
               ),
             ),
@@ -119,19 +136,17 @@ class _MobileScreenState extends State<MobileScreen> {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, box) {
       final portrait = box.maxHeight > box.maxWidth;
-      return Column(
-        children: [
-          if (portrait) ...[
-            Expanded(child: _touchpad(true)),
-            SizedBox(
+      final Widget touchpad = portrait
+          ? Expanded(child: _touchpad(true))
+          : Expanded(flex: 2, child: _touchpad(false));
+      final Widget keyboard = portrait
+          ? SizedBox(
               height: math.min(360, box.maxHeight * 0.52),
               child: const KeyboardScreen(compact: true),
-            ),
-          ] else ...[
-            Expanded(flex: 2, child: _touchpad(false)),
-            const Expanded(flex: 3, child: KeyboardScreen()),
-          ],
-        ],
+            )
+          : const Expanded(flex: 3, child: KeyboardScreen());
+      return Column(
+        children: _keyboardFirst ? [keyboard, touchpad] : [touchpad, keyboard],
       );
     },
   );

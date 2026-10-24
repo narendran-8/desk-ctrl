@@ -1,7 +1,7 @@
 ---
 id: testing
 summary: How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.
-updated: 2026-10-23
+updated: 2026-10-24
 sources: [mobile/test/fake_agent.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/usb.rs]
 ---
 # Testing
@@ -27,7 +27,8 @@ On-phone combined-screen check (2026-10-23): release APK installed; the mode but
 Portrait Mobile check (2026-10-23): an intermediate release APK was installed and the phone showed a portrait touchpad above five readable keyboard rows with the rotate button. Its gesture help was crowded, so a shorter portrait-only message was added and all 245 tests passed. The final APK is at `output/desk_ctrl.apk`; the phone disconnected before the final install.
 Mobile controls check (2026-10-23): updated APK installed; screenshots confirmed the small rotate and phone-media buttons align vertically with the volume strip in portrait and sit horizontally at the top left in landscape. The on-phone check only changed screen mode and orientation; media key actions were verified with the recording fake agent widget test.
 Landscape refinement (2026-10-23): release APK installed; screenshot showed the 14 dp landscape icons in a 28 dp horizontal row against the touchpad's top edge, near the top media marks. Portrait screenshot confirmed its larger vertical buttons stayed in place. No control inputs were sent to a real computer.
-| menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test`, `mobile_screen_test` (combined layout, persisted switch, scoped settings) |
+Mobile section swap (2026-10-24): `mobile_screen_test` taps the swap button in portrait and landscape, verifies Keyboard moves above TouchPad, taps again, and verifies TouchPad returns above Keyboard. It also checks the swap control joins the vertical portrait control stack and horizontal landscape row. The APK was built, but the phone disconnected before installation.
+| menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test`, `mobile_screen_test` (combined layout, portrait/landscape section swap, persisted mode switch, scoped settings) |
 | auto keyboard | `auto_keyboard_test` |
 | keyboard | `arrow_cluster_test`, `delete_switch_test`, `shift_highlight_test` |
 

@@ -129,7 +129,7 @@ The phone provides these main modes:
 - **Mouse** — use left, right, middle, double-click, drag, and scroll controls.
 - **Trackpad** — move the pointer, tap, drag, scroll, zoom, use multi-finger gestures, and optionally control the pointer with phone motion.
 - **Voice** — dictate text or hold the command button to speak an action. Voice processing runs locally on the computer after the optional voice setup.
-- **Mobile** — a touchpad in the top portion and the keyboard below, so you can point and type without changing screens. It supports portrait with larger phone-sized keys; tap the rotate icon on the touchpad to switch orientation. Top-edge play/pause and track buttons control the computer by default; tap the phone icon to control media on Android instead. Show or hide the screen in Settings > Screens.
+- **Mobile** — a touchpad and keyboard on one screen, so you can point and type without changing modes. Tap the swap icon to place either the touchpad or keyboard on top. It supports portrait with larger phone-sized keys; tap the rotate icon on the touchpad to switch orientation. Top-edge play/pause and track buttons control the computer by default; tap the phone icon to control media on Android instead. Show or hide the screen in Settings > Screens.
 - **Round action button** — open shortcuts such as copy, paste, terminal actions, refresh, open terminal, close application, and custom keys.
 
 The round button can be edited from the app's Settings. You can add, remove, reorder, and move actions between rows, create custom key actions, choose whether the menu stays open, and configure hold-repeat and idle-close behavior. A row's actions share the row's available arc, so four actions fill the row evenly.

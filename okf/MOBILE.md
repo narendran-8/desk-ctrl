@@ -1,7 +1,7 @@
 ---
 id: mobile
 summary: The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.
-updated: 2026-10-23
+updated: 2026-10-24
 sources: [mobile/lib/main.dart, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, mobile/lib/usb_pairing.dart, mobile/lib/motion_cursor.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt]
 ---
 # Mobile app (mobile/, package `deskctrl`, Android only, Flutter 3 / Dart 3.13)
@@ -23,7 +23,7 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `voice_screen.dart`, `voice.dart`, `voice_commands.dart` | Voice mode: screen (Dictate / Command buttons), `VoiceController` (mic -> frames -> answer -> type or run), phrase table + typing (US layout) |
 | `Mic.kt` (android) | 16 kHz mono microphone, channels `deskctrl/mic`, `deskctrl/mic/audio`; permission RECORD_AUDIO |
 | `pad_screen.dart` | `PadScreen` + `TouchPad`: gestures, edge zones, HUD, window/tab slider, motion cursor |
-| `mobile_screen.dart` | combined screen: landscape top 2/5 touchpad, bottom 3/5 full keyboard; portrait touchpad (short gesture help) above a 5-row compact keyboard (up to 360 dp tall); rotate and phone-media buttons vertical beside the volume strip in portrait (36 dp tap, 20 dp icon), horizontal against the top-left edge in landscape (28 dp tap, 14 dp icon; phone media off by default); restores landscape lock on exit |
+| `mobile_screen.dart` | combined screen: touchpad above keyboard by default; swap button reverses/restores their order while preserving the landscape 2:3 split or portrait keyboard height; portrait uses a 5-row compact keyboard (up to 360 dp); rotate, phone-media and swap buttons are vertical beside the volume strip in portrait (36 dp tap, 20 dp icon), horizontal against the top-left edge in landscape (28 dp tap, 14 dp icon; phone media off by default); restores landscape lock on exit |
 | `phone_media.dart` | Android MethodChannel for local media keys, media volume/mute, and window brightness; volume/brightness return 0-100 percentages for TouchPad HUD |
 | `edge_zones.dart` | `EdgeZones` geometry/keys/labels, `EdgeZoneMarks` painter, `SwitchGuard`, `TopEdgeMode` |
 | `edit_menu.dart` | `EditMenuButton` + `EditFan` (three-row black/white fan), `editActions`/`terminalActions`/`refreshActions`/`editRings` |

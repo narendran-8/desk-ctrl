@@ -1,11 +1,17 @@
 ---
 id: changelog
 summary: Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.
-updated: 2026-10-23
+updated: 2026-10-24
 sources: []
 ---
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
+
+## 2026-10-23 · Revert Computer mode update
+- files: mobile/lib, mobile/test, README.md
+- docs: FEATURES, MOBILE, SETTINGS
+- tests: Flutter tests: 238 passed; reverted APK built and installed successfully
+- note: The mode switcher is restored to the previous Keyboard, Mousepad, Mouse, and optional Voice behavior.
 
 ## 2026-10-23 · Use transparent ViL icon on Android and desktop
 - files: branding, mobile/android/app/src/main/res, output/vil-icon.png

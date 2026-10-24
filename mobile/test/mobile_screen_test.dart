@@ -84,7 +84,7 @@ void main() {
     (const Size(720, 1640), true),
   ]) {
     testWidgets(
-      'mobile screen fits ${compact ? 'portrait' : 'landscape'} with pad above keys',
+      'mobile screen fits ${compact ? 'portrait' : 'landscape'} and swaps pad with keys',
       (tester) async {
         SharedPreferences.setMockInitialValues({});
         await Settings.instance.load();
@@ -104,9 +104,12 @@ void main() {
         expect(find.byTooltip('Rotate Mobile screen'), findsOneWidget);
         final rotate = find.byTooltip('Rotate Mobile screen');
         final phoneMedia = find.byTooltip('Mobile media off');
+        final swap = find.byTooltip('Move keyboard to top');
         expect(phoneMedia, findsOneWidget);
+        expect(swap, findsOneWidget);
         expect(tester.getSize(rotate), Size.square(compact ? 36 : 28));
         expect(tester.getSize(phoneMedia), Size.square(compact ? 36 : 28));
+        expect(tester.getSize(swap), Size.square(compact ? 36 : 28));
         final rotateButton = find.ancestor(
           of: rotate,
           matching: find.byType(IconButton),
@@ -115,12 +118,20 @@ void main() {
           of: phoneMedia,
           matching: find.byType(IconButton),
         );
+        final swapButton = find.ancestor(
+          of: swap,
+          matching: find.byType(IconButton),
+        );
         expect(
           tester.widget<IconButton>(rotateButton).iconSize,
           compact ? 20 : 14,
         );
         expect(
           tester.widget<IconButton>(phoneMediaButton).iconSize,
+          compact ? 20 : 14,
+        );
+        expect(
+          tester.widget<IconButton>(swapButton).iconSize,
           compact ? 20 : 14,
         );
         final pad = find.byType(TouchPad);
@@ -134,17 +145,40 @@ void main() {
             tester.getTopLeft(phoneMedia).dy,
             greaterThan(tester.getBottomLeft(rotate).dy),
           );
+          expect(
+            tester.getTopLeft(swap).dy,
+            greaterThan(tester.getBottomLeft(phoneMedia).dy),
+          );
         } else {
           expect(tester.getCenter(phoneMedia).dy, tester.getCenter(rotate).dy);
+          expect(tester.getCenter(swap).dy, tester.getCenter(rotate).dy);
           expect(
             tester.getTopLeft(phoneMedia).dx,
             greaterThan(tester.getTopRight(rotate).dx),
+          );
+          expect(
+            tester.getTopLeft(swap).dx,
+            greaterThan(tester.getTopRight(phoneMedia).dx),
           );
           expect(
             tester.getTopLeft(rotate).dy - tester.getTopLeft(pad).dy,
             lessThanOrEqualTo(12),
           );
         }
+        expect(
+          tester.getBottomLeft(find.byType(TouchPad)).dy,
+          lessThanOrEqualTo(tester.getTopLeft(find.byType(KeyboardScreen)).dy),
+        );
+        await tester.tap(swap);
+        await tester.pump();
+        expect(find.byTooltip('Move trackpad to top'), findsOneWidget);
+        expect(
+          tester.getBottomLeft(find.byType(KeyboardScreen)).dy,
+          lessThanOrEqualTo(tester.getTopLeft(find.byType(TouchPad)).dy),
+        );
+        await tester.tap(find.byTooltip('Move trackpad to top'));
+        await tester.pump();
+        expect(find.byTooltip('Move keyboard to top'), findsOneWidget);
         expect(
           tester.getBottomLeft(find.byType(TouchPad)).dy,
           lessThanOrEqualTo(tester.getTopLeft(find.byType(KeyboardScreen)).dy),

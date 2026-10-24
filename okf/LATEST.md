@@ -1,11 +1,17 @@
 ---
 id: latest
 summary: The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.
-updated: 2026-10-23
+updated: 2026-10-24
 sources: []
 ---
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
+
+## 2026-10-24 · Add Mobile section swap button
+- files: README.md, mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 247 passed; focused 4 passed; analyzer 12 existing infos; release APK built
+- note: APK installation and on-phone visual check pending because no adb device is attached
 
 ## 2026-10-23 · Move Mobile landscape controls to top edge
 - files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, FEATURES, MOBILE, TESTING
 - tests: Flutter 239 passed; release APK built and installed; analyze 13 pre-existing info lints; git diff --check passed
 - note: Gestures switch only connected computers; long press opens the Computers sheet.
-
-## 2026-10-23 · Revert Computer mode update
-- files: mobile/lib, mobile/test, README.md
-- docs: FEATURES, MOBILE, SETTINGS
-- tests: Flutter tests: 238 passed; reverted APK built and installed successfully
-- note: The mode switcher is restored to the previous Keyboard, Mousepad, Mouse, and optional Voice behavior.
 
