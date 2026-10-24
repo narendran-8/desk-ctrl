@@ -73,7 +73,7 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | `voiceTab` | true | the Voice screen is one of the modes |
 
 ## Mobile combined screen
-`mobileTab` (default true) shows a fifth mode with touchpad above the keyboard. Its in-screen swap button reverses or restores those sections for the current Mobile screen instance; this order is not a saved setting. It uses `padEnabled`, the existing touchpad gestures and edge controls, and the normal keyboard settings. The scoped Mobile settings sheet shows both Keyboard and Touchpad sections. `brightPad` is also used for this screen.
+`mobileTab` (default true) shows a fifth mode with touchpad above the keyboard. Its in-screen swap button reverses or restores those sections for the current Mobile screen instance; this order is not a saved setting. Portrait uses Mobile's own six-row compact keyboard, including a punctuation row; no setting changes the normal Keyboard mode layout. It uses `padEnabled`, the existing touchpad gestures and edge controls, and the normal keyboard settings. The scoped Mobile settings sheet shows both Keyboard and Touchpad sections. `brightPad` is also used for this screen.
 | `voiceHold` | true | hold the button to talk (off: tap to start, tap to stop) |
 | `voiceAi` | false | unknown commands are guessed by Needle on the computer, always asked first |
 | `voiceEnter` | false | press Enter after dictated text |

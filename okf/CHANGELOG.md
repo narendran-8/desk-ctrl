@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Computer button switches live devices by tap gestures
+- files: mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/computer_button_test.dart
+- docs: INDEX, FEATURES, MOBILE, TESTING
+- tests: Flutter 239 passed; release APK built and installed; analyze 13 pre-existing info lints; git diff --check passed
+- note: Gestures switch only connected computers; long press opens the Computers sheet.
+
 ## 2026-10-23 · Revert Computer mode update
 - files: mobile/lib, mobile/test, README.md
 - docs: FEATURES, MOBILE, SETTINGS

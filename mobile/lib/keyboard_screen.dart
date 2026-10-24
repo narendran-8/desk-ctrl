@@ -279,6 +279,13 @@ final portraitKeyboardLayout = <List<KeyDef>>[
     ...kLayout[4].sublist(1, 8),
     const KeyDef('Backspace', _backspaceHid, flex: 1.8, isDeleteSwitch: true),
   ],
+  [
+    kLayout[1][0], // ` ~
+    ...kLayout[1].sublist(11, 13), // - _  = +
+    ...kLayout[2].sublist(11, 14), // [ {  ] }  \ |
+    ...kLayout[3].sublist(10, 12), // ; :  ' "
+    ...kLayout[4].sublist(8, 11), // , <  . >  / ?
+  ],
   const [
     KeyDef('Esc', 0x29),
     KeyDef('Ctrl', 0xE0),

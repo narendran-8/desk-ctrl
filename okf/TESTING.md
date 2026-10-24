@@ -8,7 +8,7 @@ sources: [mobile/test/fake_agent.dart, mobile/test/usb_test.dart, mobile/test/ed
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 247 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
+State: phone 248 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -28,7 +28,8 @@ Portrait Mobile check (2026-10-23): an intermediate release APK was installed an
 Mobile controls check (2026-10-23): updated APK installed; screenshots confirmed the small rotate and phone-media buttons align vertically with the volume strip in portrait and sit horizontally at the top left in landscape. The on-phone check only changed screen mode and orientation; media key actions were verified with the recording fake agent widget test.
 Landscape refinement (2026-10-23): release APK installed; screenshot showed the 14 dp landscape icons in a 28 dp horizontal row against the touchpad's top edge, near the top media marks. Portrait screenshot confirmed its larger vertical buttons stayed in place. No control inputs were sent to a real computer.
 Mobile section swap (2026-10-24): `mobile_screen_test` taps the swap button in portrait and landscape, verifies Keyboard moves above TouchPad, taps again, and verifies TouchPad returns above Keyboard. It also checks the swap control joins the vertical portrait control stack and horizontal landscape row. The APK was built, but the phone disconnected before installation.
-| menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test`, `mobile_screen_test` (combined layout, portrait/landscape section swap, persisted mode switch, scoped settings) |
+Mobile punctuation row (2026-10-24): `mobile_screen_test` verifies the compact-only sixth row contains all 11 base punctuation keys and their 11 Shift symbols. The full 248-test suite passed and the release APK was built; installation and visual inspection are pending because no adb device is attached.
+| menus/settings/layout | `edit_menu_test`, `settings_sheet_test`, `screens_section_test`, `layout_rotation_test`, `modes*_test`, `mode_button_test`, `notch_layout_test`, `mobile_screen_test` (combined layout, portrait/landscape section swap, compact punctuation row, persisted mode switch, scoped settings) |
 | auto keyboard | `auto_keyboard_test` |
 | keyboard | `arrow_cluster_test`, `delete_switch_test`, `shift_highlight_test` |
 

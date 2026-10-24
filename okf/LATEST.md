@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-24 · Add punctuation row to Mobile keyboard
+- files: README.md, mobile/lib/keyboard_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built
+- note: Only Mobile portrait compact keyboard changed; APK installation and visual check pending because no adb device is attached
+
 ## 2026-10-24 · Add Mobile section swap button
 - files: README.md, mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: FEATURES, MOBILE, SETTINGS, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, TESTING
 - tests: Flutter 239 passed; targeted gesture/icon test passed; APK built and installed; analyze has 13 pre-existing info lints
 - note: Computer icon reflects active device; transport icon still reflects the active device medium.
-
-## 2026-10-23 · Computer button switches live devices by tap gestures
-- files: mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/computer_button_test.dart
-- docs: INDEX, FEATURES, MOBILE, TESTING
-- tests: Flutter 239 passed; release APK built and installed; analyze 13 pre-existing info lints; git diff --check passed
-- note: Gestures switch only connected computers; long press opens the Computers sheet.
 

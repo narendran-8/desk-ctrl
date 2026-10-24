@@ -14,6 +14,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'fake_agent.dart';
 
 void main() {
+  test('portrait Mobile keyboard includes every common punctuation key', () {
+    expect(portraitKeyboardLayout, hasLength(6));
+    final punctuation = portraitKeyboardLayout[4];
+    expect(
+      [
+        [for (final key in punctuation) key.label],
+        [for (final key in punctuation) key.alt],
+      ],
+      [
+        [r'`', '-', '=', '[', ']', r'\', ';', "'", ',', '.', '/'],
+        ['~', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?'],
+      ],
+    );
+  });
+
   testWidgets('portrait media icons send play/pause and next to the computer', (
     tester,
   ) async {
