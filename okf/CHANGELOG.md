@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Identify connected computers by icon colour
+- files: mobile/lib/device_color.dart, mobile/lib/main.dart, mobile/lib/devices_screen.dart, mobile/test/computer_button_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 239 passed; targeted gesture/icon test passed; APK built and installed; analyze has 13 pre-existing info lints
+- note: Computer icon reflects active device; transport icon still reflects the active device medium.
+
 ## 2026-10-23 · Computer button switches live devices by tap gestures
 - files: mobile/lib/connection.dart, mobile/lib/main.dart, mobile/test/computer_button_test.dart
 - docs: INDEX, FEATURES, MOBILE, TESTING

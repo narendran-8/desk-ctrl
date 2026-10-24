@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-24 · Refine Mobile controls after UI inspection
+- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built and installed; portrait/landscape default and swapped layouts checked
+- note: Landscape controls now end before the media strip; portrait punctuation row remained readable and unclipped
+
 ## 2026-10-24 · Add punctuation row to Mobile keyboard
 - files: README.md, mobile/lib/keyboard_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, FEATURES, MOBILE, TESTING
 - tests: Flutter 240 passed; targeted mixed-medium and single-device failover tests passed; APK built, installed, and checked on phone; analyze only 13 pre-existing style infos
 - note: With multiple connected computers the link glyph stays stable; actual medium remains in its tooltip and sheet.
-
-## 2026-10-23 · Identify connected computers by icon colour
-- files: mobile/lib/device_color.dart, mobile/lib/main.dart, mobile/lib/devices_screen.dart, mobile/test/computer_button_test.dart
-- docs: FEATURES, MOBILE, TESTING
-- tests: Flutter 239 passed; targeted gesture/icon test passed; APK built and installed; analyze has 13 pre-existing info lints
-- note: Computer icon reflects active device; transport icon still reflects the active device medium.
 

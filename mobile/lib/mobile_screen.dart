@@ -67,7 +67,7 @@ class _MobileScreenState extends State<MobileScreen> {
             ),
             Positioned(
               top: compact ? 32 : 0,
-              left: compact ? 0 : 42,
+              left: compact ? 0 : 4,
               child: Flex(
                 direction: compact ? Axis.vertical : Axis.horizontal,
                 mainAxisSize: MainAxisSize.min,

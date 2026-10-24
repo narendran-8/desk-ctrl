@@ -1,4 +1,5 @@
 import 'package:deskctrl/connection.dart';
+import 'package:deskctrl/edge_zones.dart';
 import 'package:deskctrl/keyboard_screen.dart';
 import 'package:deskctrl/mobile_screen.dart';
 import 'package:deskctrl/modes.dart';
@@ -150,6 +151,12 @@ void main() {
           compact ? 20 : 14,
         );
         final pad = find.byType(TouchPad);
+        final padRect = tester.getRect(pad);
+        expect(
+          tester.getTopRight(swap).dx,
+          lessThan(padRect.left + padRect.width * EdgeZones.topFrom),
+          reason: 'Mobile controls stay clear of the top media strip',
+        );
         if (compact) {
           expect(tester.getCenter(phoneMedia).dx, tester.getCenter(rotate).dx);
           expect(
