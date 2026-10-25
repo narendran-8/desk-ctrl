@@ -9,6 +9,7 @@ futures-util = "0.3.34"
 qrcode = { version = "0.14.1", default-features = false }
 tokio = { version = "1.53.2", features = ["rt-multi-thread", "net", "macros", "io-util", "sync", "time"] }
 tokio-tungstenite = "0.30.0"
+serde_json = "1"
 
 # Linux: uinput, BlueZ and AT-SPI over D-Bus
 [target.'cfg(unix)'.dependencies]
@@ -32,3 +33,4 @@ windows-sys = { version = "0.60", features = [
     "Win32_System_Threading",
     "Win32_UI_Input_KeyboardAndMouse",
 ] }
+cpal = "0.16"

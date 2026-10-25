@@ -1,11 +1,17 @@
 ---
 id: latest
 summary: The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.
-updated: 2026-10-24
+updated: 2026-10-25
 sources: []
 ---
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
+
+## 2026-10-25 · Add Remote Audio Output
+- files: README.md, agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, mobile/lib/settings.dart, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, output/setup_laptop.sh, output/README_windows.txt, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
+- docs: INDEX, ARCHITECTURE, PROTOCOL, AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, OPERATIONS
+- tests: Flutter 253 passed; Remote Audio 5 passed; analyzer 12 existing infos; Linux agent 77 passed; Windows Wine 32 passed; Linux/Windows releases and 71.4 MB APK built; APK installed; phone layout checked
+- note: PCM audio verified with fake agents; real Linux/Windows/Android audio hardware not exercised; Bluetooth-only audio unavailable; Windows source requires Also play on source
 
 ## 2026-10-24 · Refine Mobile controls after UI inspection
 - files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
 - tests: Flutter 241 passed; Android release APK built and installed; phone toggle visually checked; analyze only 13 existing style infos
 - note: Android media keys target the active phone media session; browser seek support varies. Brightness adjusts the ViL window, not system-wide brightness.
-
-## 2026-10-23 · Separate computer switching from the transport glyph
-- files: mobile/lib/main.dart, mobile/test/computer_button_test.dart
-- docs: INDEX, FEATURES, MOBILE, TESTING
-- tests: Flutter 240 passed; targeted mixed-medium and single-device failover tests passed; APK built, installed, and checked on phone; analyze only 13 pre-existing style infos
-- note: With multiple connected computers the link glyph stays stable; actual medium remains in its tooltip and sheet.
 

@@ -5,6 +5,7 @@ import 'edit_menu_editor.dart';
 import 'key_sound.dart';
 import 'modes.dart';
 import 'modes_editor.dart';
+import 'remote_audio.dart';
 import 'settings.dart';
 import 'window_mode.dart';
 
@@ -623,6 +624,62 @@ class SettingsSheet extends StatelessWidget {
                         'Reconnect to the computers you were using last',
                         s.autoReconnect,
                         (v) => s.autoReconnect = v,
+                      ),
+                    ],
+                  ),
+                if (scope == SettingsScope.all)
+                  _Section(
+                    icon: Icons.speaker_group_outlined,
+                    title: 'Remote Audio Output',
+                    summary:
+                        'Play computer audio on this phone or another computer',
+                    children: [
+                      _switch(
+                        'Remote Audio Output',
+                        'Show the audio button and allow desktop playback to be streamed',
+                        s.remoteAudioEnabled,
+                        (v) {
+                          s.remoteAudioEnabled = v;
+                          if (!v) RemoteAudio.instance.stop();
+                        },
+                      ),
+                      _switch(
+                        'Reconnect after a connection change',
+                        'Reconnect the same source and destination when USB, Wi-Fi or Bluetooth availability changes',
+                        s.remoteAudioAutoReconnect,
+                        (v) => s.remoteAudioAutoReconnect = v,
+                        enabled: s.remoteAudioEnabled,
+                      ),
+                      _switch(
+                        'Also play on the source computer',
+                        'Leave its speaker playing too. Off routes Linux playback only to the remote destination.',
+                        s.remoteAudioPlaySource,
+                        (v) => s.remoteAudioPlaySource = v,
+                        enabled: s.remoteAudioEnabled,
+                      ),
+                      ListTile(
+                        enabled: s.remoteAudioEnabled,
+                        title: const Text('Latency'),
+                        subtitle: const Text(
+                          'Low reacts faster; Balanced tolerates unstable Wi-Fi better',
+                        ),
+                        trailing: DropdownButton<String>(
+                          value: s.remoteAudioLatency,
+                          onChanged: s.remoteAudioEnabled
+                              ? (v) {
+                                  if (v != null) {
+                                    s.update(() => s.remoteAudioLatency = v);
+                                  }
+                                }
+                              : null,
+                          items: const [
+                            DropdownMenuItem(value: 'low', child: Text('Low')),
+                            DropdownMenuItem(
+                              value: 'balanced',
+                              child: Text('Balanced'),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

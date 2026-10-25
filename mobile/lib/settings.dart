@@ -251,6 +251,13 @@ class Settings extends ChangeNotifier {
   /// Reconnect on app start to the computers that were connected last time.
   bool autoReconnect = true;
 
+  /// Stream the active computer's playback to this phone or another connected agent.
+  bool remoteAudioEnabled = true;
+  bool remoteAudioAutoReconnect = false;
+  bool remoteAudioPlaySource = false;
+  String remoteAudioLatency = 'balanced';
+  String remoteAudioLastDestination = 'phone';
+
   /// Ids of the computers that were connected when the app was last used,
   /// and the one that was receiving input.
   List<String> lastConnected = [];
@@ -294,6 +301,15 @@ class Settings extends ChangeNotifier {
     invertGyro = _p.getBool('invertGyro') ?? false;
     tapToClick = _p.getBool('tapToClick') ?? true;
     autoReconnect = _p.getBool('autoReconnect') ?? true;
+    remoteAudioEnabled = _p.getBool('remoteAudioEnabled') ?? true;
+    remoteAudioAutoReconnect = _p.getBool('remoteAudioAutoReconnect') ?? false;
+    remoteAudioPlaySource = _p.getBool('remoteAudioPlaySource') ?? false;
+    remoteAudioLatency = _p.getString('remoteAudioLatency') ?? 'balanced';
+    if (!const ['low', 'balanced'].contains(remoteAudioLatency)) {
+      remoteAudioLatency = 'balanced';
+    }
+    remoteAudioLastDestination =
+        _p.getString('remoteAudioLastDestination') ?? 'phone';
     final bar = _p.getString('notchBar');
     notchBar = const {'auto', 'on', 'off'}.contains(bar)
         ? bar!
@@ -388,6 +404,11 @@ class Settings extends ChangeNotifier {
     _p.setBool('invertGyro', invertGyro);
     _p.setBool('tapToClick', tapToClick);
     _p.setBool('autoReconnect', autoReconnect);
+    _p.setBool('remoteAudioEnabled', remoteAudioEnabled);
+    _p.setBool('remoteAudioAutoReconnect', remoteAudioAutoReconnect);
+    _p.setBool('remoteAudioPlaySource', remoteAudioPlaySource);
+    _p.setString('remoteAudioLatency', remoteAudioLatency);
+    _p.setString('remoteAudioLastDestination', remoteAudioLastDestination);
     _p.setString('notchBar', notchBar);
     _p.setBool('fnKey', fnKey);
     _p.setBool('fnRow', fnRow);

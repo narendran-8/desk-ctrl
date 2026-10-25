@@ -20,6 +20,7 @@ import 'mouse_screen.dart';
 import 'mobile_screen.dart';
 import 'notch_layout.dart';
 import 'pad_screen.dart';
+import 'remote_audio_sheet.dart';
 import 'voice_screen.dart';
 import 'settings.dart';
 import 'settings_sheet.dart';
@@ -374,6 +375,8 @@ class _NotchLayout extends StatelessWidget {
       if (Settings.instance.editMenu) const EditMenuButton(),
       const _DeviceButton(compact: true),
       const _TransportButton(compact: true),
+      if (Settings.instance.remoteAudioEnabled)
+        const RemoteAudioButton(compact: true),
       // With only the keyboard left there is nothing to switch between.
       if (modes.length > 1)
         ModeButton(
@@ -553,6 +556,8 @@ class _TopBar extends StatelessWidget {
           _DeviceButton(compact: narrow),
           _TransportButton(compact: narrow),
           const Spacer(),
+          if (Settings.instance.remoteAudioEnabled)
+            RemoteAudioButton(compact: narrow),
           if (modes.length > 1)
             ModeButton(
               mode: mode,

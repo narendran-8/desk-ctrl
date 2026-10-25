@@ -1,8 +1,8 @@
 ---
 id: operations
 summary: Build, install, publish and run commands; paths; adb tricks; the laptop setup script.
-updated: 2026-10-23
-sources: [output/setup_laptop.sh, mobile/pubspec.yaml, agent/Cargo.toml]
+updated: 2026-10-25
+sources: [output/setup_laptop.sh, mobile/pubspec.yaml, agent/Cargo.toml, agent/src/audio.rs]
 ---
 # Operations
 
@@ -27,7 +27,7 @@ cp target/release/agent ../output/desk_ctrl_agent.new && mv ../output/desk_ctrl_
 The user restarts their own agent to pick it up; installing = copying `output/desk_ctrl_agent` (+ `setup_laptop.sh`) to each computer.
 
 ## setup_laptop.sh (needs sudo, user runs it)
-Installs udev rule `99-deskctrl-uinput.rules` (uaccess + group input), loads `uinput`, installs `adb` + `android-sdk-platform-tools-common` (apt), copies the agent to `/usr/local/bin/desk_ctrl_agent`, adds a desktop launcher. Steps numbered 1/4..4/4.
+Installs udev rule `99-deskctrl-uinput.rules` (uaccess + group input), loads `uinput`, installs `adb` + `android-sdk-platform-tools-common` for USB and `pulseaudio-utils` (`pactl`, `parec`, `pacat`) for Remote Audio on apt systems, copies the agent to `/usr/local/bin/desk_ctrl_agent`, and adds a desktop launcher. Steps numbered 1/4..4/4. PipeWire desktops need the PipeWire Pulse compatibility service; the command-line interface remains the same.
 
 ## adb cheat sheet
 - `adb reverse --list` (tunnels; the user's agent normally has `tcp:8765`), `adb reverse --remove tcp:PORT` (clean test tunnels).
@@ -44,3 +44,5 @@ Hostname of the dev laptop is `test` (so USB-paired computers show as "test").
 
 ## Windows agent (built on Linux)
 `tools/windows/build_windows.sh` builds `output/desk_ctrl_agent.exe` (target `x86_64-pc-windows-gnu`, linker = zig through `tools/windows/zigcc.py`, which drops the mingw libs rustc asks for, adds `-lunwind` and turns `-lwindows.X` into the import libs of the windows crates; zig comes from `uv pip install ziglang` in `~/winbuild/zigenv`, no sudo). `./tools/windows/build_windows.sh test` runs the agent tests of the Windows build under Wine (`~/.wine-deskctrl`). The build needs ~3 GB in `~/winbuild/target`: delete it afterwards (the disk of this machine is nearly full). Ship `output/desk_ctrl_agent.exe` + `README_windows.txt` + `allow_firewall.bat`.
+
+Remote Audio adds Windows CPAL/WASAPI dependencies to the cross-build. The 2026-10-25 release built successfully and 32 tests passed under Wine. Wine does not prove loopback/output hardware behavior; verify that on an actual Windows computer with **Also play on source** enabled.

@@ -1,8 +1,8 @@
 ---
 id: settings
 summary: Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.
-updated: 2026-10-24
-sources: [mobile/lib/settings.dart, mobile/lib/settings_sheet.dart]
+updated: 2026-10-25
+sources: [mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart]
 ---
 # Settings (`Settings` singleton, SharedPreferences keys)
 
@@ -28,6 +28,15 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | `editLayout` | '' | rows of option ids, rows ';' ids ',' ('' = standard rows); `decodeEditLayout` drops unknown ids, max 3 rows x 6 | General (EditMenuEditor) |
 | `editMenuHoldRepeat` | true | holding Backspace/Delete/Enter/Tab/Page keys repeats | General |
 | `editMenuIdleSeconds` | 6 | idle seconds before an open fan folds (2-30) | General |
+
+## Remote Audio Output
+| Key | Default | Meaning |
+|---|---|---|
+| `remoteAudioEnabled` | true | shows the speaker button and permits Remote Audio discovery/streaming; turning it off stops an active stream |
+| `remoteAudioAutoReconnect` | false | after a USB/Wi-Fi endpoint change, reconnect the same source and selected destination after one second; off stops with a clear message |
+| `remoteAudioPlaySource` | false | also leave playback audible at the source; Linux off uses a temporary null sink, while Windows currently requires this to be true |
+| `remoteAudioLatency` | `balanced` | `low` = 8 Android PCM frames, `balanced` = 20; invalid saved values reset to balanced |
+| `remoteAudioLastDestination` | `phone` | `phone` or `<deviceId>|<outputId>`; used only if discovery confirms it still exists, otherwise selection returns to the phone |
 
 ## Keyboard
 | Key | Default | Meaning |
@@ -71,11 +80,11 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | Key | Default | Meaning |
 |---|---|---|
 | `voiceTab` | true | the Voice screen is one of the modes |
-
-## Mobile combined screen
-`mobileTab` (default true) shows a fifth mode with touchpad above the keyboard. Its in-screen swap button reverses or restores those sections for the current Mobile screen instance; this order is not a saved setting. Portrait uses Mobile's own six-row compact keyboard, including a punctuation row; no setting changes the normal Keyboard mode layout. It uses `padEnabled`, the existing touchpad gestures and edge controls, and the normal keyboard settings. The scoped Mobile settings sheet shows both Keyboard and Touchpad sections. `brightPad` is also used for this screen.
 | `voiceHold` | true | hold the button to talk (off: tap to start, tap to stop) |
 | `voiceAi` | false | unknown commands are guessed by Needle on the computer, always asked first |
 | `voiceEnter` | false | press Enter after dictated text |
 | `voiceSpace` | true | a space after dictated text |
 | `voiceConfirmRisky` | true | ask "Run it?" before closing a window (Alt+F4) |
+
+## Mobile combined screen
+`mobileTab` (default true) shows a fifth mode with touchpad above the keyboard. Its in-screen swap button reverses or restores those sections for the current Mobile screen instance; this order is not a saved setting. Portrait uses Mobile's own six-row compact keyboard, including a punctuation row; no setting changes the normal Keyboard mode layout. It uses `padEnabled`, the existing touchpad gestures and edge controls, and the normal keyboard settings. The scoped Mobile settings sheet shows both Keyboard and Touchpad sections. `brightPad` is also used for this screen.

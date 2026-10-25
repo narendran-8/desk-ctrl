@@ -1,10 +1,10 @@
 ---
 id: protocol
-summary: Wire format phone<->agent for all transports, key code space, liveness and fail-over rules, USB pairing link, framing.
-updated: 2026-10-18
-sources: [agent/src/hid.rs, agent/src/server.rs, agent/src/bluetooth.rs, agent/src/identity.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/leds.rs, mobile/lib/links.dart]
+summary: Input and Remote Audio wire formats, key code space, liveness/fail-over rules, USB pairing link, and framing.
+updated: 2026-10-25
+sources: [agent/src/hid.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/identity.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/leds.rs, mobile/lib/links.dart, mobile/lib/remote_audio.dart]
 ---
-# Protocol (binary, big-endian)
+# Input/control protocol (binary, big-endian)
 
 ## Phone -> agent
 | Byte 0 | Payload | Meaning |
@@ -38,6 +38,37 @@ play/pause `0x80CD`, calculator `0x8192`, lock `0x819E`, mic mute `0x8F01` (no u
 - **Bluetooth**: RFCOMM service UUID `c0de5c71-7e1a-4d1c-8d5e-d35c7c71a001`, fixed channel 22-30 + explicit SDP record (BlueZ `Profile1`).
   Framing `[len][payload]`; first frame is the token; the phone's Kotlin bridge keeps one socket per computer.
 - **USB**: the Wi-Fi protocol through `adb reverse tcp:P tcp:P`; the phone connects to `127.0.0.1:P` (`UsbLink`). Agent knows a loopback peer = USB.
+
+## Remote Audio protocol (`/audio/v1`)
+
+Remote Audio is an independent WebSocket on the same agent port. The HTTP path is `/audio/v1`; the first frame is the same pairing token as text, and the agent answers text `ok`. Existing input clients remain on `/`, so no existing frame meaning changes. This service is available through Wi-Fi or the USB reverse tunnel; it does not use RFCOMM.
+
+The next client text frame is one JSON operation:
+
+| Operation | Fields | Agent response / behavior |
+|---|---|---|
+| `discover` | none | `devices`: protocol `version`, `computerId`, `name`, capture availability, `outputs:[{id,label}]`; then the short discovery socket closes |
+| `source` | `playSource` boolean | `active` with role/source/rate/channels, then binary audio packets until `stop` or disconnect |
+| `sink` | exact output `device` id | `active` with role/sink/device, then accepts binary audio and `gain` |
+| `gain` | `volume` 0..1, `muted` boolean | changes this remote stream only |
+| `stop` | none | closes capture/playback and restores any temporary Linux routing |
+
+Errors are text JSON `{"op":"error","version":1,"message":"..."}`. The phone never falls through to another output after an error.
+
+Each binary packet is one 20 ms PCM frame:
+
+| Bytes | Encoding |
+|---|---|
+| 0 | data type `1` |
+| 1 | audio protocol version `1` |
+| 2 | channels `2` |
+| 3 | sample format `1` = signed PCM16 little-endian |
+| 4..7 | sample rate `48000`, u32 little-endian |
+| 8..11 | sequence, u32 little-endian |
+| 12..15 | source Unix timestamp milliseconds modulo 2^32, u32 little-endian |
+| 16..3855 | 960 stereo sample frames = 3840 PCM bytes |
+
+Raw payload is 192 kB/s, about 1.536 Mbit/s before WebSocket overhead. Queues are bounded and discard old/full frames rather than delaying input. The timestamp is carried for future clock correction; current A/V synchronization is best effort.
 
 ## Liveness & fail-over
 - Phone: watchdog tick 500 ms; keep-alive every 2nd tick; link dead after `Link.deadAfter` = 3.5 s without any frame **once a heartbeat was seen**.

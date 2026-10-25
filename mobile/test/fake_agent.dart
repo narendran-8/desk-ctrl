@@ -10,6 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 class FakeAgent {
   late final HttpServer server;
   final List<String> received = [];
+  final List<String> audioCommands = [];
+  final List<Map<String, dynamic>> audioJson = [];
+  final List<List<int>> audioReceived = [];
+  final List<Map<String, String>> audioOutputs = [
+    {'id': 'default', 'label': 'System default'},
+  ];
+  WebSocket? audioSource;
+  WebSocket? audioSink;
+  int audioConnections = 0;
   int connections = 0;
 
   /// Lock lights reported after the token is accepted; null = this computer reports none.
@@ -75,6 +84,11 @@ class FakeAgent {
     a.server = await HttpServer.bind('127.0.0.1', port);
     a.server.listen((req) async {
       final ws = await WebSocketTransformer.upgrade(req);
+      if (req.uri.path == '/audio/v1') {
+        a.audioConnections++;
+        a._serveAudio(ws, token);
+        return;
+      }
       a.connections++;
       a.socket = ws;
       a.sockets.add(ws);
@@ -129,6 +143,63 @@ class FakeAgent {
     });
     return a;
   }
+
+  void _serveAudio(WebSocket ws, String token) {
+    var authed = false;
+    ws.listen((m) {
+      if (!authed) {
+        if (m == token) {
+          authed = true;
+          ws.add('ok');
+        } else {
+          ws.close();
+        }
+        return;
+      }
+      if (m is String) {
+        final command = jsonDecode(m) as Map<String, dynamic>;
+        final op = command['op'] as String? ?? '';
+        audioCommands.add(op);
+        audioJson.add(command);
+        switch (op) {
+          case 'discover':
+            ws.add(
+              jsonEncode({
+                'op': 'devices',
+                'version': 1,
+                'computerId': 'fake-$port',
+                'name': 'Fake $port',
+                'capture': true,
+                'outputs': audioOutputs,
+              }),
+            );
+            return;
+          case 'source':
+            audioSource = ws;
+            ws.add(jsonEncode({'op': 'active', 'role': 'source'}));
+            return;
+          case 'sink':
+            audioSink = ws;
+            ws.add(jsonEncode({'op': 'active', 'role': 'sink'}));
+            return;
+          case 'gain':
+            return;
+          case 'stop':
+            ws.close();
+            return;
+        }
+      } else if (m is List<int>) {
+        audioReceived.add(List<int>.from(m));
+      }
+    });
+  }
+
+  void sendAudio(List<int> pcm) {
+    final header = <int>[1, 1, 2, 1, 0x80, 0xBB, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
+    audioSource?.add([...header, ...pcm]);
+  }
+
+  Future<void> disconnectAudioOutput() async => audioSink?.close();
 
   int get port => server.port;
 }

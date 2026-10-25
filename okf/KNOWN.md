@@ -1,23 +1,27 @@
 ---
 id: known
 summary: Limits, unverified items, open problems and ideas. Update when something is fixed or discovered.
-updated: 2026-10-19
+updated: 2026-10-25
 sources: []
 ---
 # Known limits and open items
 
 ## Limits
-- Agent is **Linux only** (uinput, BlueZ, /sys, /proc, AT-SPI). Windows/macOS not supported (a Wi-Fi-only Windows port = SendInput; Bluetooth is the hard part).
+- Agent supports Linux and Windows. Windows lacks Bluetooth transport, voice, auto-keyboard focus detection, and volume/brightness reporting; see AGENT.md. macOS is not supported.
 - Window detection (`xprop`) is X11 only; on Wayland only the AT-SPI path works. Browsers may expose focus only after accessibility has been on a while.
 - No agentless mode: a computer without the agent (friend's laptop, login screen, new PC) cannot be used. Options discussed: Bluetooth HID (no root), rooted USB HID gadget, a small USB board (Pico W/ESP32).
 - USB needs adb on the computer + USB debugging on the phone (one-time Allow).
 - Old agents lack: heartbeat, lock lights (<v2), levels `0x12`, focus `0x13`, info `0x14`; the app degrades gracefully.
 - Terminal copy/paste = Ctrl+Shift+C/V (Linux terminals); plain Copy in a terminal sends SIGINT.
+- Remote Audio is Wi-Fi/USB only. Bluetooth-only connections remain available for input but cannot carry the raw 1.54 Mbit/s stream.
+- Remote Audio v1 is uncompressed 48 kHz stereo PCM16. This favors simple low-latency local playback but uses more bandwidth than Opus; A/V synchronization is best effort and the packet timestamp is not yet used for clock correction.
+- Windows Remote Audio cannot mute/reroute the source endpoint safely yet. It starts only when **Also play on source** is explicitly enabled, so duplicate source/destination playback is visible and opt-in.
 
 ## Unverified on a real phone / computer
 - Motion cursor (`MotionCursor`): accelerometer tilt joystick (the test phone has NO gyroscope, which is why the old gyro version never worked). Only roll/pitch exist, no yaw (turning the phone flat does nothing). Feel not yet judged on the real phone; speed slider is the tuning knob.
 - Bluetooth auto-setup from USB (`bt=` in the info frame) tested with a fake bridge only.
 - Auto keyboard in Chromium/Brave tab landings (Firefox verified).
+- Remote Audio on real hardware: Android phone playback, Linux capture/routing, Windows WASAPI loopback, output hot-unplug, and computer-to-computer playback are implemented but not yet listened to end to end. The dev shell had no active PulseAudio/PipeWire user server, and Wine cannot validate a physical Windows endpoint.
 
 ## Open / cleanup
 - Legacy duplicate entries on the user's phone ("test" with wrong token, USB only) remain until their agent sends the info frame (needs a restart with the newest agent + one plug-in).
@@ -25,7 +29,7 @@ sources: []
 - `UsbPhone.serial` is only shown in a tooltip.
 
 ## Ideas not built
-Agentless Bluetooth HID mode; Windows agent; send phone name to the agent for the device table; per-option settings for the edit menu; iOS app.
+Agentless Bluetooth HID mode; send phone name to the agent for the device table; Opus audio codec/adaptive jitter buffer and timestamp-based A/V clock correction; iOS app.
 
 - Once-paired phones reconnect without manual steps only while the agent's token is unchanged (kept in ~/.config/deskctrl/token). A new Wi-Fi IP address of the computer is still NOT followed (no discovery yet): Bluetooth/USB links cover it, or re-pair.
 

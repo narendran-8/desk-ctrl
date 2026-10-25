@@ -1,11 +1,17 @@
 ---
 id: changelog
 summary: Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.
-updated: 2026-10-24
+updated: 2026-10-25
 sources: []
 ---
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
+
+## 2026-10-23 · Separate computer switching from the transport glyph
+- files: mobile/lib/main.dart, mobile/test/computer_button_test.dart
+- docs: INDEX, FEATURES, MOBILE, TESTING
+- tests: Flutter 240 passed; targeted mixed-medium and single-device failover tests passed; APK built, installed, and checked on phone; analyze only 13 pre-existing style infos
+- note: With multiple connected computers the link glyph stays stable; actual medium remains in its tooltip and sheet.
 
 ## 2026-10-23 · Identify connected computers by icon colour
 - files: mobile/lib/device_color.dart, mobile/lib/main.dart, mobile/lib/devices_screen.dart, mobile/test/computer_button_test.dart

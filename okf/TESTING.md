@@ -1,14 +1,14 @@
 ---
 id: testing
 summary: How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.
-updated: 2026-10-24
-sources: [mobile/test/fake_agent.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/usb.rs]
+updated: 2026-10-25
+sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/audio.rs, agent/src/usb.rs]
 ---
 # Testing
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 248 tests pass; agent has 73 Linux tests (29 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~100 s) · `cd agent && cargo test`.
+State: phone 253 tests pass; agent has 77 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -21,6 +21,7 @@ Sensors: mock `EventChannel('dev.fluttercommunity.plus/sensors/{gyroscope,accele
 | USB, ids, dedupe | `usb_test`, `device_form_duplicate_test`, `pair_info_test` |
 | trackpad | `pad_zones_test`, `pad_buttons_test`, `pad_motion_test`, `motion_cursor_test`, `edge_zones_test`, `screenshot_gesture_test` |
 | phone media mode | `phone_media_test` mocks `deskctrl/phone_media` and checks toggle/routing, phone volume/brightness percentages, and Settings hiding the button; `mobile_screen_test` taps portrait play/pause and next icons against a recording fake agent, then toggles phone media and checks Android MethodChannel actions with no desktop key frames; portrait and landscape tests check the small buttons' vertical placement |
+| Remote Audio | `remote_audio_test` checks preference persistence, destination listing/selection, active controls, Android PCM delivery, unchanged computer relay packets, gain/mute, destination disconnect errors, safe stop when transport changes, and enabled reconnection over the new endpoint; `FakeAgent` supports `/audio/v1` discovery/source/sink/gain/stop and connection counts |
 
 On-phone percentage check (2026-10-23): Mobile mode on, one left-edge volume step showed `Phone volume 46%`; one right-edge decrease showed `Phone brightness 95%`. Reversed the steps (volume returned to 40%, window brightness stepped back up) and switched Mobile mode off.
 On-phone combined-screen check (2026-10-23): release APK installed; the mode button reached the new Mobile screen, showing a compact touchpad above all six keyboard rows with no clipped controls. Its scoped Settings sheet showed Keyboard controls. Only the mode and Settings buttons were touched; no input was sent to the computer. `mobile_screen_test` now also checks the portrait 5-row layout without overflow, alongside landscape.
@@ -36,8 +37,15 @@ Mobile UI inspection (2026-10-24): installed the punctuation/swap APK and checke
 
 Pattern: real sockets need `tester.runAsync(() => Future.delayed(...))` to deliver; fake-time timers need `tester.pump(Duration)`; view `Size(1640,720)` @2.0 = 820x360 logical.
 
+## Remote Audio verification (2026-10-25)
+- Focused Flutter suite: 5 pass. Full Flutter suite: 253 pass. Analyzer: 12 existing `curly_braces_in_flow_control_structures` infos, no new warning/error.
+- Agent: 77 Linux tests pass, including packet/version/frame tests; 32 Windows tests pass under Wine. Linux and Windows release builds complete. Wine and CI-style tests do not exercise a physical Windows audio endpoint.
+- Release APK: 71.4 MB, copied to `output/desk_ctrl.apk`, installed successfully on phone `863d0058304830363451066c2082bb` with `adb install -r`.
+- Safe UI-only phone screenshot: landscape notch rail shows the new speaker icon directly above the green mode button; no audio stream or computer input was started.
+- Actual Linux capture could not be exercised in the development shell because it has no active user PulseAudio/PipeWire server. Real phone speaker playback and real Linux/Windows computer-to-computer audio remain hardware checks, recorded in KNOWN.md.
+
 ## Windows build tests (Wine)
-`./tools/windows/build_windows.sh test` runs 29 agent tests under Wine (keys -> virtual keys, registry autostart, token file, lock lights, port owner, Wi-Fi server with `SendInput`). Wine reports every process id as 0 and its `netstat` has no pids, hence the `pid == 0` allowance in the port tests. Smoke test used: `agent.exe --headless` under Wine with `DESK_PORT`, `DESK_TOKEN`, `DESK_NO_USB`, a Python websocket client (token ok, wrong token refused, LED / info / level frames arrive, key / move / scroll frames accepted). GUI check: `Xvfb` + `wine` + `xwd` screenshot (wgpu fails there without DRI3, the OpenGL fallback draws the window).
+`./tools/windows/build_windows.sh test` runs 32 agent tests under Wine (keys -> virtual keys, registry autostart, token file, lock lights, port owner, Wi-Fi server with `SendInput`, audio packet/protocol helpers). Wine reports every process id as 0 and its `netstat` has no pids, hence the `pid == 0` allowance in the port tests. Smoke test used: `agent.exe --headless` under Wine with `DESK_PORT`, `DESK_TOKEN`, `DESK_NO_USB`, a Python websocket client (token ok, wrong token refused, LED / info / level frames arrive, key / move / scroll frames accepted). GUI check: `Xvfb` + `wine` + `xwd` screenshot (wgpu fails there without DRI3, the OpenGL fallback draws the window).
 
 ## Agent window check
 `/tmp/shot.sh`-style: `Xvfb :78`, `WGPU_BACKEND=gl <agent>`, `xwd -root`, convert with PIL; a Python websocket client connects to the agent (a client from the LAN address shows as a Wi-Fi phone, one from 127.0.0.1 as a USB device). Look at: default, devices connected, `DESK_SHOW=settings`, `DESK_SHOW=log`, port-busy error (start a second agent on the same port).
@@ -61,7 +69,7 @@ Agent: fake shell helper (`voice::fake_engine`) over Wi-Fi and Bluetooth; never 
 3. Add it as computer "ZZfake" in the app (form: tap field, `KEYCODE_MOVE_END` + 24x `KEYCODE_DEL`, `input text`, `KEYCODE_BACK` to hide the IME, ONE field at a time), then **make it Active and verify "Active" next to it before any key/click**.
 4. Drive the UI with `adb shell input tap/swipe` only after a screenshot confirms the screen (rail side: count bright pixels top-left vs top-right; screen = keyboard if >55% of sampled pixels are lit).
 5. Clean up: Forget ZZfake (⋮ at the row, Forget, confirm - check the dialog title), re-activate the user's computer, kill the fake by PID (`ss -ltnp`), `adb reverse --remove tcp:8793`, delete temp files.
-Coordinates (landscape 1640x720 px, rail on the LEFT; mirrored x ≈ 1640-52 when the phone is turned): edit button (52,48), computers (52,143), transport (52,240), mode (52,576), settings tune (52,672).
+Coordinates (landscape 1640x720 px, rail on the LEFT; mirrored x ≈ 1640-52 when the phone is turned): edit button (52,48), computers (52,143), transport (52,240), Remote Audio (52,477), mode (52,576), settings tune (52,672).
 2026-10-23 phone observation: two live computers ("Computer 2" USB + Wi-Fi, "box" Wi-Fi). Before the fix, tapping the computer icon changed the neighbouring USB glyph to Wi-Fi; after the fix, the computer icon changed teal/blue and the link glyph stayed fixed. The original computer was reselected after checking. No keys/clicks were sent to a computer.
 Computers sheet: Add (1370,~102), row ⋮ at x=1332. `am start -n com.deskctrl.deskctrl/.MainActivity` (not `monkey`, it hangs). Rotation: `settings put system user_rotation 1|3` (restore `accelerometer_rotation 1`, `user_rotation 0`).
 Desktop side checks: pointer position via Gdk (`Gdk.Display.get_default().get_default_seat().get_pointer().get_position()`), synthetic clicks via `Atspi.generate_mouse_event`, `wmctrl -a "title"` to switch windows, `xprop`.

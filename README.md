@@ -1,11 +1,11 @@
 # ViL
 
-ViL turns an Android phone into a wireless keyboard, trackpad, mouse, and voice controller for a computer.
+ViL turns an Android phone into a wireless keyboard, trackpad, mouse, voice controller, and remote audio output for a computer.
 
 The project has two parts:
 
-- **ViL mobile app** — a Flutter Android app with keyboard, trackpad, mouse, voice, gestures, shortcuts, and a customisable round action button.
-- **ViL Agent** — a Rust desktop program that receives phone input and sends keyboard and mouse events to the operating system.
+- **ViL mobile app** — a Flutter Android app with keyboard, trackpad, mouse, voice, gestures, shortcuts, a customisable round action button, and computer-audio playback.
+- **ViL Agent** — a Rust desktop program that receives phone input, sends keyboard and mouse events to the operating system, and captures or plays Remote Audio.
 
 The phone and computer can communicate over Wi-Fi, Bluetooth, or a USB cable. The app remembers paired computers and automatically changes to another available connection when the current connection fails.
 
@@ -54,7 +54,7 @@ cd output
 sudo ./setup_laptop.sh
 ```
 
-The setup script installs the uinput permission rule, enables USB support when `adb` is available, installs the agent, and creates a **ViL Agent** launcher. Log out and back in if Linux asks you to refresh the `input` group permission.
+The setup script installs the uinput permission rule, USB support when `adb` is available, PulseAudio client tools for Remote Audio, the agent, and a **ViL Agent** launcher. Log out and back in if Linux asks you to refresh the `input` group permission.
 
 For a development run without installing the agent:
 
@@ -136,6 +136,21 @@ The round button can be edited from the app's Settings. You can add, remove, reo
 
 The side connection icon shows the active medium. It changes between Wi-Fi, Bluetooth, and USB during automatic fail-over.
 
+## Remote Audio Output
+
+Remote Audio sends the active computer's desktop/media playback to this Android phone or to a specific output on another connected ViL Agent computer.
+
+1. Connect the source computer and, for computer-to-computer playback, the destination computer.
+2. Tap the speaker icon directly above the Keyboard/Trackpad/Mouse mode button.
+3. Select **This phone** or one of the named output devices on another computer.
+4. Tap **Start**. The panel provides Stop, Mute, and stream Volume controls and shows connecting, active, unavailable, and error states.
+
+The stream stays active while changing ViL modes. Audio uses its own authenticated WebSocket, so it cannot delay keyboard or pointer traffic. USB is preferred when present; Wi-Fi is used otherwise. Bluetooth-only control connections remain usable for input, but Remote Audio requires USB or Wi-Fi. If the route changes, the stream either stops with a message or reconnects to the same destination according to **Settings > Remote Audio Output > Reconnect after a connection change**. It never silently chooses another speaker.
+
+Linux uses the current PulseAudio or PipeWire-Pulse desktop monitor through `pactl`, `parec`, and `pacat`. With **Also play on the source computer** off, ViL temporarily routes playback through a private null sink and restores the previous default/output routes when stopped. Windows uses WASAPI loopback through CPAL. Windows currently requires **Also play on the source computer** to be enabled because the agent cannot yet mute the source endpoint safely.
+
+The first implementation sends 48 kHz stereo PCM16 in 20 ms frames, about 1.54 Mbit/s before WebSocket overhead. It is intended for a local Wi-Fi network or USB connection. Audio is held only in bounded memory queues and is never recorded to disk. Video synchronization is best effort; the packet timestamp is reserved for later clock correction.
+
 ## Optional voice control
 
 Voice control is optional and is currently intended for Linux. It uses Cactus Needle and Whistle locally on the computer.
@@ -161,7 +176,7 @@ The result is `output/desk_ctrl_agent.exe`. Copy it to the Windows computer and 
 
 For USB, copy `adb.exe` into the same folder as the agent, enable USB debugging, connect the phone, and approve the computer.
 
-Windows currently does not provide Linux's Bluetooth transport, voice engine, automatic keyboard focus detection, volume/brightness levels, or Linux-specific brightness keys. The Windows build uses native Windows input injection and includes the tray and autostart features.
+Windows currently does not provide Linux's Bluetooth transport, voice engine, automatic keyboard focus detection, volume/brightness levels, or Linux-specific brightness keys. The Windows build uses native Windows input injection, WASAPI Remote Audio, and includes the tray and autostart features. Remote Audio output-device discovery is supported, but source playback must remain enabled while capturing on Windows.
 
 ## Useful agent options
 
@@ -226,6 +241,10 @@ DESK_PORT=8790 ./output/desk_ctrl_agent
 ```
 
 The phone must use the same port when pairing manually.
+
+### Remote Audio is unavailable on Linux
+
+Install the PulseAudio client utilities (`pulseaudio-utils` on Debian/Ubuntu), and confirm that `pactl info`, `parec --help`, and `pacat --help` work in the same desktop login session as ViL Agent. PipeWire systems need the PipeWire Pulse compatibility service. Remote Audio cannot start through a Bluetooth-only ViL connection.
 
 ## More documentation
 

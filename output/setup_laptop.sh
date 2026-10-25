@@ -39,12 +39,19 @@ udevadm control --reload-rules
 udevadm trigger --subsystem-match=misc --sysname-match=uinput || true
 usermod -aG input "$USER_NAME"
 
-echo "2/4 USB support: installing adb (lets the agent find a phone plugged in and connect it)..."
+echo "2/4 USB and Remote Audio support: installing desktop helper tools..."
 if ! command -v adb >/dev/null 2>&1; then
     if command -v apt-get >/dev/null 2>&1; then
         apt-get install -y adb android-sdk-platform-tools-common || echo "Could not install adb; install it yourself for USB support." >&2
     else
         echo "Install adb (android-tools) with your package manager for USB support." >&2
+    fi
+fi
+if ! command -v pactl >/dev/null 2>&1 || ! command -v parec >/dev/null 2>&1 || ! command -v pacat >/dev/null 2>&1; then
+    if command -v apt-get >/dev/null 2>&1; then
+        apt-get install -y pulseaudio-utils || echo "Could not install PulseAudio tools; install pactl, parec and pacat yourself for Remote Audio." >&2
+    else
+        echo "Install PulseAudio client tools (pactl, parec and pacat) with your package manager for Remote Audio." >&2
     fi
 fi
 

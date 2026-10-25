@@ -1,8 +1,8 @@
 ---
 id: mobile
 summary: The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.
-updated: 2026-10-24
-sources: [mobile/lib/main.dart, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, mobile/lib/usb_pairing.dart, mobile/lib/motion_cursor.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt]
+updated: 2026-10-25
+sources: [mobile/lib/main.dart, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, mobile/lib/usb_pairing.dart, mobile/lib/motion_cursor.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt]
 ---
 # Mobile app (mobile/, package `deskctrl`, Android only, Flutter 3 / Dart 3.13)
 
@@ -13,8 +13,8 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 ## lib/ file map
 | File | Contents |
 |---|---|
-| `main.dart` | `DeskCtrlApp` (themed MaterialApp), `Home` (mode switch, auto-keyboard `_textFocus`/`_clicked`, brightness per screen), `_NotchLayout` rail / `_TopBar`, `_DeviceButton` (tap previous, double tap next, long press Computers sheet), `_TransportButton` (stable link glyph with multiple live computers; actual medium glyph with one)+`TransportSheet`, startup: `Settings.load`, `dedupeAll`, `restoreLast`, `UsbPairing.start` |
-| `connection.dart` | `Session`, `Connection` (see ARCHITECTURE), ordered `connectedDeviceIds`, `switchToPreviousConnected`/`switchToNextConnected` (live computers only), `pairOverUsb`, `mergeInto`/`mergeFields`/`dedupeAll` (merges serialized by `_exclusive`) |
+| `main.dart` | `DeskCtrlApp` (themed MaterialApp), `Home` (mode switch, auto-keyboard `_textFocus`/`_clicked`, brightness per screen), `_NotchLayout` rail / `_TopBar`, `_DeviceButton` (tap previous, double tap next, long press Computers sheet), `_TransportButton` (stable link glyph with multiple live computers; actual medium glyph with one)+`TransportSheet`, `RemoteAudioButton` immediately before the mode switch, startup: `Settings.load`, `dedupeAll`, `restoreLast`, `UsbPairing.start` |
+| `connection.dart` | `Session`, `Connection` (see ARCHITECTURE), ordered `connectedDeviceIds`, public live-session lookup `connectedSession` for pinned services, `switchToPreviousConnected`/`switchToNextConnected` (live computers only), `pairOverUsb`, `mergeInto`/`mergeFields`/`dedupeAll` (merges serialized by `_exclusive`) |
 | `device_color.dart` | stable computer icon colour from saved-list position; shared by rail/top bar and the Computers sheet |
 | `links.dart` | `Transport{wifi,bluetooth,usb}`, `Link`, `WifiLink`, `UsbLink`, `BtLink` (+`BtDevice`) |
 | `settings.dart` | `Device` model + `Settings` singleton (see SETTINGS.md); `findSame` |
@@ -25,6 +25,8 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 | `pad_screen.dart` | `PadScreen` + `TouchPad`: gestures, edge zones, HUD, window/tab slider, motion cursor |
 | `mobile_screen.dart` | combined screen: touchpad above keyboard by default; swap button reverses/restores their order while preserving the landscape 2:3 split or portrait keyboard height; portrait uses the 6-row compact keyboard (up to 360 dp); rotate, phone-media and swap buttons are vertical beside the volume strip in portrait (36 dp tap, 20 dp icon), horizontal in the unused top-left corner in landscape (28 dp tap, 14 dp icon), with their right edge kept before `EdgeZones.topFrom` so they do not overlap media controls; phone media off by default; restores landscape lock on exit |
 | `phone_media.dart` | Android MethodChannel for local media keys, media volume/mute, and window brightness; volume/brightness return 0-100 percentages for TouchPad HUD |
+| `remote_audio.dart` | `RemoteAudio` singleton: `/audio/v1` token-authenticated sockets, destination discovery/selection, source-to-phone or source-to-agent relay, gain/mute, endpoint-change stop/reconnect, remembered destination validation; audio uses USB then Wi-Fi and rejects Bluetooth-only sessions |
+| `remote_audio_sheet.dart` | sidebar/top-bar speaker button and Audio Output panel: source, state, outputs, refresh, Start/Stop, Mute, Volume/error message; active icon uses accent colour and error uses error colour |
 | `edge_zones.dart` | `EdgeZones` geometry/keys/labels, `EdgeZoneMarks` painter, `SwitchGuard`, `TopEdgeMode` |
 | `edit_menu.dart` | `EditMenuButton` + `EditFan` (three-row black/white fan), `editActions`/`terminalActions`/`refreshActions`/`editRings` |
 | `motion_cursor.dart` | `MotionCursor` accelerometer tilt joystick (axes from gravity at engage) |
@@ -49,5 +51,8 @@ Deps: web_socket_channel, sensors_plus, wakelock_plus, shared_preferences, audio
 ## Kotlin (`MainActivity.kt`)
 Channels: `deskctrl/bt` + `deskctrl/bt/events` (RFCOMM per address), `deskctrl/window` (`setCutout`, `setBrightness`),
 `deskctrl/phone_media` (`action`, `volume`, `mute`, `brightness`: Android media keys/audio stream/window brightness),
+`deskctrl/remote_audio` (`start`, `write`, `gain`, `stop`: bounded 48 kHz PCM playback in `RemoteAudio.kt`),
 `deskctrl/link` + `/events` (deep link `deskctrl://pair/...`, initial + `onNewIntent`). Manifest: INTERNET, CAMERA, BLUETOOTH perms,
 VIEW intent filter for `deskctrl://pair`, `launchMode=singleTop`.
+
+`RemoteAudio.kt` requests Android media audio focus, creates a streaming PCM16 `AudioTrack` on the current Android media route, and uses an 8-frame Low or 20-frame Balanced queue. A full queue drops the oldest frame to limit latency. Stop interrupts the worker, clears memory, flushes/releases the track, and abandons focus. No audio is written to storage.

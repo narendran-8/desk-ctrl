@@ -2,6 +2,7 @@
 
 #[cfg(unix)]
 mod autostart;
+mod audio;
 #[cfg(windows)]
 #[path = "autostart_win.rs"]
 mod autostart;

@@ -530,6 +530,13 @@ class Connection extends ChangeNotifier {
       if (_sessions[d.id]?.phase == Phase.active) d.id,
   ];
 
+  /// A saved computer's live session, used by services that pin a source independently of
+  /// whichever computer currently receives keyboard and pointer input.
+  Session? connectedSession(String id) {
+    final s = _sessions[id];
+    return s?.phase == Phase.active ? s : null;
+  }
+
   /// A tap goes back to the previous live computer, then alternates between them.
   /// If that computer went offline, use the next live one instead.
   Future<void> switchToPreviousConnected() async {

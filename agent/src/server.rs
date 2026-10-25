@@ -14,6 +14,7 @@ use tokio::net::TcpListener;
 use tokio::runtime::Runtime;
 use tokio::sync::{broadcast, watch};
 use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::tungstenite::handshake::server::{Request, Response};
 
 pub const DEFAULT_PORT: u16 = 8765;
 
@@ -332,7 +333,17 @@ async fn handle_client(
     mut level_rx: watch::Receiver<levels::Levels>,
     mut event_rx: broadcast::Receiver<Vec<u8>>,
 ) {
-    let Ok(mut ws) = tokio_tungstenite::accept_async(stream).await else { return };
+    // Audio has its own WebSocket on the same authenticated port. Keeping it off the input
+    // socket means a full audio queue can never delay a key-up or pointer packet.
+    let audio_path = Arc::new(AtomicBool::new(false));
+    let route = audio_path.clone();
+    let Ok(mut ws) = tokio_tungstenite::accept_hdr_async(
+        stream,
+        move |request: &Request, response: Response| {
+            route.store(request.uri().path() == crate::audio::PATH, Ordering::Relaxed);
+            Ok(response)
+        },
+    ).await else { return };
     // First frame must be a text message carrying the token.
     let ok = match ws.next().await {
         Some(Ok(Message::Text(t))) => token_ok(&shared, t.as_bytes()),
@@ -345,6 +356,10 @@ async fn handle_client(
     }
     // Tell the phone the token was accepted so it can show "connected" truthfully.
     if ws.send(Message::Text("ok".into())).await.is_err() {
+        return;
+    }
+    if audio_path.load(Ordering::Relaxed) {
+        crate::audio::handle(ws, shared, stop).await;
         return;
     }
     let label = addr.clone();

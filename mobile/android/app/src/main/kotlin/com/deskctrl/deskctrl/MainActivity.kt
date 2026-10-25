@@ -47,6 +47,7 @@ class MainActivity : FlutterActivity() {
     private var pendingMic: MethodChannel.Result? = null
     private var micSink: EventChannel.EventSink? = null
     private val mic = Mic { bytes -> main.post { micSink?.success(bytes) } }
+    private val remoteAudio by lazy { RemoteAudio(this) }
 
     // deskctrl://pair/... links (sent by the agent over the USB cable)
     private var linkSink: EventChannel.EventSink? = null
@@ -74,6 +75,24 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val messenger = flutterEngine.dartExecutor.binaryMessenger
+
+        MethodChannel(messenger, "deskctrl/remote_audio").setMethodCallHandler { call, result ->
+            try {
+                when (call.method) {
+                    "start" -> {
+                        remoteAudio.start(call.argument<Int>("rate") ?: 48000, call.argument<Int>("channels") ?: 2, call.argument<String>("latency") ?: "balanced")
+                        result.success(null)
+                    }
+                    "write" -> { remoteAudio.write(call.arguments as? ByteArray ?: ByteArray(0)); result.success(null) }
+                    "gain" -> {
+                        remoteAudio.gain((call.argument<Number>("volume")?.toFloat() ?: 1f), call.argument<Boolean>("muted") ?: false)
+                        result.success(null)
+                    }
+                    "stop" -> { remoteAudio.stop(); result.success(null) }
+                    else -> result.notImplemented()
+                }
+            } catch (e: Exception) { result.error("remote_audio", e.message, null) }
+        }
 
         MethodChannel(messenger, "deskctrl/phone_media").setMethodCallHandler { call, result ->
             try {
@@ -224,6 +243,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        remoteAudio.stop()
         mic.stop()
         conns.keys.toList().forEach { closeConn(it) }
         super.onDestroy()

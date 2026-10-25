@@ -1,8 +1,8 @@
 ---
 id: features
 summary: Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.
-updated: 2026-10-24
-sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, agent/src/focus.rs, agent/src/usb.rs]
+updated: 2026-10-25
+sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, agent/src/audio.rs, agent/src/focus.rs, agent/src/usb.rs]
 ---
 # Features (behaviour as shipped)
 
@@ -14,6 +14,14 @@ sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/li
 - Offline (nothing connected) the whole app still opens (keyboard/pad/mouse screens, settings, edit menu); a red strip "Offline - tap to choose a computer" opens the Computers sheet (`DeviceListScreen` is no longer used by Home).
 - Status text per computer: "Connected - USB + Wi-Fi", "(Wi-Fi down)", "Connection lost - reconnecting...". Reconnects last computers at start (the agent keeps its token across restarts, so a once-paired phone stays paired; the strip says "Looking for <name>..." while it waits, or that the agent has a new pairing code when the token is rejected); if the agent is not running yet, the phone keeps looking every 4 s (`Session._waitForComputer`, only for computers connected last time and not disconnected by hand) and connects the moment the agent starts - no scan or cable.
 - USB: needs adb on the computer + USB debugging on the phone (allow once). Plug in -> app opens, pairs, connects. Over USB the agent sends Wi-Fi/BT details so those links appear too.
+
+## Remote Audio Output
+- The speaker icon sits directly before/above the mode-switch control in both top-bar and notch-rail layouts. It is hidden when `remoteAudioEnabled` is off, uses the accent colour while streaming, and the error colour after a failure. The installed-phone landscape check confirmed its rail position above the green mode button.
+- Tapping opens **Audio Output**. The active computer is the source. Destinations are **This phone** plus every reported output of another currently connected ViL Agent computer. The selected output has a checked radio mark. Discovery failure on one computer does not hide the phone or other computers.
+- Start authenticates separate `/audio/v1` source and optional sink sockets with the already-paired token. Phone playback uses Android's current media output. Computer playback uses the exact selected sink/endpoint. The panel exposes Start/Stop, Mute, a 0-100% stream-volume slider, Refresh, source/status, and clear connecting/active/stopped/error messages.
+- Audio continues while the user changes Keyboard/Trackpad/Mouse/Voice/Mobile mode. The source is pinned when Start is pressed, so switching the input target does not redirect a running stream. Stopping, source loss, destination loss, or a selected output failure closes both sides and stops Android playback. ViL never silently selects another output.
+- USB is preferred and Wi-Fi is next. Bluetooth-only control still works, but audio reports unavailable because RFCOMM is deliberately not used for the 1.54 Mbit/s PCM stream. When a USB/Wi-Fi endpoint changes, the default behavior stops with a message. Optional auto-reconnect closes the old sockets and resumes the same source/destination after one second.
+- Linux captures desktop/media playback only. Source playback off moves current/new playback into a temporary monitored null sink, then restores the original default and routes on stop. Windows captures WASAPI loopback and requires **Also play on source** until safe endpoint muting exists. The stream is 48 kHz stereo PCM16, 20 ms/frame, bounded/drop-old queues, no disk recording; A/V sync is currently best effort.
 
 ## Keyboard screen
 Full layout; Shift legends highlight; Caps light follows the computer's real LED; optional F-row/Fn; joined Backspace/Del; arrow cluster (stacked up/down); key sound packs.
