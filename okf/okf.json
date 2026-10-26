@@ -24,8 +24,8 @@
     "agent/src/look.rs",
     "agent/src/media.rs"
    ],
-   "lines": 88,
-   "approx_tokens": 4930
+   "lines": 90,
+   "approx_tokens": 5007
   },
   {
    "file": "ARCHITECTURE.md",
@@ -51,8 +51,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-26",
    "sources": [],
-   "lines": 411,
-   "approx_tokens": 7741
+   "lines": 417,
+   "approx_tokens": 7853
   },
   {
    "file": "DECISIONS.md",
@@ -89,7 +89,7 @@
     "agent/src/usb.rs"
    ],
    "lines": 85,
-   "approx_tokens": 4543
+   "approx_tokens": 4562
   },
   {
    "file": "INDEX.md",
@@ -107,7 +107,7 @@
    "updated": "2026-10-26",
    "sources": [],
    "lines": 55,
-   "approx_tokens": 2204
+   "approx_tokens": 2216
   },
   {
    "file": "LATEST.md",
@@ -116,7 +116,7 @@
    "updated": "2026-10-26",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1993
+   "approx_tokens": 2080
   },
   {
    "file": "MOBILE.md",
@@ -140,7 +140,7 @@
     "mobile/lib/now_playing.dart"
    ],
    "lines": 68,
-   "approx_tokens": 2789
+   "approx_tokens": 2830
   },
   {
    "file": "OKF.md",
@@ -187,7 +187,7 @@
     "mobile/lib/now_playing.dart"
    ],
    "lines": 91,
-   "approx_tokens": 1976
+   "approx_tokens": 2007
   },
   {
    "file": "SETTINGS.md",
@@ -218,8 +218,8 @@
     "mobile/test/now_playing_test.dart",
     "agent/src/media.rs"
    ],
-   "lines": 91,
-   "approx_tokens": 3820
+   "lines": 93,
+   "approx_tokens": 4048
   }
  ]
 }

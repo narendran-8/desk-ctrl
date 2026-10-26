@@ -26,11 +26,9 @@ class NowPlaying {
   final String seekKey;
   final DateTime? receivedAt;
   bool get hasTimeline => positionMs >= 0 || durationMs > 0;
-  bool get seekable =>
-      canSeek &&
-      positionMs >= 0 &&
-      durationMs > 0 &&
-      RegExp(r'^[0-9a-f]{16}$').hasMatch(seekKey);
+  bool get canStep =>
+      canSeek && positionMs >= 0 && RegExp(r'^[0-9a-f]{16}$').hasMatch(seekKey);
+  bool get seekable => canStep && durationMs > 0;
   int positionAt(DateTime now) {
     final elapsed = playing && receivedAt != null
         ? now.difference(receivedAt!).inMilliseconds.clamp(0, 4000) * rate
@@ -279,9 +277,12 @@ class _MediaTimelineState extends State<MediaTimeline> {
 
   void _skip(int delta) {
     final m = widget.media;
-    if (!m.seekable) return;
+    if (!m.canStep) return;
     final base = _pending ?? m.positionAt(DateTime.now()).toDouble();
-    final target = (base.round() + delta).clamp(0, m.durationMs);
+    final target = (base.round() + delta).clamp(
+      0,
+      m.durationMs > 0 ? m.durationMs : 1 << 52,
+    );
     if (target == base.round()) return;
     setState(() => _pending = target.toDouble());
     widget.onSeek(m.seekKey, target);
@@ -337,7 +338,7 @@ class _MediaTimelineState extends State<MediaTimeline> {
             key: ValueKey('mediaBackward:${m.seekKey}'),
             name: 'mediaBackward',
             icon: Icons.fast_rewind,
-            onStep: m.seekable ? () => _skip(-10000) : null,
+            onStep: m.canStep ? () => _skip(-10000) : null,
           ),
           time(
             m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
@@ -427,14 +428,14 @@ class _MediaTimelineState extends State<MediaTimeline> {
             ),
           ),
           time(
-            m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
+            m.durationMs > 0 ? playbackTime(m.durationMs) : '--:--',
             'mediaDuration',
           ),
           _SeekRepeatButton(
             key: ValueKey('mediaForward:${m.seekKey}'),
             name: 'mediaForward',
             icon: Icons.fast_forward,
-            onStep: m.seekable ? () => _skip(10000) : null,
+            onStep: m.canStep ? () => _skip(10000) : null,
           ),
           button(
             'mediaNext',

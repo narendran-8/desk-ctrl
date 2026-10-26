@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Allow Firefox seek controls without duration metadata
+- files: agent/src/media.rs, mobile/lib/now_playing.dart, mobile/lib/connection.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, KNOWN, TESTING
+- tests: Flutter 268 passed; focused timeline 7 passed; Linux 81 passed; private MPRIS unknown-duration repeated seeks passed; actual phone UI 12 commands across four holds; analyzer 12 existing infos; APK built/installed; Linux release rebuilt
+- note: Read-only Firefox inspection confirmed CanSeek=true with missing length. Old APK sent zero commands; fixed APK seeks without duration and shows --:--. Reopen running ViL Agent to load output binary. Cleanup tap may have clicked box; disclosed and original target restored.
+
 ## 2026-10-26 · Fix repeated seek holds cancelling on finger drift
 - files: mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart
 - docs: INDEX, MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, ARCHITECTURE, PROTOCOL, AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, OPERATIONS
 - tests: Flutter 253 passed; Remote Audio 5 passed; analyzer 12 existing infos; Linux agent 77 passed; Windows Wine 32 passed; Linux/Windows releases and 71.4 MB APK built; APK installed; phone layout checked
 - note: PCM audio verified with fake agents; real Linux/Windows/Android audio hardware not exercised; Bluetooth-only audio unavailable; Windows source requires Also play on source
-
-## 2026-10-24 · Refine Mobile controls after UI inspection
-- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
-- docs: FEATURES, MOBILE, TESTING
-- tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built and installed; portrait/landscape default and swapped layouts checked
-- note: Landscape controls now end before the media strip; portrait punctuation row remained readable and unclipped
 

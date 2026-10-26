@@ -857,7 +857,7 @@ class Connection extends ChangeNotifier {
     if (activeId != deviceId ||
         s?.effective == null ||
         s!.nowPlaying.seekKey != trackKey ||
-        !s.nowPlaying.seekable) {
+        !s.nowPlaying.canStep) {
       return;
     }
     final frame = ByteData(17)..setUint8(0, 0x07);
@@ -869,7 +869,11 @@ class Connection extends ChangeNotifier {
     }
     frame.setUint64(
       9,
-      positionMs.clamp(0, s.nowPlaying.durationMs) * 1000,
+      positionMs.clamp(
+            0,
+            s.nowPlaying.durationMs > 0 ? s.nowPlaying.durationMs : 1 << 52,
+          ) *
+          1000,
       Endian.big,
     );
     s.send(frame.buffer.asUint8List());

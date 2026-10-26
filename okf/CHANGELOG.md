@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-24 · Refine Mobile controls after UI inspection
+- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built and installed; portrait/landscape default and swapped layouts checked
+- note: Landscape controls now end before the media strip; portrait punctuation row remained readable and unclipped
+
 ## 2026-10-24 · Add punctuation row to Mobile keyboard
 - files: README.md, mobile/lib/keyboard_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING

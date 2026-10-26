@@ -71,7 +71,7 @@ void main() {
           ),
         ),
       );
-      expect(find.text('LIVE'), findsOneWidget);
+      expect(find.text('--:--'), findsOneWidget);
       expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
     },
   );
@@ -177,6 +177,49 @@ void main() {
         await tester.pump(const Duration(milliseconds: 300));
         expect(seeks.length, before + 3);
       }
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+  testWidgets(
+    'Firefox unknown duration allows consecutive seek holds but not timeline drag',
+    (tester) async {
+      final seeks = <int>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 600,
+              child: MediaTimeline(
+                media: const NowPlaying(
+                  title: 'Firefox video',
+                  positionMs: 20000,
+                  canSeek: true,
+                  seekKey: '1234567890abcdef',
+                ),
+                onSeek: (_, p) => seeks.add(p),
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('--:--'), findsOneWidget);
+      expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
+      for (final key in [
+        'mediaForward',
+        'mediaForward',
+        'mediaBackward',
+        'mediaBackward',
+      ]) {
+        final before = seeks.length;
+        final hold = await tester.startGesture(
+          tester.getCenter(find.byKey(Key(key))),
+        );
+        await tester.pump(const Duration(milliseconds: 800));
+        await hold.up();
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(seeks.length, before + 2);
+      }
+      expect(seeks, [30000, 40000, 50000, 60000, 50000, 40000, 30000, 20000]);
       await tester.pumpWidget(const SizedBox());
     },
   );

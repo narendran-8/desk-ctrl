@@ -8,7 +8,7 @@ sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobil
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 267 tests pass; agent has 81 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
+State: phone 268 tests pass; agent has 81 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -88,3 +88,5 @@ Media title placement (2026-10-26): moved from the volume strip to a 24dp row be
 Hold-to-seek (2026-10-26): widget test verifies accumulated forward/backward targets, no extra seek on release, pointer cancellation, track replacement and disabled-seek cancellation. Five focused timeline tests pass.
 
 Repeated-hold regression: consecutive holds in both directions, same-track feedback rebuilds, 16dp finger drift, accumulated targets and no post-release sends. This test fails on the previous implementation (only one seek after drift), and passes with a single gesture owner and 18dp cancellation tolerance.
+
+Unknown-duration investigation (2026-10-26): actual phone UI showed LIVE/disabled seek arrows. Read-only session-bus inspection found Firefox CanSeek=true with no mpris:length. Old APK + recording test computer sent zero commands for two holds. Fixed APK on the same phone sent 12 absolute seek commands: 20->30->40->50, then 60->70->80 seconds on consecutive forward holds; backward holds returned 80->70->60->50, then 40->30->20. No HID frames were received by the test computer. Test entry and USB reverse tunnel removed; original Computer 2 restored. During cleanup, one tap after the forget sheet closed may have clicked the real box target; disclosed to user. Never chain cleanup taps across dialog closure. Seven focused timeline tests and full 268 mobile/81 Linux tests passed. Updated Linux binary copied to output/desk_ctrl_agent; running agent must be reopened to load the changed capability checks.

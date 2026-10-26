@@ -177,7 +177,6 @@ fn now_playing(bus: &zbus::blocking::Connection) -> Option<serde_json::Value> {
             .filter(|p| *p >= 0);
         let can_seek = player.get_property::<bool>("CanSeek").unwrap_or(false)
             && !track.is_empty()
-            && length > 0
             && position.is_some();
         let rate = player.get_property::<f64>("Rate").unwrap_or(1.0);
         let value = serde_json::json!({
@@ -216,9 +215,12 @@ fn set_position(
         .as_u64()
         .unwrap_or(0)
         .saturating_mul(1000);
-    let position = position_us
-        .min(length_us.saturating_sub(1))
-        .min(i64::MAX as u64) as i64;
+    let position = if length_us > 0 {
+        position_us.min(length_us.saturating_sub(1))
+    } else {
+        position_us
+    }
+    .min(i64::MAX as u64) as i64;
     let proxy = zbus::blocking::Proxy::new(
         bus,
         player,
@@ -332,6 +334,7 @@ mod tests {
     #[cfg(unix)]
     struct MockPlayer {
         position: Arc<std::sync::atomic::AtomicI64>,
+        length: Arc<std::sync::atomic::AtomicI64>,
         changed: Arc<AtomicBool>,
         seekable: Arc<AtomicBool>,
     }
@@ -362,7 +365,9 @@ mod tests {
                 ),
                 (
                     "mpris:length".into(),
-                    Value::from(120_000_000i64).try_to_owned().unwrap(),
+                    Value::from(self.length.load(Ordering::Relaxed))
+                        .try_to_owned()
+                        .unwrap(),
                 ),
                 (
                     "mpris:trackid".into(),
@@ -425,6 +430,7 @@ mod tests {
             .read_line(&mut address)
             .unwrap();
         let position = Arc::new(std::sync::atomic::AtomicI64::new(20_000_000));
+        let length = Arc::new(std::sync::atomic::AtomicI64::new(120_000_000));
         let changed = Arc::new(AtomicBool::new(false));
         let seekable = Arc::new(AtomicBool::new(true));
         let service = zbus::blocking::connection::Builder::address(address.trim())
@@ -435,6 +441,7 @@ mod tests {
                 "/org/mpris/MediaPlayer2",
                 MockPlayer {
                     position: position.clone(),
+                    length: length.clone(),
                     changed: changed.clone(),
                     seekable: seekable.clone(),
                 },
@@ -478,8 +485,18 @@ mod tests {
         let new_info = now_playing(&client).unwrap();
         let new_key = u64::from_str_radix(new_info["seekKey"].as_str().unwrap(), 16).unwrap();
         assert_ne!(new_key, key);
+        // Firefox can seek without providing mpris:length. Do not clamp all targets to zero.
+        length.store(0, Ordering::Relaxed);
+        let unknown = now_playing(&client).unwrap();
+        assert_eq!(unknown["durationMs"], 0);
+        assert_eq!(unknown["canSeek"], true);
+        let unknown_key = u64::from_str_radix(unknown["seekKey"].as_str().unwrap(), 16).unwrap();
+        for target in [30_000_000, 40_000_000, 25_000_000, 15_000_000] {
+            assert!(set_position(&client, unknown_key, target).unwrap());
+            assert_eq!(position.load(Ordering::Relaxed), target as i64);
+        }
         seekable.store(false, Ordering::Relaxed);
-        assert!(!set_position(&client, new_key, 5_000_000).unwrap());
+        assert!(!set_position(&client, unknown_key, 5_000_000).unwrap());
         drop(service);
         assert!(now_playing(&client).is_none());
     }
