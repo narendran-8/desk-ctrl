@@ -51,8 +51,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-26",
    "sources": [],
-   "lines": 429,
-   "approx_tokens": 8318
+   "lines": 435,
+   "approx_tokens": 8511
   },
   {
    "file": "DECISIONS.md",
@@ -88,8 +88,8 @@
     "agent/src/focus.rs",
     "agent/src/usb.rs"
    ],
-   "lines": 89,
-   "approx_tokens": 4752
+   "lines": 91,
+   "approx_tokens": 4828
   },
   {
    "file": "INDEX.md",
@@ -106,8 +106,8 @@
    "summary": "Limits, unverified items, open problems and ideas. Update when something is fixed or discovered.",
    "updated": "2026-10-26",
    "sources": [],
-   "lines": 59,
-   "approx_tokens": 2416
+   "lines": 61,
+   "approx_tokens": 2540
   },
   {
    "file": "LATEST.md",
@@ -116,7 +116,7 @@
    "updated": "2026-10-26",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 2027
+   "approx_tokens": 2035
   },
   {
    "file": "MOBILE.md",
@@ -139,8 +139,8 @@
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt",
     "mobile/lib/now_playing.dart"
    ],
-   "lines": 72,
-   "approx_tokens": 3220
+   "lines": 74,
+   "approx_tokens": 3424
   },
   {
    "file": "OKF.md",
@@ -218,8 +218,8 @@
     "mobile/test/now_playing_test.dart",
     "agent/src/media.rs"
    ],
-   "lines": 101,
-   "approx_tokens": 4707
+   "lines": 105,
+   "approx_tokens": 4978
   }
  ]
 }

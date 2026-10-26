@@ -56,6 +56,15 @@ class Session extends ChangeNotifier {
 
   Device device;
   NowPlaying nowPlaying = const NowPlaying();
+  void noteMediaSeek(int positionMs) {
+    nowPlaying = nowPlaying.afterSeek(
+      positionMs.clamp(
+        0,
+        nowPlaying.durationMs > 0 ? nowPlaying.durationMs : 1 << 52,
+      ),
+    );
+    notifyListeners();
+  }
 
   /// What could not be set up from the information the computer sent over the cable (for
   /// example: its Bluetooth is not paired with this phone). Shown with the links.
@@ -877,6 +886,7 @@ class Connection extends ChangeNotifier {
       Endian.big,
     );
     s.send(frame.buffer.asUint8List());
+    s.noteMediaSeek(positionMs);
   }
 
   void _send(List<int> payload) => active?.send(Uint8List.fromList(payload));

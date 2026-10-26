@@ -19,6 +19,7 @@ class NowPlaying {
     this.canSeek = false,
     this.seekKey = '',
     this.receivedAt,
+    this.positionEstimated = false,
   });
   final String title, app, player, trackId, mediaUrl;
   final bool playing;
@@ -28,6 +29,24 @@ class NowPlaying {
   final bool canSeek;
   final String seekKey;
   final DateTime? receivedAt;
+  final bool positionEstimated;
+
+  NowPlaying afterSeek(int target, {DateTime? now}) => NowPlaying(
+    title: title,
+    app: app,
+    player: player,
+    trackId: trackId,
+    mediaUrl: mediaUrl,
+    playing: playing,
+    icon: icon,
+    positionMs: target,
+    durationMs: durationMs,
+    rate: rate,
+    canSeek: canSeek,
+    seekKey: seekKey,
+    receivedAt: now ?? DateTime.now(),
+    positionEstimated: true,
+  );
   String get identity => player.isNotEmpty && trackId.isNotEmpty
       ? '$player\u0000$trackId\u0000$title\u0000$mediaUrl'
       : '$app\u0000$title\u0000$seekKey';
@@ -53,6 +72,7 @@ class NowPlaying {
   factory NowPlaying.fromJson(
     Map<String, dynamic> json, {
     NowPlaying? previous,
+    DateTime? now,
   }) {
     Uint8List? icon;
     try {
@@ -80,9 +100,15 @@ class NowPlaying {
           : 1,
       canSeek: json['canSeek'] == true,
       seekKey: json['seekKey'] is String ? json['seekKey'] as String : '',
-      receivedAt: DateTime.now(),
+      receivedAt: now ?? DateTime.now(),
     );
     if (previous == null || !current.sameTrack(previous)) return current;
+    final expected = previous.positionAt(current.receivedAt!);
+    final raw = current.positionMs;
+    // A seek preview must not expire into an unchanged pre-seek sample or a
+    // browser's buffering zero. Once genuine feedback resumes, use it again.
+    final confirmed = raw >= 0 && (raw - expected).abs() < 3000;
+    final estimating = previous.positionEstimated && !confirmed;
     // Browsers can omit timing fields while buffering after SetPosition.
     // Never borrow timing from a different player/video or from an empty report.
     return NowPlaying(
@@ -93,7 +119,9 @@ class NowPlaying {
       mediaUrl: current.mediaUrl,
       playing: current.playing,
       icon: current.icon,
-      positionMs: current.positionMs >= 0
+      positionMs: estimating
+          ? expected
+          : current.positionMs >= 0
           ? current.positionMs
           : previous.positionMs >= 0
           ? previous.positionAt(current.receivedAt!)
@@ -105,6 +133,7 @@ class NowPlaying {
       canSeek: current.canSeek,
       seekKey: current.seekKey,
       receivedAt: current.receivedAt,
+      positionEstimated: estimating,
     );
   }
 }
@@ -384,7 +413,9 @@ class _MediaTimelineState extends State<MediaTimeline> {
             onStep: m.canStep ? () => _skip(-10000) : null,
           ),
           time(
-            m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
+            m.positionMs >= 0
+                ? '${m.positionEstimated ? '~' : ''}${playbackTime(position.round())}'
+                : '--:--',
             'mediaElapsed',
           ),
           Expanded(

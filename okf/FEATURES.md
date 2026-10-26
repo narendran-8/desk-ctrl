@@ -86,3 +86,5 @@ The Trackpad/combined Mobile screen displays one row: previous track, rewind, el
 Remote Audio reconnects unexpected source/destination socket drops when Reconnect automatically is enabled, using the same source and selected speaker. Healthy audio sockets stay on their current route if an additional USB/Wi-Fi link appears. Recovery is visible and cancellable with Stop; it never redirects audio to the newly active input computer. The preference is available directly in Audio Output as well as Settings.
 
 Timeline continuity: seeking/buffering can temporarily remove browser timing metadata. ViL retains the last known total for that same video and keeps the seek preview while awaiting confirmation. New videos/players clear retained timing; durations are never copied between computers. A video with no known duration still shows --:--.
+
+After seeking, stale browser position-zero reports no longer reset the timeline when the preview ends. The session keeps a playback-rate/pause-aware estimated clock from the selected target until consistent source timing resumes; `~` marks estimated elapsed time. Changing media clears that estimate.

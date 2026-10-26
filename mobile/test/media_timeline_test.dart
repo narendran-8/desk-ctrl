@@ -134,6 +134,83 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
+  test('seek clock advances beyond five seconds through stale zero and old-position reports', () {
+    final at = DateTime(2026);
+    final json = <String, dynamic>{
+      'title': 'Video',
+      'app': 'Firefox',
+      'player': 'org.mpris.firefox',
+      'trackId': '/firefox',
+      'mediaUrl': 'video1',
+      'positionMs': 20000,
+      'durationMs': 360000,
+      'playing': true,
+      'canSeek': true,
+      'seekKey': '1234567890abcdef',
+    };
+    var media = NowPlaying.fromJson(json, now: at).afterSeek(150000, now: at);
+    for (var second = 1; second <= 15; second++) {
+      media = NowPlaying.fromJson(
+        {...json, 'positionMs': second.isEven ? second * 1000 : 0},
+        previous: media,
+        now: at.add(Duration(seconds: second)),
+      );
+      expect(media.positionMs, 150000 + second * 1000);
+      expect(media.positionEstimated, isTrue);
+    }
+    media = NowPlaying.fromJson(
+      {...json, 'positionMs': 166000},
+      previous: media,
+      now: at.add(const Duration(seconds: 16)),
+    );
+    expect(media.positionMs, 166000);
+    expect(media.positionEstimated, isFalse);
+    // A later valid seek to zero is authoritative once normal feedback resumed.
+    media = NowPlaying.fromJson(
+      {...json, 'positionMs': 0},
+      previous: media,
+      now: at.add(const Duration(seconds: 17)),
+    );
+    expect(media.positionMs, 0);
+  });
+  test('unconfirmed seek respects pause, repeat seeks and video changes', () {
+    final at = DateTime(2026);
+    final json = <String, dynamic>{
+      'title': 'Video',
+      'app': 'Firefox',
+      'player': 'org.mpris.firefox',
+      'trackId': '/firefox',
+      'mediaUrl': 'video1',
+      'positionMs': 20000,
+      'durationMs': 360000,
+      'playing': false,
+      'canSeek': true,
+      'seekKey': '1234567890abcdef',
+    };
+    var media = NowPlaying.fromJson(json, now: at).afterSeek(150000, now: at);
+    for (var second = 1; second <= 8; second++) {
+      media = NowPlaying.fromJson(
+        {...json, 'positionMs': 20000},
+        previous: media,
+        now: at.add(Duration(seconds: second)),
+      );
+    }
+    expect(media.positionMs, 150000);
+    media = media.afterSeek(240000, now: at.add(const Duration(seconds: 8)));
+    media = NowPlaying.fromJson(
+      {...json, 'positionMs': 0},
+      previous: media,
+      now: at.add(const Duration(seconds: 9)),
+    );
+    expect(media.positionMs, 240000);
+    final next = NowPlaying.fromJson(
+      {...json, 'mediaUrl': 'video2', 'positionMs': 0},
+      previous: media,
+      now: at.add(const Duration(seconds: 10)),
+    );
+    expect(next.positionMs, 0);
+    expect(next.positionEstimated, isFalse);
+  });
   testWidgets(
     'red playhead/played track, grey remainder and live seek disabled',
     (tester) async {

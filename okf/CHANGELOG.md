@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-26 · Show track title and app icon below trackpad volume
+- files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/media.rs, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
+- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
+- tests: Flutter 259 passed; focused 6 passed; Linux agent 80 passed; private MPRIS and PNG icon checks passed; analyzer 12 existing infos; Linux/Windows releases and 71.6MB APK built; APK installed
+- note: Metadata currently Linux MPRIS only; PNG app icons with music-note fallback; Windows and Android local-media titles unavailable
+
 ## 2026-10-26 · Reduce Remote Audio burst stutter and playback latency
 - files: agent/src/audio.rs, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PcmPump.kt, tools/audio/PcmPumpTest.kt, tools/audio/test_pcm_pump.py, README.md
 - docs: AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, PROTOCOL, ARCHITECTURE

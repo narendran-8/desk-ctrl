@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Prevent playback clock resetting after seek preview timeout
+- files: mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, TESTING, KNOWN
+- tests: Flutter 274 passed with one soak skipped; focused media 19 passed; stale zero/advancing old samples/pause/confirmation regressions passed; analyzer 12 existing infos; APK built and installed; actual phone checked at 7 and 13 seconds
+- note: Old APK reset to 0:00 at 7 seconds after 2:30 seek. Fixed APK showed ~2:37 while feedback stale, then confirmed 2:43 at 13 seconds. Session clock survives widget preview expiry; estimate explicitly marked until matching feedback. No desktop upgrade needed. Test source/tunnel removed; original Computer 2 restored.
+
 ## 2026-10-26 · Keep playback timeline stable across seek metadata gaps
 - files: agent/src/media.rs, mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, TESTING, KNOWN
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, MOBILE, FEATURES, TESTING
 - tests: Flutter 261 passed; focused 8 passed; short-title centering and long-title scrolling checked at full/compact sizes; compact hint overlap assertion passed; release APK built and installed
 - note: Icon and short title center as one group; long titles scroll within playback strip width; metadata protocol unchanged
-
-## 2026-10-26 · Show track title and app icon below trackpad volume
-- files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/media.rs, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
-- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
-- tests: Flutter 259 passed; focused 6 passed; Linux agent 80 passed; private MPRIS and PNG icon checks passed; analyzer 12 existing infos; Linux/Windows releases and 71.6MB APK built; APK installed
-- note: Metadata currently Linux MPRIS only; PNG app icons with music-note fallback; Windows and Android local-media titles unavailable
 
