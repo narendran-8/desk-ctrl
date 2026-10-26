@@ -195,8 +195,13 @@ class FakeAgent {
   }
 
   void sendAudio(List<int> pcm) {
+    if (audioSource?.readyState != WebSocket.open) return;
     final header = <int>[1, 1, 2, 1, 0x80, 0xBB, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
-    audioSource?.add([...header, ...pcm]);
+    try {
+      audioSource?.add([...header, ...pcm]);
+    } on StateError {
+      // A capture frame can race the peer's close handshake.
+    }
   }
 
   Future<void> disconnectAudioOutput() async => audioSink?.close();

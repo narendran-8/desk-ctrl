@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Recover Remote Audio socket drops without manual restart
+- files: mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/settings_sheet.dart, mobile/test/remote_audio_test.dart, mobile/test/fake_agent.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, SETTINGS, PROTOCOL, TESTING, KNOWN
+- tests: Flutter 270 passed with one opt-in soak skipped; Remote Audio 7 passed; separate 3:08 PCM soak with three forced drops and >6000 frames passed; analyzer 12 existing infos; APK built/installed; actual phone UI inspected
+- note: Healthy routes stay pinned; standard Ping liveness; original-source/output recovery with capped backoff and generation guards; Stop cancels retries. Enabled auto reconnect on current Computer 2 -> box route. Real-speaker uninterrupted playback not measured; no desktop upgrade required.
+
 ## 2026-10-26 · Allow Firefox seek controls without duration metadata
 - files: agent/src/media.rs, mobile/lib/now_playing.dart, mobile/lib/connection.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, KNOWN, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, PROTOCOL, ARCHITECTURE
 - tests: Flutter 253 passed; Linux agent 77 passed; native PCM prebuffer/partial-write/continuity/error tests passed; Android and Linux/Windows release builds passed
 - note: Pulse server unavailable in shell; live listening and exact AV latency not measured; restart updated desktop agent for capture timing fix
-
-## 2026-10-25 · Add Remote Audio Output
-- files: README.md, agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, mobile/lib/settings.dart, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, output/setup_laptop.sh, output/README_windows.txt, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
-- docs: INDEX, ARCHITECTURE, PROTOCOL, AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, OPERATIONS
-- tests: Flutter 253 passed; Remote Audio 5 passed; analyzer 12 existing infos; Linux agent 77 passed; Windows Wine 32 passed; Linux/Windows releases and 71.4 MB APK built; APK installed; phone layout checked
-- note: PCM audio verified with fake agents; real Linux/Windows/Android audio hardware not exercised; Bluetooth-only audio unavailable; Windows source requires Also play on source
 

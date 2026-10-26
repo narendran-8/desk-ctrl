@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-25 · Add Remote Audio Output
+- files: README.md, agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, mobile/lib/settings.dart, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, output/setup_laptop.sh, output/README_windows.txt, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
+- docs: INDEX, ARCHITECTURE, PROTOCOL, AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, OPERATIONS
+- tests: Flutter 253 passed; Remote Audio 5 passed; analyzer 12 existing infos; Linux agent 77 passed; Windows Wine 32 passed; Linux/Windows releases and 71.4 MB APK built; APK installed; phone layout checked
+- note: PCM audio verified with fake agents; real Linux/Windows/Android audio hardware not exercised; Bluetooth-only audio unavailable; Windows source requires Also play on source
+
 ## 2026-10-24 · Refine Mobile controls after UI inspection
 - files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: FEATURES, MOBILE, TESTING

@@ -644,8 +644,8 @@ class SettingsSheet extends StatelessWidget {
                         },
                       ),
                       _switch(
-                        'Reconnect after a connection change',
-                        'Reconnect the same source and destination when USB, Wi-Fi or Bluetooth availability changes',
+                        'Reconnect audio automatically',
+                        'Resume the same source and output after a temporary stream or connection drop',
                         s.remoteAudioAutoReconnect,
                         (v) => s.remoteAudioAutoReconnect = v,
                         enabled: s.remoteAudioEnabled,

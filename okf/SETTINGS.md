@@ -33,7 +33,7 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | Key | Default | Meaning |
 |---|---|---|
 | `remoteAudioEnabled` | true | shows the speaker button and permits Remote Audio discovery/streaming; turning it off stops an active stream |
-| `remoteAudioAutoReconnect` | false | after a USB/Wi-Fi endpoint change, reconnect the same source and selected destination after one second; off stops with a clear message |
+| `remoteAudioAutoReconnect` | false | after a stream/socket or USB/Wi-Fi endpoint loss, retry the same source and selected output after 1/2/4/8 seconds (capped); Stop cancels retries, off stops with a clear message. Also exposed in Audio Output panel |
 | `remoteAudioPlaySource` | false | also leave playback audible at the source; Linux off uses a temporary null sink, while Windows currently requires this to be true |
 | `remoteAudioLatency` | `balanced` | `low` = 40 ms prebuffer / 4 queued frames, `balanced` = 60 ms prebuffer / 6 queued frames; invalid saved values reset to balanced |
 | `remoteAudioLastDestination` | `phone` | `phone` or `<deviceId>|<outputId>`; used only if discovery confirms it still exists, otherwise selection returns to the phone |
