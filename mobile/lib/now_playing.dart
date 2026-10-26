@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import 'split_media_seek_bar.dart';
+
 class NowPlaying {
   const NowPlaying({
     this.title = '',
@@ -419,86 +421,61 @@ class _MediaTimelineState extends State<MediaTimeline> {
             'mediaElapsed',
           ),
           Expanded(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  height: 40,
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3,
-                      activeTrackColor: Colors.red,
-                      inactiveTrackColor: Colors.grey.shade700,
-                      thumbColor: Colors.red,
-                      disabledActiveTrackColor: Colors.red,
-                      disabledInactiveTrackColor: Colors.grey.shade700,
-                      disabledThumbColor: Colors.red,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 5,
-                      ),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 10,
-                      ),
-                    ),
-                    child: Slider(
-                      key: const Key('mediaSeekBar'),
-                      min: 0,
-                      max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
-                      value: m.durationMs > 0 ? position : 0,
-                      label: playbackTime(position.round()),
-                      onChangeStart: m.seekable
-                          ? (value) {
-                              _dragKey = m.seekKey;
-                              setState(() => _drag = value);
-                            }
-                          : null,
-                      onChanged: m.seekable
-                          ? (value) => setState(() => _drag = value)
-                          : null,
-                      onChangeEnd: m.seekable
-                          ? (value) {
-                              final key = _dragKey;
-                              _dragKey = null;
-                              if (key != m.seekKey) {
-                                setState(() => _drag = null);
-                                return;
-                              }
-                              setState(() {
-                                _drag = null;
-                                _pending = value;
-                              });
-                              widget.onSeek(key!, value.round());
-                              _pendingTimer?.cancel();
-                              _pendingTimer = Timer(
-                                const Duration(seconds: 5),
-                                () {
-                                  if (mounted) setState(() => _pending = null);
-                                },
-                              );
-                            }
-                          : null,
-                    ),
+            child: SplitMediaSeekBar(
+              key: const Key('mediaSeekBar'),
+              max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
+              value: m.durationMs > 0 ? position : 0,
+              onChangeStart: m.seekable
+                  ? (value) {
+                      _dragKey = m.seekKey;
+                      setState(() => _drag = value);
+                    }
+                  : null,
+              onChanged: m.seekable
+                  ? (value) => setState(() => _drag = value)
+                  : null,
+              onChangeEnd: m.seekable
+                  ? (value) {
+                      final key = _dragKey;
+                      _dragKey = null;
+                      if (key != m.seekKey) {
+                        setState(() => _drag = null);
+                        return;
+                      }
+                      setState(() {
+                        _drag = null;
+                        _pending = value;
+                      });
+                      widget.onSeek(key!, value.round());
+                      _pendingTimer?.cancel();
+                      _pendingTimer = Timer(const Duration(seconds: 5), () {
+                        if (mounted) setState(() => _pending = null);
+                      });
+                    }
+                  : null,
+
+              onCancel: () => setState(() {
+                _drag = null;
+                _dragKey = null;
+              }),
+              center: SizedBox(
+                width: 30,
+                height: 30,
+                child: Material(
+                  color: const Color(0xFF151A20),
+                  shape: const CircleBorder(),
+                  child: IconButton(
+                    key: const Key('mediaPlayPause'),
+                    padding: EdgeInsets.zero,
+                    iconSize: 22,
+                    color: Colors.white70,
+                    onPressed: widget.onControl == null
+                        ? null
+                        : () => widget.onControl!(0x80CD),
+                    icon: Icon(m.playing ? Icons.pause : Icons.play_arrow),
                   ),
                 ),
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: Material(
-                    color: const Color(0xFF151A20),
-                    shape: const CircleBorder(),
-                    child: IconButton(
-                      key: const Key('mediaPlayPause'),
-                      padding: EdgeInsets.zero,
-                      iconSize: 22,
-                      color: Colors.white70,
-                      onPressed: widget.onControl == null
-                          ? null
-                          : () => widget.onControl!(0x80CD),
-                      icon: Icon(m.playing ? Icons.pause : Icons.play_arrow),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           time(

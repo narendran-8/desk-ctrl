@@ -51,8 +51,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-26",
    "sources": [],
-   "lines": 435,
-   "approx_tokens": 8511
+   "lines": 441,
+   "approx_tokens": 8653
   },
   {
    "file": "DECISIONS.md",
@@ -88,8 +88,8 @@
     "agent/src/focus.rs",
     "agent/src/usb.rs"
    ],
-   "lines": 91,
-   "approx_tokens": 4828
+   "lines": 93,
+   "approx_tokens": 4896
   },
   {
    "file": "INDEX.md",
@@ -116,7 +116,7 @@
    "updated": "2026-10-26",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 2035
+   "approx_tokens": 2069
   },
   {
    "file": "MOBILE.md",
@@ -137,10 +137,11 @@
     "mobile/lib/motion_cursor.dart",
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt",
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt",
-    "mobile/lib/now_playing.dart"
+    "mobile/lib/now_playing.dart",
+    "mobile/lib/split_media_seek_bar.dart"
    ],
-   "lines": 74,
-   "approx_tokens": 3424
+   "lines": 76,
+   "approx_tokens": 3565
   },
   {
    "file": "OKF.md",
@@ -218,8 +219,8 @@
     "mobile/test/now_playing_test.dart",
     "agent/src/media.rs"
    ],
-   "lines": 105,
-   "approx_tokens": 4978
+   "lines": 109,
+   "approx_tokens": 5187
   }
  ]
 }

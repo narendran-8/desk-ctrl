@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-26 · Move now-playing title beneath playback controls
+- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, TESTING
+- tests: Flutter 261 passed; focused 8 passed; short-title centering and long-title scrolling checked at full/compact sizes; compact hint overlap assertion passed; release APK built and installed
+- note: Icon and short title center as one group; long titles scroll within playback strip width; metadata protocol unchanged
+
 ## 2026-10-26 · Show track title and app icon below trackpad volume
 - files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/media.rs, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
 - docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:deskctrl/connection.dart';
 import 'package:deskctrl/now_playing.dart';
+import 'package:deskctrl/split_media_seek_bar.dart';
 import 'package:deskctrl/pad_screen.dart';
 import 'package:deskctrl/settings.dart';
 import 'package:flutter/material.dart';
@@ -111,12 +112,16 @@ void main() {
       expect(sent.length, 1);
       expect(find.text('6:00'), findsOneWidget);
       expect(
-        tester.widget<Slider>(find.byKey(const Key('mediaSeekBar'))).max,
+        tester
+            .widget<SplitMediaSeekBar>(find.byKey(const Key('mediaSeekBar')))
+            .max,
         360000,
       );
       await tester.pump(const Duration(seconds: 3));
       expect(
-        tester.widget<Slider>(find.byKey(const Key('mediaSeekBar'))).value,
+        tester
+            .widget<SplitMediaSeekBar>(find.byKey(const Key('mediaSeekBar')))
+            .value,
         closeTo(sent.single.toDouble(), 1),
       );
       media = NowPlaying.fromJson({
@@ -128,7 +133,9 @@ void main() {
       await tester.pumpWidget(view());
       expect(find.text('6:00'), findsOneWidget);
       expect(
-        tester.widget<Slider>(find.byKey(const Key('mediaSeekBar'))).value,
+        tester
+            .widget<SplitMediaSeekBar>(find.byKey(const Key('mediaSeekBar')))
+            .value,
         closeTo(sent.single.toDouble(), 1),
       );
       await tester.pumpWidget(const SizedBox());
@@ -212,6 +219,70 @@ void main() {
     expect(next.positionEstimated, isFalse);
   });
   testWidgets(
+    'split playhead stays outside play button and drags across both halves',
+    (tester) async {
+      final seeks = <double>[];
+      var plays = 0;
+      Widget view(double value, double width) => MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: width,
+              child: SplitMediaSeekBar(
+                key: const Key('splitTest'),
+                value: value,
+                max: 100,
+                onChanged: (_) {},
+                onChangeEnd: seeks.add,
+                center: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: IconButton(
+                    key: const Key('splitPlay'),
+                    padding: EdgeInsets.zero,
+                    onPressed: () => plays++,
+                    icon: const Icon(Icons.play_arrow),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      for (final width in [68.0, 320.0]) {
+        for (final value in [0.0, 49.0, 50.0, 51.0, 100.0]) {
+          await tester.pumpWidget(view(value, width));
+          final paint = tester.widget<CustomPaint>(
+            find.byKey(const Key('mediaSeekPaint')),
+          );
+          final bounds = tester.getRect(
+            find.byKey(const Key('mediaSeekPaint')),
+          );
+          final thumb =
+              (paint.painter! as SplitSeekPainter).thumbCenter(bounds.size) +
+              bounds.topLeft;
+          final button = tester.getRect(find.byKey(const Key('splitPlay')));
+          expect(
+            thumb.dx + 5 <= button.left || thumb.dx - 5 >= button.right,
+            isTrue,
+          );
+        }
+      }
+      await tester.tap(find.byKey(const Key('splitPlay')));
+      expect(plays, 1);
+      expect(seeks, isEmpty, reason: 'play must never seek');
+      final rect = tester.getRect(find.byKey(const Key('splitTest')));
+      final drag = await tester.startGesture(
+        Offset(rect.left + 8, rect.center.dy),
+      );
+      await drag.moveTo(Offset(rect.right - 8, rect.center.dy));
+      await drag.up();
+      expect(seeks.single, closeTo(100, 1));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+  testWidgets(
     'red playhead/played track, grey remainder and live seek disabled',
     (tester) async {
       await tester.pumpWidget(
@@ -229,11 +300,14 @@ void main() {
       );
       expect(find.text('0:15'), findsOneWidget);
       expect(find.text('1:30'), findsOneWidget);
-      final theme = tester.widget<SliderTheme>(find.byType(SliderTheme));
-      expect(theme.data.activeTrackColor, Colors.red);
-      expect(theme.data.thumbColor, Colors.red);
-      expect(theme.data.inactiveTrackColor, Colors.grey.shade700);
-      expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
+      expect(SplitSeekPainter.played, Colors.red);
+      expect(SplitSeekPainter.remaining, Colors.grey.shade700);
+      expect(
+        tester
+            .widget<SplitMediaSeekBar>(find.byType(SplitMediaSeekBar))
+            .onChanged,
+        isNull,
+      );
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -248,7 +322,12 @@ void main() {
         ),
       );
       expect(find.text('--:--'), findsOneWidget);
-      expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
+      expect(
+        tester
+            .widget<SplitMediaSeekBar>(find.byType(SplitMediaSeekBar))
+            .onChanged,
+        isNull,
+      );
     },
   );
   testWidgets(
@@ -379,7 +458,12 @@ void main() {
         ),
       );
       expect(find.text('--:--'), findsOneWidget);
-      expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
+      expect(
+        tester
+            .widget<SplitMediaSeekBar>(find.byType(SplitMediaSeekBar))
+            .onChanged,
+        isNull,
+      );
       for (final key in [
         'mediaForward',
         'mediaForward',

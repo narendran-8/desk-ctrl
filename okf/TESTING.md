@@ -8,7 +8,7 @@ sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobil
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 274 tests pass; agent has 82 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
+State: phone 275 tests pass; agent has 82 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -102,3 +102,7 @@ Actual phone UI verification: recording test source initially reports a 6:00 vid
 Seek-clock regression: deterministic tests inject alternating stale zeros and advancing pre-seek positions for 15 seconds after a 2:30 seek. Displayed clock must advance to 2:45, then synchronize to a matching 2:46 report. Also checks paused/repeated seeks, new-video reset, and genuine zero after confirmation. Old five-second-only preview reproduced on the phone using a source that reports zero for twelve seconds; a controlled screenshot at seven seconds showed 0:00.
 
 Phone before/after: recording source reports zero for twelve seconds after a 2:30 seek while its simulated playback continues. Old APK screenshot at seven seconds showed 0:00. Fixed APK at seven seconds showed ~2:37, and at thirteen seconds showed confirmed 2:43 with the estimate marker removed. Total duration remained 6:00. No HID frames were recorded; ZZClockTest and USB test reverse were removed, original Computer 2 restored. Full 274 mobile tests passed with one opt-in soak skipped, focused media 19 passed, analyzer retains 12 existing infos. APK release rebuilt and installed; desktop unchanged.
+
+Split-timeline tests: playhead clearance is checked at 0%, 49%, 50%, 51% and 100% in 68dp and 320dp seek widths, ensuring its 5dp radius never overlaps the 30dp play button. A real drag crosses both halves; center tap invokes play without sending a seek. Existing timing, hold-repeat, pointer-isolation and track-change tests now exercise SplitMediaSeekBar.
+
+Split timeline verification results: 275 full-suite tests passed with one opt-in soak skipped; focused media 20 passed; analyzer 12 existing style infos. Release APK installed. Phone recording-source UI checked at exactly 3:00/6:00 (dot visible left of play), a left-to-right drag selected 4:21 on the right half, and a center tap recorded only the play/pause HID pair with no extra seek. Test pairing/tunnel removed, original Computer 2 restored. No desktop/protocol changes.

@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Split playback progress around the play-pause button
+- files: mobile/lib/split_media_seek_bar.dart, mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, TESTING
+- tests: Flutter 275 passed with one soak skipped; focused media 20 passed; playhead clearance at compact/full widths and cross-gap drag passed; analyzer 12 existing infos; APK built/installed; actual phone midpoint/drag/play UI checked
+- note: Two progress halves share one timeline with a 38dp center control slot; dot never painted behind play. Existing time labels/seek clock preserved. Test source/tunnel removed, original Computer 2 restored. Desktop unchanged.
+
 ## 2026-10-26 · Prevent playback clock resetting after seek preview timeout
 - files: mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, TESTING, KNOWN
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
 - tests: Flutter 265 passed; focused timeline/media 12 passed; Linux 81 passed; private MPRIS absolute seek/stale-track/clamp tests passed; pointer isolation and compact layout passed; analyzer 12 existing infos; Linux/Windows releases and APK built
 - note: Requires updated Linux agent and MPRIS seek capability; unknown duration/live streams disable seeking; Windows/local-phone metadata remains unavailable
-
-## 2026-10-26 · Move now-playing title beneath playback controls
-- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
-- docs: INDEX, MOBILE, FEATURES, TESTING
-- tests: Flutter 261 passed; focused 8 passed; short-title centering and long-title scrolling checked at full/compact sizes; compact hint overlap assertion passed; release APK built and installed
-- note: Icon and short title center as one group; long titles scroll within playback strip width; metadata protocol unchanged
 
