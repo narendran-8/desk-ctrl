@@ -75,6 +75,65 @@ void main() {
       expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
     },
   );
+  testWidgets(
+    'seek holds accumulate, stop on release, cancel and track change',
+    (tester) async {
+      final seeks = <int>[];
+      Widget view({String track = '1234567890abcdef', bool enabled = true}) =>
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                width: 400,
+                child: MediaTimeline(
+                  media: NowPlaying(
+                    positionMs: 40000,
+                    durationMs: 180000,
+                    canSeek: enabled,
+                    seekKey: track,
+                  ),
+                  onSeek: (_, position) => seeks.add(position),
+                ),
+              ),
+            ),
+          );
+      await tester.pumpWidget(view());
+      final forward = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('mediaForward'))),
+      );
+      await tester.pump(const Duration(milliseconds: 1100));
+      expect(seeks, [50000, 60000, 70000]);
+      await forward.up();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(seeks.length, 3);
+      final backward = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('mediaBackward'))),
+      );
+      await tester.pump(const Duration(milliseconds: 800));
+      expect(seeks.sublist(3), [60000, 50000]);
+      await backward.cancel();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(seeks.length, 5);
+      final changed = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('mediaForward'))),
+      );
+      await tester.pump(const Duration(milliseconds: 600));
+      final count = seeks.length;
+      await tester.pumpWidget(view(track: '0000000000000001'));
+      await tester.pump(const Duration(milliseconds: 700));
+      await changed.up();
+      expect(seeks.length, count);
+      final disabled = await tester.startGesture(
+        tester.getCenter(find.byKey(const Key('mediaForward'))),
+      );
+      await tester.pump(const Duration(milliseconds: 600));
+      final beforeDisable = seeks.length;
+      await tester.pumpWidget(view(track: '0000000000000001', enabled: false));
+      await tester.pump(const Duration(milliseconds: 700));
+      await disabled.up();
+      expect(seeks.length, beforeDisable);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
   testWidgets('drag sends one absolute seek and no mouse/key events', (
     tester,
   ) async {

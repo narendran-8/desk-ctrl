@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Repeat playback seeking while holding forward or rewind
+- files: mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, TESTING
+- tests: Flutter 266 passed; focused timeline 5 passed; hold accumulation/release/cancel/track-change/disabled checks passed; analyzer 12 existing infos; APK built and installed
+- note: Tap still seeks 10 seconds; hold repeats 10-second seeks every 250ms after 500ms threshold, stopping at boundaries or cancellation; protocol unchanged
+
 ## 2026-10-26 · Place playback times inside skip controls
 - files: mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
 - tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built
 - note: Only Mobile portrait compact keyboard changed; APK installation and visual check pending because no adb device is attached
-
-## 2026-10-24 · Add Mobile section swap button
-- files: README.md, mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
-- docs: FEATURES, MOBILE, SETTINGS, TESTING
-- tests: Flutter 247 passed; focused 4 passed; analyzer 12 existing infos; release APK built
-- note: APK installation and on-phone visual check pending because no adb device is attached
 

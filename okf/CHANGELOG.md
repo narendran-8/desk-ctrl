@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-24 · Add Mobile section swap button
+- files: README.md, mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 247 passed; focused 4 passed; analyzer 12 existing infos; release APK built
+- note: APK installation and on-phone visual check pending because no adb device is attached
+
 ## 2026-10-23 · Move Mobile landscape controls to top edge
 - files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: FEATURES, MOBILE, TESTING

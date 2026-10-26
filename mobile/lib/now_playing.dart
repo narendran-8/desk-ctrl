@@ -277,6 +277,20 @@ class _MediaTimelineState extends State<MediaTimeline> {
     super.dispose();
   }
 
+  void _skip(int delta) {
+    final m = widget.media;
+    if (!m.seekable) return;
+    final base = _pending ?? m.positionAt(DateTime.now()).toDouble();
+    final target = (base.round() + delta).clamp(0, m.durationMs);
+    if (target == base.round()) return;
+    setState(() => _pending = target.toDouble());
+    widget.onSeek(m.seekKey, target);
+    _pendingTimer?.cancel();
+    _pendingTimer = Timer(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _pending = null);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final m = widget.media;
@@ -297,16 +311,6 @@ class _MediaTimelineState extends State<MediaTimeline> {
         icon: Icon(icon),
       ),
     );
-    void skip(int delta) {
-      if (!m.seekable) return;
-      final target = (position.round() + delta).clamp(0, m.durationMs);
-      setState(() => _pending = target.toDouble());
-      widget.onSeek(m.seekKey, target);
-      _pendingTimer?.cancel();
-      _pendingTimer = Timer(const Duration(seconds: 2), () {
-        if (mounted) setState(() => _pending = null);
-      });
-    }
 
     Widget time(String value, String key) => SizedBox(
       width: 44,
@@ -329,10 +333,11 @@ class _MediaTimelineState extends State<MediaTimeline> {
             Icons.skip_previous,
             widget.onControl == null ? null : () => widget.onControl!(0x80B6),
           ),
-          button(
-            'mediaBackward',
-            Icons.fast_rewind,
-            m.seekable ? () => skip(-10000) : null,
+          _SeekRepeatButton(
+            key: ValueKey('mediaBackward:${m.seekKey}'),
+            name: 'mediaBackward',
+            icon: Icons.fast_rewind,
+            onStep: m.seekable ? () => _skip(-10000) : null,
           ),
           time(
             m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
@@ -425,10 +430,11 @@ class _MediaTimelineState extends State<MediaTimeline> {
             m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
             'mediaDuration',
           ),
-          button(
-            'mediaForward',
-            Icons.fast_forward,
-            m.seekable ? () => skip(10000) : null,
+          _SeekRepeatButton(
+            key: ValueKey('mediaForward:${m.seekKey}'),
+            name: 'mediaForward',
+            icon: Icons.fast_forward,
+            onStep: m.seekable ? () => _skip(10000) : null,
           ),
           button(
             'mediaNext',
@@ -439,4 +445,77 @@ class _MediaTimelineState extends State<MediaTimeline> {
       ),
     );
   }
+}
+
+/// A tap seeks once; holding repeats until release, cancellation or removal.
+class _SeekRepeatButton extends StatefulWidget {
+  const _SeekRepeatButton({
+    super.key,
+    required this.name,
+    required this.icon,
+    required this.onStep,
+  });
+  final String name;
+  final IconData icon;
+  final VoidCallback? onStep;
+  @override
+  State<_SeekRepeatButton> createState() => _SeekRepeatButtonState();
+}
+
+class _SeekRepeatButtonState extends State<_SeekRepeatButton> {
+  Timer? _repeat;
+  void _stop() {
+    _repeat?.cancel();
+    _repeat = null;
+  }
+
+  @override
+  void didUpdateWidget(_SeekRepeatButton old) {
+    super.didUpdateWidget(old);
+    if (widget.onStep == null) _stop();
+  }
+
+  @override
+  void deactivate() {
+    _stop();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _stop();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onLongPressStart: widget.onStep == null
+        ? null
+        : (_) {
+            _stop();
+            widget.onStep!();
+            _repeat = Timer.periodic(
+              const Duration(milliseconds: 250),
+              (_) => widget.onStep?.call(),
+            );
+          },
+    onLongPressEnd: (_) => _stop(),
+    onLongPressCancel: _stop,
+    onLongPressMoveUpdate: (event) {
+      final p = event.localPosition;
+      if (p.dx < 0 || p.dx > 26 || p.dy < 0 || p.dy > 40) _stop();
+    },
+    child: SizedBox(
+      width: 26,
+      height: 40,
+      child: IconButton(
+        key: Key(widget.name),
+        padding: EdgeInsets.zero,
+        iconSize: 18,
+        color: Colors.white60,
+        onPressed: widget.onStep,
+        icon: Icon(widget.icon),
+      ),
+    ),
+  );
 }
