@@ -39,7 +39,7 @@ void main() {
     expect(media.icon, isNull);
   });
   for (final size in [const Size(800, 320), const Size(340, 150)]) {
-    testWidgets('title stays under volume within 40dp at $size', (
+    testWidgets('long title scrolls below playback controls at $size', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -52,7 +52,7 @@ void main() {
                 height: size.height,
                 child: const EdgeZoneMarks(
                   media: NowPlaying(
-                    title: 'A very long currently playing video title',
+                    title: 'A very long currently playing video title that must scroll across the full playback width even in landscape',
                     app: 'Firefox',
                   ),
                 ),
@@ -63,11 +63,14 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 100));
       final rect = tester.getRect(find.byKey(const Key('nowPlayingBadge')));
-      expect(rect.width, 40);
+      expect(rect.width, closeTo(size.width * .6, .01));
+      expect(rect.center.dx, closeTo(size.width / 2, .01));
       expect(rect.bottom, lessThanOrEqualTo(size.height));
       expect(
         rect.top,
-        greaterThan(tester.getRect(find.byIcon(Icons.volume_up)).bottom),
+        greaterThanOrEqualTo(
+          tester.getRect(find.byIcon(Icons.play_arrow)).bottom,
+        ),
       );
       final before = tester
           .widget<Transform>(
@@ -97,6 +100,41 @@ void main() {
       expect(after, lessThan(before));
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
+    });
+  }
+  for (final size in [const Size(800, 320), const Size(340, 150)]) {
+    testWidgets('short title and icon center together at $size', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: size.width,
+                height: size.height,
+                child: const EdgeZoneMarks(
+                  media: NowPlaying(title: 'Song', app: 'Firefox'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      final content = tester.getRect(
+        find.byKey(const Key('nowPlayingContent')),
+      );
+      expect(content.center.dx, closeTo(size.width / 2, .01));
+      expect(content.width, lessThan(size.width * .6));
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('nowPlayingBadge')),
+          matching: find.byType(Transform),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
     });
   }
   testWidgets('empty metadata hides the badge', (tester) async {
@@ -152,6 +190,27 @@ void main() {
         findsOneWidget,
       );
       expect(find.byIcon(Icons.pause), findsOneWidget);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 340,
+                height: 150,
+                child: TouchPad(enabled: true, compact: true),
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(
+        tester.getRect(find.textContaining('Drag: move')).top,
+        greaterThanOrEqualTo(
+          tester.getRect(find.byKey(const Key('nowPlayingBadge'))).bottom,
+        ),
+      );
+      expect(tester.takeException(), isNull);
       await tester.runAsync(() => Connection.instance.switchTo('second'));
       await tester.pump();
       expect(find.bySemanticsLabel(RegExp('VLC: Song two')), findsOneWidget);

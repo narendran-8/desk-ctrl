@@ -43,37 +43,62 @@ class NowPlayingBadge extends StatelessWidget {
       label: '${media.app}: ${media.title}',
       child: SizedBox(
         key: const Key('nowPlayingBadge'),
-        width: 40,
-        height: 36,
-        child: Column(
-          children: [
-            if (media.icon != null)
-              Image.memory(
-                media.icon!,
-                width: 16,
-                height: 16,
-                errorBuilder: (_, _, _) => const Icon(
-                  Icons.music_note,
-                  size: 16,
-                  color: Colors.white54,
-                ),
-              )
-            else
-              const Icon(Icons.music_note, size: 16, color: Colors.white54),
-            const SizedBox(height: 3),
-            SizedBox(
-              height: 14,
-              child: _TrackTitle(
-                key: ValueKey('${media.app}:${media.title}'),
-                title: media.title,
+        height: 24,
+        child: LayoutBuilder(
+          builder: (context, box) {
+            final measure = TextPainter(
+              text: TextSpan(text: media.title, style: _titleStyle),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+              maxLines: 1,
+            )..layout();
+            final titleWidth = measure.width.clamp(
+              0.0,
+              (box.maxWidth - 22).clamp(0.0, double.infinity),
+            );
+            measure.dispose();
+            return Center(
+              child: Row(
+                key: const Key('nowPlayingContent'),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (media.icon != null)
+                    Image.memory(
+                      media.icon!,
+                      width: 16,
+                      height: 16,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.music_note,
+                        size: 16,
+                        color: Colors.white54,
+                      ),
+                    )
+                  else
+                    const Icon(
+                      Icons.music_note,
+                      size: 16,
+                      color: Colors.white54,
+                    ),
+                  const SizedBox(width: 6),
+                  SizedBox(
+                    width: titleWidth,
+                    height: 20,
+                    child: _TrackTitle(
+                      key: ValueKey('${media.app}:${media.title}'),
+                      title: media.title,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 }
+
+const _titleStyle = TextStyle(color: Colors.white60, fontSize: 12);
 
 class _TrackTitle extends StatefulWidget {
   const _TrackTitle({super.key, required this.title});
@@ -85,7 +110,7 @@ class _TrackTitle extends StatefulWidget {
 class _TrackTitleState extends State<_TrackTitle>
     with SingleTickerProviderStateMixin {
   late final AnimationController _scroll = AnimationController(vsync: this);
-  static const style = TextStyle(color: Colors.white60, fontSize: 10);
+  static const style = _titleStyle;
   @override
   void dispose() {
     _scroll.dispose();
@@ -99,6 +124,7 @@ class _TrackTitleState extends State<_TrackTitle>
         text: TextSpan(text: widget.title, style: style),
         textDirection: Directionality.of(context),
         maxLines: 1,
+        textScaler: MediaQuery.textScalerOf(context),
       )..layout();
       final width = text.width;
       text.dispose();

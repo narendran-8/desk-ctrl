@@ -780,26 +780,48 @@ class _TouchPadState extends State<TouchPad> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Center(
-                child: Text(
-                  widget.enabled
-                      ? widget.compact
-                            ? 'Drag: move · tap: click\n'
-                                  '2 fingers: scroll · pinch: zoom\n'
-                                  'Edges: media, volume, brightness'
-                            : '1 finger: move · tap: click · tap + drag: drag\n'
-                                  '2 fingers: scroll · pinch: zoom · tap: right click${Settings.instance.padSwipeNav ? ' · swipe sideways = back / forward' : ''}\n'
-                                  '3 fingers: tap = middle click · swipe left / right = workspace\n'
-                                  'swipe up = overview${Settings.instance.screenshotSwipe ? ' · swipe down = screenshot' : ''}'
-                                  '${Settings.instance.padMotion ? (Settings.instance.padMotionAlways ? '\ntilt the phone: the cursor follows (a finger works too)' : '\nhold a finger and tilt the phone: the cursor follows') : ''}'
-                      : 'Touchpad off',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white30,
-                    fontSize: 12,
-                    height: 1.7,
-                  ),
-                ),
+              ListenableBuilder(
+                listenable: Connection.instance,
+                builder: (context, _) {
+                  final hasMedia =
+                      widget.enabled &&
+                      Settings.instance.padZones &&
+                      !widget.phoneMedia &&
+                      Connection.instance.active?.effective != null &&
+                      (Connection
+                              .instance
+                              .active
+                              ?.nowPlaying
+                              .title
+                              .isNotEmpty ??
+                          false);
+                  final hint = Center(
+                    child: Text(
+                      widget.enabled
+                          ? widget.compact
+                                ? 'Drag: move · tap: click\n'
+                                      '2 fingers: scroll · pinch: zoom\n'
+                                      'Edges: media, volume, brightness'
+                                : '1 finger: move · tap: click · tap + drag: drag\n'
+                                      '2 fingers: scroll · pinch: zoom · tap: right click${Settings.instance.padSwipeNav ? ' · swipe sideways = back / forward' : ''}\n'
+                                      '3 fingers: tap = middle click · swipe left / right = workspace\n'
+                                      'swipe up = overview${Settings.instance.screenshotSwipe ? ' · swipe down = screenshot' : ''}'
+                                      '${Settings.instance.padMotion ? (Settings.instance.padMotionAlways ? '\ntilt the phone: the cursor follows (a finger works too)' : '\nhold a finger and tilt the phone: the cursor follows') : ''}'
+                          : 'Touchpad off',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white30,
+                        fontSize: 12,
+                        height: 1.7,
+                      ),
+                    ),
+                  );
+                  if (!hasMedia) return hint;
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 64, bottom: 40),
+                    child: FittedBox(fit: BoxFit.scaleDown, child: hint),
+                  );
+                },
               ),
               if (widget.enabled && Settings.instance.padZones)
                 ListenableBuilder(

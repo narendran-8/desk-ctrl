@@ -233,7 +233,7 @@ class EdgeZoneMarks extends StatelessWidget {
         builder: (context, box) {
           final sideTop = box.maxHeight * EdgeZones.sideTopFraction;
           final sideHeight = box.maxHeight - sideTop;
-          final showMedia = media.title.isNotEmpty && sideHeight >= 60;
+          final showMedia = media.title.isNotEmpty && box.maxHeight >= 100;
           return Stack(
             children: [
               Positioned(
@@ -242,21 +242,7 @@ class EdgeZoneMarks extends StatelessWidget {
                 top: sideTop,
                 height: sideHeight,
                 child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: (sideHeight - (showMedia ? 36 : 0)).clamp(
-                          0.0,
-                          110.0,
-                        ),
-                        child: _slider(
-                          muted ? Icons.volume_off : Icons.volume_up,
-                        ),
-                      ),
-                      if (showMedia) NowPlayingBadge(media: media),
-                    ],
-                  ),
+                  child: _slider(muted ? Icons.volume_off : Icons.volume_up),
                 ),
               ),
               Positioned(
@@ -293,6 +279,14 @@ class EdgeZoneMarks extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+              if (showMedia)
+                Positioned(
+                  left: box.maxWidth * EdgeZones.topFrom,
+                  right: box.maxWidth * (1 - EdgeZones.topTo),
+                  top: EdgeZones.edge,
+                  height: 24,
+                  child: NowPlayingBadge(media: media),
                 ),
               Positioned(
                 left: box.maxWidth * EdgeZones.topFrom,
