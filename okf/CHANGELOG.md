@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Support portrait in combined Mobile mode
+- files: mobile/lib/mobile_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, README.md
+- docs: INDEX, MOBILE, FEATURES, TESTING
+- tests: Flutter 245 passed; portrait APK built; intermediate build checked on phone; final APK install pending because adb device disappeared; analyze has 12 existing style infos
+- note: Rotate icon switches orientation; portrait keyboard keeps phone-sized QWERTY and shortcuts.
+
 ## 2026-10-23 · Add combined Mobile keyboard and touchpad screen
 - files: mobile/lib/mobile_screen.dart, mobile/lib/modes.dart, mobile/lib/modes_editor.dart, mobile/lib/main.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, mobile/test/modes_test.dart, mobile/test/modes_editor_test.dart, mobile/test/mode_tap_test.dart, mobile/test/mode_button_test.dart, mobile/test/voice_screen_test.dart, mobile/test/auto_keyboard_test.dart, README.md
 - docs: INDEX, MOBILE, SETTINGS, FEATURES, TESTING

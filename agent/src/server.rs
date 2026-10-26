@@ -67,6 +67,7 @@ pub struct Shared {
     pub port_owner: Option<Owner>,
     /// Speech to text / to action for the phone's voice screen (see voice.rs).
     pub voice: Arc<crate::voice::Engine>,
+    pub media_requests: Option<std::sync::mpsc::SyncSender<crate::media::SeekRequest>>,
     pub(crate) next_id: u64,
 }
 
@@ -255,10 +256,12 @@ impl Server {
             self.usb_auto.clone(),
         ));
         let (ev, send_bt) = (self.event_tx.clone(), Mutex::new(bt.broadcaster()));
+        let (media_tx, media_rx) = std::sync::mpsc::sync_channel(8);
+        self.shared.lock().unwrap().media_requests = Some(media_tx);
         self.media_thread = Some(crate::media::spawn(self.led_stop.clone(), move |frame| {
             let _ = ev.send(frame.to_vec());
             (send_bt.lock().unwrap())(frame);
-        }));
+        }, media_rx));
         self.bt = Some(bt);
         self.rt.spawn(accept_loop(listener, self.shared.clone(), input, rx, self.led_tx.subscribe(), self.level_tx.subscribe(), self.event_tx.clone()));
     }
@@ -451,7 +454,7 @@ async fn handle_client(
                     if data.as_ref() == [KEEPALIVE] {
                         keepalives = true;
                     }
-                    if !voice.handle(&data) {
+                    if !crate::media::handle(&data, &shared) && !voice.handle(&data) {
                         apply_bytes(&input, &data);
                     }
                 }

@@ -8,7 +8,7 @@ sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobil
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 261 tests pass; agent has 80 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
+State: phone 265 tests pass; agent has 81 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -81,3 +81,6 @@ Desktop side checks: pointer position via Gdk (`Gdk.Display.get_default().get_de
 `media.rs`: Unicode/chunk framing roundtrip, path-traversal rejection for app identity, and an isolated real D-Bus fake MPRIS service verifying title/identity/play state and removal. `now_playing_test.dart`: eight tests for UTF-8 reassembly/reset, invalid-icon fallback, playback-strip clipped marquee movement and short-title centering at full and compact sizes, no-media hiding, and live fake-agent updates across selected computers/local-phone mode. Full suite: 259 mobile / 80 Linux tests. Analyzer retains 12 existing style infos. Windows cross-build remains compatible; native Windows metadata is not implemented.
 
 Media title placement (2026-10-26): moved from the volume strip to a 24dp row below the playback controls. Focused now-playing tests now cover 8 cases, including group centering for short titles and scrolling for long titles at 800x320 and 340x150. Full Flutter suite: 261 tests. The existing trackpad hints reserve the media row and scale to fit compact layouts.
+
+## Playback timeline verification (2026-10-26)
+`media_timeline_test.dart`: four tests for hour/minute time formatting, pause/rate interpolation and clamping, red/grey slider styling, disabled live/non-seekable progress, and a real gesture against FakeAgent proving one 17-byte absolute seek with zero pointer/key frames. The gesture test also changes tracks mid-drag to verify cancellation and checks compact 340x150 timeline bounds above the bottom controls. Existing eight now-playing tests pass. Full Flutter suite: 265 passed. Agent suite: 81 passed. Private D-Bus MPRIS mock verifies real position/duration, SetPosition, clamp-to-end, stale/new track and CanSeek rejection. Seek command tests check length/routing and bounded-channel delivery. Linux and Windows releases built; Windows still has no metadata provider.

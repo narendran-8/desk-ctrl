@@ -760,123 +760,175 @@ class _TouchPadState extends State<TouchPad> {
   @override
   Widget build(BuildContext context) {
     final active = _pos.isNotEmpty;
-    return IgnorePointer(
-      ignoring: !widget.enabled,
-      child: Listener(
-        behavior: HitTestBehavior.opaque,
-        onPointerDown: _down,
-        onPointerMove: _move,
-        onPointerUp: _up,
-        onPointerCancel: _up,
-        child: Container(
-          decoration: BoxDecoration(
-            color: !widget.enabled
-                ? context.desk.padOff
-                : active
-                ? context.desk.padActive
-                : context.desk.pad,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ListenableBuilder(
-                listenable: Connection.instance,
-                builder: (context, _) {
-                  final hasMedia =
-                      widget.enabled &&
-                      Settings.instance.padZones &&
-                      !widget.phoneMedia &&
-                      Connection.instance.active?.effective != null &&
-                      (Connection
-                              .instance
-                              .active
-                              ?.nowPlaying
-                              .title
-                              .isNotEmpty ??
-                          false);
-                  final hint = Center(
-                    child: Text(
-                      widget.enabled
-                          ? widget.compact
-                                ? 'Drag: move · tap: click\n'
-                                      '2 fingers: scroll · pinch: zoom\n'
-                                      'Edges: media, volume, brightness'
-                                : '1 finger: move · tap: click · tap + drag: drag\n'
-                                      '2 fingers: scroll · pinch: zoom · tap: right click${Settings.instance.padSwipeNav ? ' · swipe sideways = back / forward' : ''}\n'
-                                      '3 fingers: tap = middle click · swipe left / right = workspace\n'
-                                      'swipe up = overview${Settings.instance.screenshotSwipe ? ' · swipe down = screenshot' : ''}'
-                                      '${Settings.instance.padMotion ? (Settings.instance.padMotionAlways ? '\ntilt the phone: the cursor follows (a finger works too)' : '\nhold a finger and tilt the phone: the cursor follows') : ''}'
-                          : 'Touchpad off',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white30,
-                        fontSize: 12,
-                        height: 1.7,
-                      ),
-                    ),
-                  );
-                  if (!hasMedia) return hint;
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 64, bottom: 40),
-                    child: FittedBox(fit: BoxFit.scaleDown, child: hint),
-                  );
-                },
-              ),
-              if (widget.enabled && Settings.instance.padZones)
-                ListenableBuilder(
-                  listenable: Connection.instance,
-                  builder: (context, _) {
-                    final session = Connection.instance.active;
-                    final media =
-                        widget.phoneMedia || session?.effective == null
-                        ? const NowPlaying()
-                        : session!.nowPlaying;
-                    return EdgeZoneMarks(
-                      media: media,
-                      top: parseTopEdgeMode(Settings.instance.padTopMode),
-                      playing: media.title.isEmpty ? _playing : media.playing,
-                      muted: _muted,
-                      windows: Settings.instance.padWindows,
-                      tabs: Settings.instance.tabsMode,
-                    );
-                  },
+    return LayoutBuilder(
+      builder: (context, box) => Stack(
+        fit: StackFit.expand,
+        children: [
+          IgnorePointer(
+            ignoring: !widget.enabled,
+            child: Listener(
+              behavior: HitTestBehavior.opaque,
+              onPointerDown: _down,
+              onPointerMove: _move,
+              onPointerUp: _up,
+              onPointerCancel: _up,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: !widget.enabled
+                      ? context.desk.padOff
+                      : active
+                      ? context.desk.padActive
+                      : context.desk.pad,
+                  borderRadius: BorderRadius.circular(18),
                 ),
-              // What the last slide on an edge did (volume, brightness, track).
-              if (_hud != null)
-                Positioned(
-                  top: EdgeZones.edge + 8,
-                  left: 0,
-                  right: 0,
-                  child: IgnorePointer(
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xCC00D4BE),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: ListenableBuilder(
-                          listenable: Connection.instance,
-                          builder: (_, _) => Text(
-                            _hudText(),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ListenableBuilder(
+                      listenable: Connection.instance,
+                      builder: (context, _) {
+                        final hasMedia =
+                            widget.enabled &&
+                            Settings.instance.padZones &&
+                            !widget.phoneMedia &&
+                            Connection.instance.active?.effective != null &&
+                            (Connection
+                                    .instance
+                                    .active
+                                    ?.nowPlaying
+                                    .title
+                                    .isNotEmpty ??
+                                false);
+                        final hint = Center(
+                          child: Text(
+                            widget.enabled
+                                ? widget.compact
+                                      ? 'Drag: move · tap: click\n'
+                                            '2 fingers: scroll · pinch: zoom\n'
+                                            'Edges: media, volume, brightness'
+                                      : '1 finger: move · tap: click · tap + drag: drag\n'
+                                            '2 fingers: scroll · pinch: zoom · tap: right click${Settings.instance.padSwipeNav ? ' · swipe sideways = back / forward' : ''}\n'
+                                            '3 fingers: tap = middle click · swipe left / right = workspace\n'
+                                            'swipe up = overview${Settings.instance.screenshotSwipe ? ' · swipe down = screenshot' : ''}'
+                                            '${Settings.instance.padMotion ? (Settings.instance.padMotionAlways ? '\ntilt the phone: the cursor follows (a finger works too)' : '\nhold a finger and tilt the phone: the cursor follows') : ''}'
+                                : 'Touchpad off',
+                            textAlign: TextAlign.center,
                             style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
+                              color: Colors.white30,
+                              fontSize: 12,
+                              height: 1.7,
+                            ),
+                          ),
+                        );
+                        if (!hasMedia) return hint;
+                        final hasTimeline =
+                            (Connection
+                                .instance
+                                .active
+                                ?.nowPlaying
+                                .hasTimeline ??
+                            false);
+                        if (hasTimeline && box.maxHeight < 210) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            top: hasTimeline ? 108 : 64,
+                            bottom: 40,
+                          ),
+                          child: FittedBox(fit: BoxFit.scaleDown, child: hint),
+                        );
+                      },
+                    ),
+                    if (widget.enabled && Settings.instance.padZones)
+                      ListenableBuilder(
+                        listenable: Connection.instance,
+                        builder: (context, _) {
+                          final session = Connection.instance.active;
+                          final media =
+                              widget.phoneMedia || session?.effective == null
+                              ? const NowPlaying()
+                              : session!.nowPlaying;
+                          return EdgeZoneMarks(
+                            media: media,
+                            top: parseTopEdgeMode(Settings.instance.padTopMode),
+                            playing: media.title.isEmpty
+                                ? _playing
+                                : media.playing,
+                            muted: _muted,
+                            windows: Settings.instance.padWindows,
+                            tabs: Settings.instance.tabsMode,
+                          );
+                        },
+                      ),
+                    // What the last slide on an edge did (volume, brightness, track).
+                    if (_hud != null)
+                      Positioned(
+                        top: EdgeZones.edge + 8,
+                        left: 0,
+                        right: 0,
+                        child: IgnorePointer(
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xCC00D4BE),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: ListenableBuilder(
+                                listenable: Connection.instance,
+                                builder: (_, _) => Text(
+                                  _hudText(),
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (widget.enabled &&
+              Settings.instance.padZones &&
+              !widget.phoneMedia &&
+              box.maxHeight >= 150)
+            ListenableBuilder(
+              listenable: Connection.instance,
+              builder: (context, _) {
+                final session = Connection.instance.active;
+                final media = session?.effective == null
+                    ? const NowPlaying()
+                    : session!.nowPlaying;
+                if (media.title.isEmpty || !media.hasTimeline) {
+                  return const SizedBox.shrink();
+                }
+                return Positioned(
+                  left: box.maxWidth * .2,
+                  right: box.maxWidth * .2,
+                  top: 64,
+                  height: 44,
+                  child: MediaTimeline(
+                    media: media,
+                    onSeek: (key, position) => Connection.instance.seekMedia(
+                      session!.device.id,
+                      key,
+                      position,
                     ),
                   ),
-                ),
-            ],
-          ),
-        ),
+                );
+              },
+            ),
+        ],
       ),
     );
   }

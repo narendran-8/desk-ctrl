@@ -852,6 +852,29 @@ class Connection extends ChangeNotifier {
   /// Send a frame the voice screen made (microphone audio and requests, see voice.dart).
   void sendVoice(List<int> payload) => _send(payload);
 
+  void seekMedia(String deviceId, String trackKey, int positionMs) {
+    final s = active;
+    if (activeId != deviceId ||
+        s?.effective == null ||
+        s!.nowPlaying.seekKey != trackKey ||
+        !s.nowPlaying.seekable) {
+      return;
+    }
+    final frame = ByteData(17)..setUint8(0, 0x07);
+    for (var i = 0; i < 8; i++) {
+      frame.setUint8(
+        i + 1,
+        int.parse(trackKey.substring(i * 2, i * 2 + 2), radix: 16),
+      );
+    }
+    frame.setUint64(
+      9,
+      positionMs.clamp(0, s.nowPlaying.durationMs) * 1000,
+      Endian.big,
+    );
+    s.send(frame.buffer.asUint8List());
+  }
+
   void _send(List<int> payload) => active?.send(Uint8List.fromList(payload));
 
   static List<int> _i16(int v) => [(v >> 8) & 0xFF, v & 0xFF];

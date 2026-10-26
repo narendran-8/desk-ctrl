@@ -122,7 +122,7 @@ pub fn serve_stream<S: Read + Write>(mut s: S, addr: String, shared: &SharedStat
                 if frame == [server::KEEPALIVE] {
                     keepalives = true;
                 }
-                if !voice.handle(&frame) {
+                if !crate::media::handle(&frame, shared) && !voice.handle(&frame) {
                     server::apply_bytes(input, &frame);
                 }
             }

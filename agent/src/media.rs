@@ -6,6 +6,33 @@ use std::sync::{
 use std::time::Duration;
 
 pub const FRAME: u8 = 0x16;
+pub const SEEK: u8 = 0x07;
+pub type SeekRequest = (u64, u64);
+
+/// Bounded commands are handled by the media worker, never by the input thread.
+pub fn handle(frame: &[u8], shared: &crate::server::SharedState) -> bool {
+    if frame.first() != Some(&SEEK) {
+        return false;
+    }
+    if frame.len() == 17 {
+        let request = (
+            u64::from_be_bytes(frame[1..9].try_into().unwrap()),
+            u64::from_be_bytes(frame[9..17].try_into().unwrap()),
+        );
+        if let Some(tx) = &shared.lock().unwrap().media_requests {
+            let _ = tx.try_send(request);
+        }
+    }
+    true
+}
+
+#[cfg(unix)]
+fn track_key(player: &str, track: &str, title: &str, length: i64) -> u64 {
+    let value = format!("{player}\0{track}\0{title}\0{length}");
+    value.bytes().fold(0xcbf29ce484222325, |h, b| {
+        (h ^ b as u64).wrapping_mul(0x100000001b3)
+    })
+}
 
 pub fn frames(value: &serde_json::Value) -> Vec<Vec<u8>> {
     let bytes = value.to_string().into_bytes();
@@ -24,6 +51,7 @@ pub fn frames(value: &serde_json::Value) -> Vec<Vec<u8>> {
 pub fn spawn(
     stop: Arc<AtomicBool>,
     send: impl Fn(&[u8]) + Send + 'static,
+    requests: std::sync::mpsc::Receiver<SeekRequest>,
 ) -> std::thread::JoinHandle<()> {
     std::thread::spawn(move || {
         #[cfg(unix)]
@@ -33,6 +61,14 @@ pub fn spawn(
         let mut previous = serde_json::Value::Null;
         let mut ticks = 0;
         while !stop.load(Ordering::Relaxed) {
+            while let Ok((key, position)) = requests.try_recv() {
+                #[cfg(unix)]
+                if let Some(bus) = &bus {
+                    let _ = set_position(bus, key, position);
+                }
+                #[cfg(windows)]
+                let _ = (key, position);
+            }
             #[cfg(unix)]
             let info = bus
                 .as_ref()
@@ -52,7 +88,19 @@ pub fn spawn(
                 if stop.load(Ordering::Relaxed) {
                     return;
                 }
-                std::thread::sleep(Duration::from_millis(100));
+                match requests.recv_timeout(Duration::from_millis(100)) {
+                    Ok((key, position)) => {
+                        #[cfg(unix)]
+                        if let Some(bus) = &bus {
+                            let _ = set_position(bus, key, position);
+                        }
+                        #[cfg(windows)]
+                        let _ = (key, position);
+                        break; // report the new position immediately after a seek
+                    }
+                    Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => return,
+                    Err(_) => {}
+                }
             }
         }
     })
@@ -113,7 +161,32 @@ fn now_playing(bus: &zbus::blocking::Connection) -> Option<serde_json::Value> {
                 .unwrap_or("")
                 .into()
         });
-        let value = serde_json::json!({"title":title.chars().take(512).collect::<String>(), "app":app, "playing":status == "Playing", "icon": app_icon(&desktop)});
+        let length = metadata
+            .get("mpris:length")
+            .and_then(|v| i64::try_from(v).ok())
+            .unwrap_or(0)
+            .max(0);
+        let track = metadata
+            .get("mpris:trackid")
+            .and_then(|v| <&zbus::zvariant::ObjectPath>::try_from(v).ok())
+            .map(|p| p.as_str())
+            .unwrap_or("");
+        let position = player
+            .get_property::<i64>("Position")
+            .ok()
+            .filter(|p| *p >= 0);
+        let can_seek = player.get_property::<bool>("CanSeek").unwrap_or(false)
+            && !track.is_empty()
+            && length > 0
+            && position.is_some();
+        let rate = player.get_property::<f64>("Rate").unwrap_or(1.0);
+        let value = serde_json::json!({
+            "title":title.chars().take(512).collect::<String>(), "app":app, "playing":status == "Playing", "icon": app_icon(&desktop),
+            "positionMs":position.map(|p| p / 1000), "durationMs":length / 1000,
+            "rate": if rate.is_finite() { rate } else { 1.0 }, "canSeek":can_seek,
+            "seekKey":format!("{:016x}", track_key(name, track, title, length)),
+            "player":name, "trackId":track
+        });
         if status == "Playing" {
             return Some(value);
         }
@@ -122,6 +195,38 @@ fn now_playing(bus: &zbus::blocking::Connection) -> Option<serde_json::Value> {
         }
     }
     paused
+}
+
+#[cfg(unix)]
+fn set_position(
+    bus: &zbus::blocking::Connection,
+    key: u64,
+    position_us: u64,
+) -> zbus::Result<bool> {
+    // Re-read the active session. A stale drag must never seek the next track or another app.
+    let Some(info) = now_playing(bus) else {
+        return Ok(false);
+    };
+    if info["seekKey"].as_str() != Some(&format!("{key:016x}")) || info["canSeek"] != true {
+        return Ok(false);
+    }
+    let player = info["player"].as_str().unwrap_or("");
+    let track = zbus::zvariant::ObjectPath::try_from(info["trackId"].as_str().unwrap_or("/"))?;
+    let length_us = info["durationMs"]
+        .as_u64()
+        .unwrap_or(0)
+        .saturating_mul(1000);
+    let position = position_us
+        .min(length_us.saturating_sub(1))
+        .min(i64::MAX as u64) as i64;
+    let proxy = zbus::blocking::Proxy::new(
+        bus,
+        player,
+        "/org/mpris/MediaPlayer2",
+        "org.mpris.MediaPlayer2.Player",
+    )?;
+    proxy.call::<_, _, ()>("SetPosition", &(track, position))?;
+    Ok(true)
 }
 
 #[cfg(unix)]
@@ -210,8 +315,26 @@ mod tests {
             info
         );
     }
+    #[test]
+    fn seek_frame_is_bounded_and_separate_from_input() {
+        let shared = Arc::new(std::sync::Mutex::new(crate::server::Shared::default()));
+        let (tx, rx) = std::sync::mpsc::sync_channel(1);
+        shared.lock().unwrap().media_requests = Some(tx);
+        let mut frame = vec![SEEK];
+        frame.extend_from_slice(&123u64.to_be_bytes());
+        frame.extend_from_slice(&65_000_000u64.to_be_bytes());
+        assert!(handle(&frame, &shared));
+        assert_eq!(rx.try_recv().unwrap(), (123, 65_000_000));
+        assert!(handle(&[SEEK, 1], &shared));
+        assert!(rx.try_recv().is_err());
+        assert!(!handle(&[1, 0, 4], &shared));
+    }
     #[cfg(unix)]
-    struct MockPlayer;
+    struct MockPlayer {
+        position: Arc<std::sync::atomic::AtomicI64>,
+        changed: Arc<AtomicBool>,
+        seekable: Arc<AtomicBool>,
+    }
     #[cfg(unix)]
     #[zbus::interface(name = "org.mpris.MediaPlayer2.Player")]
     impl MockPlayer {
@@ -221,12 +344,48 @@ mod tests {
         }
         #[zbus(property)]
         fn metadata(&self) -> std::collections::HashMap<String, zbus::zvariant::OwnedValue> {
-            std::collections::HashMap::from([(
-                "xesam:title".into(),
-                zbus::zvariant::Value::from("A Firefox video 🎵")
-                    .try_to_owned()
-                    .unwrap(),
-            )])
+            use zbus::zvariant::{ObjectPath, Value};
+            let title = if self.changed.load(Ordering::Relaxed) {
+                "Next track"
+            } else {
+                "A Firefox video 🎵"
+            };
+            let track = if self.changed.load(Ordering::Relaxed) {
+                "/vil/test/track2"
+            } else {
+                "/vil/test/track1"
+            };
+            std::collections::HashMap::from([
+                (
+                    "xesam:title".into(),
+                    Value::from(title).try_to_owned().unwrap(),
+                ),
+                (
+                    "mpris:length".into(),
+                    Value::from(120_000_000i64).try_to_owned().unwrap(),
+                ),
+                (
+                    "mpris:trackid".into(),
+                    Value::from(ObjectPath::try_from(track).unwrap())
+                        .try_to_owned()
+                        .unwrap(),
+                ),
+            ])
+        }
+        #[zbus(property)]
+        fn position(&self) -> i64 {
+            self.position.load(Ordering::Relaxed)
+        }
+        #[zbus(property)]
+        fn rate(&self) -> f64 {
+            1.0
+        }
+        #[zbus(property)]
+        fn can_seek(&self) -> bool {
+            self.seekable.load(Ordering::Relaxed)
+        }
+        fn set_position(&self, _track: zbus::zvariant::ObjectPath<'_>, position: i64) {
+            self.position.store(position, Ordering::Relaxed);
         }
     }
     #[cfg(unix)]
@@ -265,11 +424,21 @@ mod tests {
         std::io::BufReader::new(daemon.0.stdout.take().unwrap())
             .read_line(&mut address)
             .unwrap();
+        let position = Arc::new(std::sync::atomic::AtomicI64::new(20_000_000));
+        let changed = Arc::new(AtomicBool::new(false));
+        let seekable = Arc::new(AtomicBool::new(true));
         let service = zbus::blocking::connection::Builder::address(address.trim())
             .unwrap()
             .name("org.mpris.MediaPlayer2.viltest")
             .unwrap()
-            .serve_at("/org/mpris/MediaPlayer2", MockPlayer)
+            .serve_at(
+                "/org/mpris/MediaPlayer2",
+                MockPlayer {
+                    position: position.clone(),
+                    changed: changed.clone(),
+                    seekable: seekable.clone(),
+                },
+            )
             .unwrap()
             .serve_at("/org/mpris/MediaPlayer2", MockApp)
             .unwrap()
@@ -288,10 +457,29 @@ mod tests {
         let encoded = info["icon"].as_str().unwrap();
         if !encoded.is_empty() {
             use base64::Engine;
-            let bytes = base64::engine::general_purpose::STANDARD.decode(encoded).unwrap();
+            let bytes = base64::engine::general_purpose::STANDARD
+                .decode(encoded)
+                .unwrap();
             let icon = image::load_from_memory(&bytes).unwrap();
             assert!(icon.width() <= 24 && icon.height() <= 24);
         }
+        assert_eq!(info["positionMs"], 20000);
+        assert_eq!(info["durationMs"], 120000);
+        assert_eq!(info["canSeek"], true);
+        let key = u64::from_str_radix(info["seekKey"].as_str().unwrap(), 16).unwrap();
+        assert!(set_position(&client, key, 90_000_000).unwrap());
+        assert_eq!(position.load(Ordering::Relaxed), 90_000_000);
+        assert!(!set_position(&client, key.wrapping_add(1), 5_000_000).unwrap());
+        assert_eq!(position.load(Ordering::Relaxed), 90_000_000);
+        assert!(set_position(&client, key, u64::MAX).unwrap());
+        assert_eq!(position.load(Ordering::Relaxed), 119_999_999);
+        changed.store(true, Ordering::Relaxed);
+        assert!(!set_position(&client, key, 3_000_000).unwrap());
+        let new_info = now_playing(&client).unwrap();
+        let new_key = u64::from_str_radix(new_info["seekKey"].as_str().unwrap(), 16).unwrap();
+        assert_ne!(new_key, key);
+        seekable.store(false, Ordering::Relaxed);
+        assert!(!set_position(&client, new_key, 5_000_000).unwrap());
         drop(service);
         assert!(now_playing(&client).is_none());
     }

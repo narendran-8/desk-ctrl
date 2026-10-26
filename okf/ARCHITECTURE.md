@@ -52,3 +52,5 @@ Remote Audio latency (2026-10-26): capture/playback helpers request 40 ms latenc
 
 ## Now-playing feedback
 Agent `media.rs` polls MPRIS independently of input and Remote Audio. It publishes title/app/status/icon chunks through the normal authenticated feedback paths (event broadcast + Bluetooth). Each phone Link reassembles chunks independently, Session stores the per-computer `NowPlaying`, and the Trackpad badge follows only the active live session. This works without Remote Audio streaming being enabled.
+
+Playback timeline: MPRIS timing travels in the same per-computer feedback. The phone interpolates report timestamps locally and sends a single absolute seek on release. Wi-Fi/USB and Bluetooth both route the new seek opcode to a bounded media-worker queue before HID handling; the worker validates the track and calls SetPosition. The timeline is overlaid outside the raw touchpad Listener to isolate pointer events.

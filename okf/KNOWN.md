@@ -50,3 +50,5 @@ Agentless Bluetooth HID mode; send phone name to the agent for the device table;
 - Remote Audio stutter reported on hardware (2026-10-26): capture batching and Android empty-buffer startup addressed with explicit Pulse timing, short native prebuffer and partial-write handling. No exact end-to-end latency or lip-sync guarantee; listen again using both updated APK and agent.
 
 - Trackpad now-playing reporting (2026-10-26) currently uses Linux MPRIS. Players that disable or omit MPRIS metadata cannot provide a title. PNG-installed app icons are supported; SVG-only/missing icons use a music-note fallback. Windows and Android local-phone media metadata remain unsupported (no stale desktop title is shown in phone mode).
+
+- Playback timeline uses Linux MPRIS capabilities. A player that does not provide Position/length/CanSeek cannot offer absolute seeking; unknown duration is shown as LIVE with a disabled timeline. Windows and Android local-phone media remain unsupported. The timeline updates from one-second source samples with local interpolation, so network/player delays can briefly differ from the desktop's displayed clock.
