@@ -8,6 +8,9 @@ class NowPlaying {
   const NowPlaying({
     this.title = '',
     this.app = '',
+    this.player = '',
+    this.trackId = '',
+    this.mediaUrl = '',
     this.playing = false,
     this.icon,
     this.positionMs = -1,
@@ -17,7 +20,7 @@ class NowPlaying {
     this.seekKey = '',
     this.receivedAt,
   });
-  final String title, app;
+  final String title, app, player, trackId, mediaUrl;
   final bool playing;
   final Uint8List? icon;
   final int positionMs, durationMs;
@@ -25,6 +28,14 @@ class NowPlaying {
   final bool canSeek;
   final String seekKey;
   final DateTime? receivedAt;
+  String get identity => player.isNotEmpty && trackId.isNotEmpty
+      ? '$player\u0000$trackId\u0000$title\u0000$mediaUrl'
+      : '$app\u0000$title\u0000$seekKey';
+  bool sameTrack(NowPlaying other) =>
+      title.isNotEmpty &&
+      title == other.title &&
+      app == other.app &&
+      identity == other.identity;
   bool get hasTimeline => positionMs >= 0 || durationMs > 0;
   bool get canStep =>
       canSeek && positionMs >= 0 && RegExp(r'^[0-9a-f]{16}$').hasMatch(seekKey);
@@ -39,7 +50,10 @@ class NowPlaying {
     );
   }
 
-  factory NowPlaying.fromJson(Map<String, dynamic> json) {
+  factory NowPlaying.fromJson(
+    Map<String, dynamic> json, {
+    NowPlaying? previous,
+  }) {
     Uint8List? icon;
     try {
       final encoded = json['icon'];
@@ -47,9 +61,12 @@ class NowPlaying {
         icon = base64Decode(encoded);
       }
     } catch (_) {}
-    return NowPlaying(
+    final current = NowPlaying(
       title: json['title'] is String ? json['title'] as String : '',
       app: json['app'] is String ? json['app'] as String : '',
+      player: json['player'] is String ? json['player'] as String : '',
+      trackId: json['trackId'] is String ? json['trackId'] as String : '',
+      mediaUrl: json['mediaUrl'] is String ? json['mediaUrl'] as String : '',
       playing: json['playing'] == true,
       icon: icon,
       positionMs: json['positionMs'] is num
@@ -64,6 +81,30 @@ class NowPlaying {
       canSeek: json['canSeek'] == true,
       seekKey: json['seekKey'] is String ? json['seekKey'] as String : '',
       receivedAt: DateTime.now(),
+    );
+    if (previous == null || !current.sameTrack(previous)) return current;
+    // Browsers can omit timing fields while buffering after SetPosition.
+    // Never borrow timing from a different player/video or from an empty report.
+    return NowPlaying(
+      title: current.title,
+      app: current.app,
+      player: current.player,
+      trackId: current.trackId,
+      mediaUrl: current.mediaUrl,
+      playing: current.playing,
+      icon: current.icon,
+      positionMs: current.positionMs >= 0
+          ? current.positionMs
+          : previous.positionMs >= 0
+          ? previous.positionAt(current.receivedAt!)
+          : -1,
+      durationMs: current.durationMs > 0
+          ? current.durationMs
+          : previous.durationMs,
+      rate: current.rate,
+      canSeek: current.canSeek,
+      seekKey: current.seekKey,
+      receivedAt: current.receivedAt,
     );
   }
 }
@@ -256,10 +297,12 @@ class _MediaTimelineState extends State<MediaTimeline> {
   @override
   void didUpdateWidget(MediaTimeline old) {
     super.didUpdateWidget(old);
-    if (old.media.seekKey != widget.media.seekKey) {
+    if (old.media.identity != widget.media.identity) {
       _drag = _pending = null;
       _dragKey = null;
       _pendingTimer?.cancel();
+    } else if (_dragKey != null && old.media.seekKey != widget.media.seekKey) {
+      _dragKey = widget.media.seekKey;
     } else if (_pending != null &&
         (widget.media.positionMs - _pending!).abs() < 1500) {
       _pending = null;
@@ -287,7 +330,7 @@ class _MediaTimelineState extends State<MediaTimeline> {
     setState(() => _pending = target.toDouble());
     widget.onSeek(m.seekKey, target);
     _pendingTimer?.cancel();
-    _pendingTimer = Timer(const Duration(seconds: 2), () {
+    _pendingTimer = Timer(const Duration(seconds: 5), () {
       if (mounted) setState(() => _pending = null);
     });
   }
@@ -335,7 +378,7 @@ class _MediaTimelineState extends State<MediaTimeline> {
             widget.onControl == null ? null : () => widget.onControl!(0x80B6),
           ),
           _SeekRepeatButton(
-            key: ValueKey('mediaBackward:${m.seekKey}'),
+            key: ValueKey('mediaBackward:${m.identity}'),
             name: 'mediaBackward',
             icon: Icons.fast_rewind,
             onStep: m.canStep ? () => _skip(-10000) : null,
@@ -396,7 +439,7 @@ class _MediaTimelineState extends State<MediaTimeline> {
                               widget.onSeek(key!, value.round());
                               _pendingTimer?.cancel();
                               _pendingTimer = Timer(
-                                const Duration(seconds: 2),
+                                const Duration(seconds: 5),
                                 () {
                                   if (mounted) setState(() => _pending = null);
                                 },
@@ -432,7 +475,7 @@ class _MediaTimelineState extends State<MediaTimeline> {
             'mediaDuration',
           ),
           _SeekRepeatButton(
-            key: ValueKey('mediaForward:${m.seekKey}'),
+            key: ValueKey('mediaForward:${m.identity}'),
             name: 'mediaForward',
             icon: Icons.fast_forward,
             onStep: m.canStep ? () => _skip(10000) : null,

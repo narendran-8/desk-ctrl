@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-26 · Reduce Remote Audio burst stutter and playback latency
+- files: agent/src/audio.rs, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PcmPump.kt, tools/audio/PcmPumpTest.kt, tools/audio/test_pcm_pump.py, README.md
+- docs: AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, PROTOCOL, ARCHITECTURE
+- tests: Flutter 253 passed; Linux agent 77 passed; native PCM prebuffer/partial-write/continuity/error tests passed; Android and Linux/Windows release builds passed
+- note: Pulse server unavailable in shell; live listening and exact AV latency not measured; restart updated desktop agent for capture timing fix
+
 ## 2026-10-25 · Add Remote Audio Output
 - files: README.md, agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, mobile/lib/settings.dart, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, output/setup_laptop.sh, output/README_windows.txt, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
 - docs: INDEX, ARCHITECTURE, PROTOCOL, AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, OPERATIONS

@@ -43,7 +43,7 @@ class Session extends ChangeNotifier {
       l.onVoice = (f) => onVoice?.call(f);
       l.onLevels = _setLevels;
       l.onMedia = (info) {
-        nowPlaying = NowPlaying.fromJson(info);
+        nowPlaying = NowPlaying.fromJson(info, previous: nowPlaying);
         notifyListeners();
       };
       l.onTextFocus = (t) {

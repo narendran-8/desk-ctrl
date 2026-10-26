@@ -27,8 +27,8 @@ pub fn handle(frame: &[u8], shared: &crate::server::SharedState) -> bool {
 }
 
 #[cfg(unix)]
-fn track_key(player: &str, track: &str, title: &str, length: i64) -> u64 {
-    let value = format!("{player}\0{track}\0{title}\0{length}");
+fn track_key(player: &str, track: &str, title: &str, media_url: &str) -> u64 {
+    let value = format!("{player}\0{track}\0{title}\0{media_url}");
     value.bytes().fold(0xcbf29ce484222325, |h, b| {
         (h ^ b as u64).wrapping_mul(0x100000001b3)
     })
@@ -171,6 +171,10 @@ fn now_playing(bus: &zbus::blocking::Connection) -> Option<serde_json::Value> {
             .and_then(|v| <&zbus::zvariant::ObjectPath>::try_from(v).ok())
             .map(|p| p.as_str())
             .unwrap_or("");
+        let media_url = metadata
+            .get("xesam:url")
+            .and_then(|v| <&str>::try_from(v).ok())
+            .unwrap_or("");
         let position = player
             .get_property::<i64>("Position")
             .ok()
@@ -183,8 +187,8 @@ fn now_playing(bus: &zbus::blocking::Connection) -> Option<serde_json::Value> {
             "title":title.chars().take(512).collect::<String>(), "app":app, "playing":status == "Playing", "icon": app_icon(&desktop),
             "positionMs":position.map(|p| p / 1000), "durationMs":length / 1000,
             "rate": if rate.is_finite() { rate } else { 1.0 }, "canSeek":can_seek,
-            "seekKey":format!("{:016x}", track_key(name, track, title, length)),
-            "player":name, "trackId":track
+            "seekKey":format!("{:016x}", track_key(name, track, title, media_url)),
+            "player":name, "trackId":track, "mediaUrl":media_url
         });
         if status == "Playing" {
             return Some(value);
@@ -491,6 +495,10 @@ mod tests {
         assert_eq!(unknown["durationMs"], 0);
         assert_eq!(unknown["canSeek"], true);
         let unknown_key = u64::from_str_radix(unknown["seekKey"].as_str().unwrap(), 16).unwrap();
+        assert_eq!(
+            unknown_key, new_key,
+            "duration dropout must not change track identity"
+        );
         for target in [30_000_000, 40_000_000, 25_000_000, 15_000_000] {
             assert!(set_position(&client, unknown_key, target).unwrap());
             assert_eq!(position.load(Ordering::Relaxed), target as i64);
@@ -499,6 +507,14 @@ mod tests {
         assert!(!set_position(&client, unknown_key, 5_000_000).unwrap());
         drop(service);
         assert!(now_playing(&client).is_none());
+    }
+    #[cfg(unix)]
+    #[test]
+    fn media_track_identity_includes_video_url() {
+        assert_ne!(
+            track_key("player", "/firefox", "Same title", "video1"),
+            track_key("player", "/firefox", "Same title", "video2")
+        );
     }
     #[cfg(unix)]
     #[test]

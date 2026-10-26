@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Keep playback timeline stable across seek metadata gaps
+- files: agent/src/media.rs, mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, TESTING, KNOWN
+- tests: Flutter 272 passed with one soak skipped; focused media 17 passed; Linux 82 passed; analyzer 12 existing infos; APK built/installed; Linux release built; phone UI before/after seek reproduction verified
+- note: Old UI disappeared after 2:30 seek. Fixed UI retains bar and 6:00 total through four-second null metadata at 2:30, 4:38 and 1:07. Duration cached only for same video; agent fingerprint excludes duration and includes URL. Test source/tunnel cleaned; original Computer 2 restored. Reopen agent for desktop fix.
+
 ## 2026-10-26 · Recover Remote Audio socket drops without manual restart
 - files: mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/settings_sheet.dart, mobile/test/remote_audio_test.dart, mobile/test/fake_agent.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, SETTINGS, PROTOCOL, TESTING, KNOWN
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
 - tests: Flutter 259 passed; focused 6 passed; Linux agent 80 passed; private MPRIS and PNG icon checks passed; analyzer 12 existing infos; Linux/Windows releases and 71.6MB APK built; APK installed
 - note: Metadata currently Linux MPRIS only; PNG app icons with music-note fallback; Windows and Android local-media titles unavailable
-
-## 2026-10-26 · Reduce Remote Audio burst stutter and playback latency
-- files: agent/src/audio.rs, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PcmPump.kt, tools/audio/PcmPumpTest.kt, tools/audio/test_pcm_pump.py, README.md
-- docs: AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, PROTOCOL, ARCHITECTURE
-- tests: Flutter 253 passed; Linux agent 77 passed; native PCM prebuffer/partial-write/continuity/error tests passed; Android and Linux/Windows release builds passed
-- note: Pulse server unavailable in shell; live listening and exact AV latency not measured; restart updated desktop agent for capture timing fix
 

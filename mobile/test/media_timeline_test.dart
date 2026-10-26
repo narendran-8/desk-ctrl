@@ -35,6 +35,105 @@ void main() {
     );
     expect(paused.positionAt(now.add(const Duration(seconds: 3))), 10000);
   });
+  test('same video preserves duration through null/zero reports without borrowing across videos', () {
+    final json = <String, dynamic>{
+      'title': 'Video',
+      'app': 'Firefox',
+      'player': 'org.mpris.firefox',
+      'trackId': '/firefox',
+      'mediaUrl': 'video1',
+      'positionMs': 90000,
+      'durationMs': 360000,
+      'canSeek': true,
+      'seekKey': '1234567890abcdef',
+    };
+    final original = NowPlaying.fromJson(json);
+    final gap = NowPlaying.fromJson({
+      ...json,
+      'durationMs': null,
+      'positionMs': null,
+      'seekKey': '0000000000000001',
+    }, previous: original);
+    expect(gap.durationMs, 360000);
+    expect(gap.positionMs, 90000);
+    expect(gap.seekable, isTrue);
+    final zero = NowPlaying.fromJson({...json, 'durationMs': 0}, previous: gap);
+    expect(zero.durationMs, 360000);
+    final next = NowPlaying.fromJson({
+      ...json,
+      'mediaUrl': 'video2',
+      'durationMs': 0,
+    }, previous: zero);
+    expect(next.durationMs, 0);
+    expect(next.seekable, isFalse);
+    expect(NowPlaying.fromJson({}, previous: original).hasTimeline, isFalse);
+  });
+  testWidgets(
+    'seek preview and total survive missing metadata and legacy key changes',
+    (tester) async {
+      final sent = <int>[];
+      final json = <String, dynamic>{
+        'title': 'Video',
+        'app': 'Firefox',
+        'player': 'org.mpris.firefox',
+        'trackId': '/firefox',
+        'mediaUrl': 'video1',
+        'positionMs': 20000,
+        'durationMs': 360000,
+        'canSeek': true,
+        'seekKey': '1234567890abcdef',
+      };
+      var media = NowPlaying.fromJson(json);
+      Widget view() => MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 600,
+            child: MediaTimeline(media: media, onSeek: (_, p) => sent.add(p)),
+          ),
+        ),
+      );
+      await tester.pumpWidget(view());
+      // A real pointer drag to a random position; the source temporarily drops its timing.
+      var rect = tester.getRect(find.byKey(const Key('mediaSeekBar')));
+      final drag = await tester.startGesture(
+        Offset(rect.left + 15, rect.center.dy),
+      );
+      await drag.moveTo(Offset(rect.left + rect.width * .4, rect.center.dy));
+      media = NowPlaying.fromJson({
+        ...json,
+        'durationMs': null,
+        'positionMs': null,
+        'seekKey': '0000000000000001',
+      }, previous: media);
+      await tester.pumpWidget(view());
+      await drag.up();
+      await tester.pump();
+      expect(sent.length, 1);
+      expect(find.text('6:00'), findsOneWidget);
+      expect(
+        tester.widget<Slider>(find.byKey(const Key('mediaSeekBar'))).max,
+        360000,
+      );
+      await tester.pump(const Duration(seconds: 3));
+      expect(
+        tester.widget<Slider>(find.byKey(const Key('mediaSeekBar'))).value,
+        closeTo(sent.single.toDouble(), 1),
+      );
+      media = NowPlaying.fromJson({
+        ...json,
+        'positionMs': sent.single,
+        'durationMs': 0,
+        'seekKey': '0000000000000001',
+      }, previous: media);
+      await tester.pumpWidget(view());
+      expect(find.text('6:00'), findsOneWidget);
+      expect(
+        tester.widget<Slider>(find.byKey(const Key('mediaSeekBar'))).value,
+        closeTo(sent.single.toDouble(), 1),
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
   testWidgets(
     'red playhead/played track, grey remainder and live seek disabled',
     (tester) async {
