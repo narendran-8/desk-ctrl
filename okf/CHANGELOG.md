@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-26 · Add playback time and draggable media timeline
+- files: agent/src/media.rs, agent/src/server.rs, agent/src/bluetooth.rs, mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
+- tests: Flutter 265 passed; focused timeline/media 12 passed; Linux 81 passed; private MPRIS absolute seek/stale-track/clamp tests passed; pointer isolation and compact layout passed; analyzer 12 existing infos; Linux/Windows releases and APK built
+- note: Requires updated Linux agent and MPRIS seek capability; unknown duration/live streams disable seeking; Windows/local-phone metadata remains unavailable
+
 ## 2026-10-26 · Move now-playing title beneath playback controls
 - files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, TESTING

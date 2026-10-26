@@ -169,6 +169,7 @@ class EdgeZones {
 class EdgeZoneMarks extends StatelessWidget {
   final TopEdgeMode top;
   final NowPlaying media;
+  final bool showTitle;
 
   /// Whether the computer is thought to be playing: the middle icon then offers pause,
   /// otherwise play.
@@ -188,6 +189,7 @@ class EdgeZoneMarks extends StatelessWidget {
     this.tabs = false,
     this.top = TopEdgeMode.seek,
     this.media = const NowPlaying(),
+    this.showTitle = true,
     this.playing = false,
     this.muted = false,
   });
@@ -280,7 +282,7 @@ class EdgeZoneMarks extends StatelessWidget {
                     ],
                   ),
                 ),
-              if (showMedia)
+              if (showMedia && showTitle)
                 Positioned(
                   left: box.maxWidth * EdgeZones.topFrom,
                   right: box.maxWidth * (1 - EdgeZones.topTo),

@@ -51,8 +51,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-26",
    "sources": [],
-   "lines": 441,
-   "approx_tokens": 8653
+   "lines": 447,
+   "approx_tokens": 8843
   },
   {
    "file": "DECISIONS.md",
@@ -88,8 +88,8 @@
     "agent/src/focus.rs",
     "agent/src/usb.rs"
    ],
-   "lines": 93,
-   "approx_tokens": 4896
+   "lines": 95,
+   "approx_tokens": 4961
   },
   {
    "file": "INDEX.md",
@@ -116,7 +116,7 @@
    "updated": "2026-10-26",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 2069
+   "approx_tokens": 2075
   },
   {
    "file": "MOBILE.md",
@@ -140,8 +140,8 @@
     "mobile/lib/now_playing.dart",
     "mobile/lib/split_media_seek_bar.dart"
    ],
-   "lines": 76,
-   "approx_tokens": 3565
+   "lines": 78,
+   "approx_tokens": 3743
   },
   {
    "file": "OKF.md",
@@ -219,8 +219,8 @@
     "mobile/test/now_playing_test.dart",
     "agent/src/media.rs"
    ],
-   "lines": 109,
-   "approx_tokens": 5187
+   "lines": 113,
+   "approx_tokens": 5387
   }
  ]
 }

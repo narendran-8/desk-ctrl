@@ -572,6 +572,65 @@ void main() {
     await tester.runAsync(settle);
     expect(agent.received, ['1,128,205', '2,128,205']);
     agent.received.clear();
+    final title = tester.getRect(find.byKey(const Key('mediaTrackSwipe')));
+    expect(
+      tester.getCenter(find.byKey(const Key('mediaBackward'))).dy,
+      title.center.dy,
+    );
+    expect(
+      tester.getCenter(find.byKey(const Key('mediaForward'))).dy,
+      title.center.dy,
+    );
+    await tester.drag(
+      find.byKey(const Key('mediaTrackSwipe')),
+      const Offset(-80, 0),
+    );
+    await tester.runAsync(settle);
+    expect(
+      agent.received.length,
+      1,
+      reason: 'title swipe only sends a seek, never pointer input',
+    );
+    final left = ByteData.sublistView(
+      Uint8List.fromList(
+        agent.received.single.split(',').map(int.parse).toList(),
+      ),
+    ).getUint64(9, Endian.big);
+    agent.received.clear();
+    await tester.drag(
+      find.byKey(const Key('mediaTrackSwipe')),
+      const Offset(80, 0),
+    );
+    await tester.runAsync(settle);
+    final right = ByteData.sublistView(
+      Uint8List.fromList(
+        agent.received.single.split(',').map(int.parse).toList(),
+      ),
+    ).getUint64(9, Endian.big);
+    expect(right - left, 10000000, reason: 'left swipe seeks back ten seconds');
+    agent.received.clear();
+    await tester.drag(
+      find.byKey(const Key('mediaTrackSwipe')),
+      const Offset(8, 0),
+    );
+    await tester.runAsync(settle);
+    expect(
+      agent.received,
+      isEmpty,
+      reason: 'a small title touch must not seek or click',
+    );
+    final titleGesture = await tester.startGesture(title.center);
+    await titleGesture.moveTo(title.center + const Offset(-60, 0));
+    report('2222222222222222');
+    await tester.runAsync(settle);
+    await tester.pump();
+    await titleGesture.up();
+    await tester.runAsync(settle);
+    expect(
+      agent.received,
+      isEmpty,
+      reason: 'changing tracks cancels an unfinished title swipe',
+    );
     final staleDrag = await tester.startGesture(
       Offset(rect.left + 12, rect.center.dy),
     );
@@ -609,18 +668,16 @@ void main() {
     );
     final timeline = tester.getRect(find.byKey(const Key('mediaTimeline')));
     expect(timeline.top, 0);
-    expect(timeline.bottom, 40);
+    expect(timeline.bottom, 64);
     expect(
       tester.getCenter(find.byKey(const Key("mediaElapsed"))).dy,
       tester.getCenter(find.byKey(const Key("mediaDuration"))).dy,
     );
     final order = [
       'mediaPrevious',
-      'mediaBackward',
       'mediaElapsed',
       'mediaPlayPause',
       'mediaDuration',
-      'mediaForward',
       'mediaNext',
     ];
     for (var i = 1; i < order.length; i++) {

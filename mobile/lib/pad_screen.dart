@@ -851,6 +851,8 @@ class _TouchPadState extends State<TouchPad> {
                               : session!.nowPlaying;
                           return EdgeZoneMarks(
                             media: media,
+                            showTitle:
+                                !(media.hasTimeline && box.maxHeight >= 150),
                             top: parseTopEdgeMode(Settings.instance.padTopMode),
                             playing: media.title.isEmpty
                                 ? _playing
@@ -916,7 +918,7 @@ class _TouchPadState extends State<TouchPad> {
                   left: EdgeZones.edge,
                   right: EdgeZones.edge,
                   top: 0,
-                  height: 40,
+                  height: 64,
                   child: MediaTimeline(
                     media: media,
                     onControl: (hid) {

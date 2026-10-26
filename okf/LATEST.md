@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Move seek buttons to track title and add title swipes
+- files: mobile/lib/now_playing.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 275 passed with one soak skipped; focused media 20 passed; title swipe direction/isolation/small-touch/track-change tests passed; analyzer 12 existing infos; APK built/installed; actual phone title swipes and relocated holds verified
+- note: Title row is << icon + name >>; right swipe seeks forward 10 seconds, left backward 10; existing tap/hold preserved. Split timeline stays above. Media overlay y=0..64 remains outside pointer Listener. Test source/tunnel removed, original Computer 2 restored. Desktop unchanged.
+
 ## 2026-10-26 · Split playback progress around the play-pause button
 - files: mobile/lib/split_media_seek_bar.dart, mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: MOBILE, FEATURES, TESTING
 - tests: Flutter 265 passed; focused media 12 passed; direct forward/back seek, 700ms hold-drag, previous/play/next packets and pointer isolation passed; analyzer 12 existing infos; release APK built
 - note: Progress line behind controls at y=0; times below, centered title at y=56; +/-10s absolute seeks need existing Linux media capability; protocol unchanged
-
-## 2026-10-26 · Add playback time and draggable media timeline
-- files: agent/src/media.rs, agent/src/server.rs, agent/src/bluetooth.rs, mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
-- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
-- tests: Flutter 265 passed; focused timeline/media 12 passed; Linux 81 passed; private MPRIS absolute seek/stale-track/clamp tests passed; pointer isolation and compact layout passed; analyzer 12 existing infos; Linux/Windows releases and APK built
-- note: Requires updated Linux agent and MPRIS seek capability; unknown duration/live streams disable seeking; Windows/local-phone metadata remains unavailable
 

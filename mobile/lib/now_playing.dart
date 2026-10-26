@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 
 import 'split_media_seek_bar.dart';
 
@@ -310,6 +311,8 @@ class _MediaTimelineState extends State<MediaTimeline> {
   Timer? _clock, _pendingTimer;
   double? _drag, _pending;
   String? _dragKey;
+  double _titleSwipe = 0;
+  String? _titleIdentity;
   @override
   void initState() {
     super.initState();
@@ -331,6 +334,7 @@ class _MediaTimelineState extends State<MediaTimeline> {
     if (old.media.identity != widget.media.identity) {
       _drag = _pending = null;
       _dragKey = null;
+      _titleIdentity = null;
       _pendingTimer?.cancel();
     } else if (_dragKey != null && old.media.seekKey != widget.media.seekKey) {
       _dragKey = widget.media.seekKey;
@@ -400,98 +404,151 @@ class _MediaTimelineState extends State<MediaTimeline> {
     );
     return SizedBox(
       key: const Key('mediaTimeline'),
-      height: 40,
-      child: Row(
+      height: 64,
+      child: Column(
         children: [
-          button(
-            'mediaPrevious',
-            Icons.skip_previous,
-            widget.onControl == null ? null : () => widget.onControl!(0x80B6),
-          ),
-          _SeekRepeatButton(
-            key: ValueKey('mediaBackward:${m.identity}'),
-            name: 'mediaBackward',
-            icon: Icons.fast_rewind,
-            onStep: m.canStep ? () => _skip(-10000) : null,
-          ),
-          time(
-            m.positionMs >= 0
-                ? '${m.positionEstimated ? '~' : ''}${playbackTime(position.round())}'
-                : '--:--',
-            'mediaElapsed',
-          ),
-          Expanded(
-            child: SplitMediaSeekBar(
-              key: const Key('mediaSeekBar'),
-              max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
-              value: m.durationMs > 0 ? position : 0,
-              onChangeStart: m.seekable
-                  ? (value) {
-                      _dragKey = m.seekKey;
-                      setState(() => _drag = value);
-                    }
-                  : null,
-              onChanged: m.seekable
-                  ? (value) => setState(() => _drag = value)
-                  : null,
-              onChangeEnd: m.seekable
-                  ? (value) {
-                      final key = _dragKey;
-                      _dragKey = null;
-                      if (key != m.seekKey) {
-                        setState(() => _drag = null);
-                        return;
-                      }
-                      setState(() {
-                        _drag = null;
-                        _pending = value;
-                      });
-                      widget.onSeek(key!, value.round());
-                      _pendingTimer?.cancel();
-                      _pendingTimer = Timer(const Duration(seconds: 5), () {
-                        if (mounted) setState(() => _pending = null);
-                      });
-                    }
-                  : null,
+          SizedBox(
+            height: 40,
+            child: Row(
+              children: [
+                button(
+                  'mediaPrevious',
+                  Icons.skip_previous,
+                  widget.onControl == null
+                      ? null
+                      : () => widget.onControl!(0x80B6),
+                ),
 
-              onCancel: () => setState(() {
-                _drag = null;
-                _dragKey = null;
-              }),
-              center: SizedBox(
-                width: 30,
-                height: 30,
-                child: Material(
-                  color: const Color(0xFF151A20),
-                  shape: const CircleBorder(),
-                  child: IconButton(
-                    key: const Key('mediaPlayPause'),
-                    padding: EdgeInsets.zero,
-                    iconSize: 22,
-                    color: Colors.white70,
-                    onPressed: widget.onControl == null
-                        ? null
-                        : () => widget.onControl!(0x80CD),
-                    icon: Icon(m.playing ? Icons.pause : Icons.play_arrow),
+                time(
+                  m.positionMs >= 0
+                      ? '${m.positionEstimated ? '~' : ''}${playbackTime(position.round())}'
+                      : '--:--',
+                  'mediaElapsed',
+                ),
+                Expanded(
+                  child: SplitMediaSeekBar(
+                    key: const Key('mediaSeekBar'),
+                    max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
+                    value: m.durationMs > 0 ? position : 0,
+                    onChangeStart: m.seekable
+                        ? (value) {
+                            _dragKey = m.seekKey;
+                            setState(() => _drag = value);
+                          }
+                        : null,
+                    onChanged: m.seekable
+                        ? (value) => setState(() => _drag = value)
+                        : null,
+                    onChangeEnd: m.seekable
+                        ? (value) {
+                            final key = _dragKey;
+                            _dragKey = null;
+                            if (key != m.seekKey) {
+                              setState(() => _drag = null);
+                              return;
+                            }
+                            setState(() {
+                              _drag = null;
+                              _pending = value;
+                            });
+                            widget.onSeek(key!, value.round());
+                            _pendingTimer?.cancel();
+                            _pendingTimer = Timer(
+                              const Duration(seconds: 5),
+                              () {
+                                if (mounted) setState(() => _pending = null);
+                              },
+                            );
+                          }
+                        : null,
+
+                    onCancel: () => setState(() {
+                      _drag = null;
+                      _dragKey = null;
+                    }),
+                    center: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Material(
+                        color: const Color(0xFF151A20),
+                        shape: const CircleBorder(),
+                        child: IconButton(
+                          key: const Key('mediaPlayPause'),
+                          padding: EdgeInsets.zero,
+                          iconSize: 22,
+                          color: Colors.white70,
+                          onPressed: widget.onControl == null
+                              ? null
+                              : () => widget.onControl!(0x80CD),
+                          icon: Icon(
+                            m.playing ? Icons.pause : Icons.play_arrow,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                time(
+                  m.durationMs > 0 ? playbackTime(m.durationMs) : '--:--',
+                  'mediaDuration',
+                ),
+
+                button(
+                  'mediaNext',
+                  Icons.skip_next,
+                  widget.onControl == null
+                      ? null
+                      : () => widget.onControl!(0x80B5),
+                ),
+              ],
             ),
           ),
-          time(
-            m.durationMs > 0 ? playbackTime(m.durationMs) : '--:--',
-            'mediaDuration',
-          ),
-          _SeekRepeatButton(
-            key: ValueKey('mediaForward:${m.identity}'),
-            name: 'mediaForward',
-            icon: Icons.fast_forward,
-            onStep: m.canStep ? () => _skip(10000) : null,
-          ),
-          button(
-            'mediaNext',
-            Icons.skip_next,
-            widget.onControl == null ? null : () => widget.onControl!(0x80B5),
+          SizedBox(
+            height: 24,
+            child: Row(
+              children: [
+                _SeekRepeatButton(
+                  key: ValueKey('mediaBackward:${m.identity}'),
+                  name: 'mediaBackward',
+                  icon: Icons.fast_rewind,
+                  onStep: m.canStep ? () => _skip(-10000) : null,
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    key: const Key('mediaTrackSwipe'),
+                    dragStartBehavior: DragStartBehavior.down,
+                    behavior: HitTestBehavior.opaque,
+                    onHorizontalDragStart: m.canStep
+                        ? (_) {
+                            _titleSwipe = 0;
+                            _titleIdentity = m.identity;
+                          }
+                        : null,
+                    onHorizontalDragUpdate: m.canStep
+                        ? (event) => _titleSwipe += event.delta.dx
+                        : null,
+                    onHorizontalDragCancel: () => _titleIdentity = null,
+                    onHorizontalDragEnd: m.canStep
+                        ? (_) {
+                            final sameTrack =
+                                _titleIdentity == widget.media.identity;
+                            _titleIdentity = null;
+                            if (sameTrack && _titleSwipe.abs() >= 24) {
+                              _skip(_titleSwipe > 0 ? 10000 : -10000);
+                            }
+                          }
+                        : null,
+                    child: NowPlayingBadge(media: m),
+                  ),
+                ),
+                _SeekRepeatButton(
+                  key: ValueKey('mediaForward:${m.identity}'),
+                  name: 'mediaForward',
+                  icon: Icons.fast_forward,
+                  onStep: m.canStep ? () => _skip(10000) : null,
+                ),
+              ],
+            ),
           ),
         ],
       ),
