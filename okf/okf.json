@@ -51,8 +51,8 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-26",
    "sources": [],
-   "lines": 393,
-   "approx_tokens": 7444
+   "lines": 399,
+   "approx_tokens": 7544
   },
   {
    "file": "DECISIONS.md",
@@ -116,7 +116,7 @@
    "updated": "2026-10-26",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1900
+   "approx_tokens": 1918
   },
   {
    "file": "MOBILE.md",
@@ -219,7 +219,7 @@
     "agent/src/media.rs"
    ],
    "lines": 87,
-   "approx_tokens": 3662
+   "approx_tokens": 3688
   }
  ]
 }

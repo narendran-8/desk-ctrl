@@ -324,10 +324,6 @@ class _MediaTimelineState extends State<MediaTimeline> {
       height: 40,
       child: Row(
         children: [
-          time(
-            m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
-            'mediaElapsed',
-          ),
           button(
             'mediaPrevious',
             Icons.skip_previous,
@@ -337,6 +333,10 @@ class _MediaTimelineState extends State<MediaTimeline> {
             'mediaBackward',
             Icons.fast_rewind,
             m.seekable ? () => skip(-10000) : null,
+          ),
+          time(
+            m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
+            'mediaElapsed',
           ),
           Expanded(
             child: Stack(
@@ -421,6 +421,10 @@ class _MediaTimelineState extends State<MediaTimeline> {
               ],
             ),
           ),
+          time(
+            m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
+            'mediaDuration',
+          ),
           button(
             'mediaForward',
             Icons.fast_forward,
@@ -430,10 +434,6 @@ class _MediaTimelineState extends State<MediaTimeline> {
             'mediaNext',
             Icons.skip_next,
             widget.onControl == null ? null : () => widget.onControl!(0x80B5),
-          ),
-          time(
-            m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
-            'mediaDuration',
           ),
         ],
       ),

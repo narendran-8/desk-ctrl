@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Place playback times inside skip controls
+- files: mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 265 passed including compact left-to-right order assertion; analyzer 12 existing style infos; release APK built and installed
+- note: Order: previous, rewind, current time, seek line with play/pause, total duration, forward, next. Layout-only change; existing actions preserved.
+
 ## 2026-10-26 · Arrange playback controls and times in one row
 - files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, SETTINGS, TESTING
 - tests: Flutter 247 passed; focused 4 passed; analyzer 12 existing infos; release APK built
 - note: APK installation and on-phone visual check pending because no adb device is attached
-
-## 2026-10-23 · Move Mobile landscape controls to top edge
-- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
-- docs: FEATURES, MOBILE, TESTING
-- tests: Flutter 247 passed; focused 4 passed; release APK built and installed; landscape and portrait screenshots checked; analyzer 12 existing infos
-- note: Landscape uses 28 dp controls with 14 dp icons; portrait layout unchanged
 

@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Move Mobile landscape controls to top edge
+- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 247 passed; focused 4 passed; release APK built and installed; landscape and portrait screenshots checked; analyzer 12 existing infos
+- note: Landscape uses 28 dp controls with 14 dp icons; portrait layout unchanged
+
 ## 2026-10-23 · Align Mobile controls by orientation
 - files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
 - docs: FEATURES, MOBILE, TESTING

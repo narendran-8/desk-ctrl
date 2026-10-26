@@ -206,6 +206,21 @@ void main() {
       tester.getCenter(find.byKey(const Key("mediaElapsed"))).dy,
       tester.getCenter(find.byKey(const Key("mediaDuration"))).dy,
     );
+    final order = [
+      'mediaPrevious',
+      'mediaBackward',
+      'mediaElapsed',
+      'mediaPlayPause',
+      'mediaDuration',
+      'mediaForward',
+      'mediaNext',
+    ];
+    for (var i = 1; i < order.length; i++) {
+      expect(
+        tester.getCenter(find.byKey(Key(order[i - 1]))).dx,
+        lessThan(tester.getCenter(find.byKey(Key(order[i]))).dx),
+      );
+    }
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
