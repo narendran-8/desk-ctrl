@@ -297,6 +297,8 @@ mod platform {
                     "--format=s16le",
                     "--rate=48000",
                     "--channels=2",
+                    "--latency-msec=40",
+                    "--process-time-msec=10",
                     &format!("--device={monitor}"),
                 ])
                 .stdout(Stdio::piped())
@@ -349,6 +351,8 @@ mod platform {
                 "--format=s16le",
                 "--rate=48000",
                 "--channels=2",
+                "--latency-msec=40",
+                "--process-time-msec=10",
             ]);
             if device != "default" {
                 cmd.arg(format!("--device={device}"));

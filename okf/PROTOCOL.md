@@ -1,7 +1,7 @@
 ---
 id: protocol
 summary: Input and Remote Audio wire formats, key code space, liveness/fail-over rules, USB pairing link, and framing.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [agent/src/hid.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/identity.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/leds.rs, mobile/lib/links.dart, mobile/lib/remote_audio.dart]
 ---
 # Input/control protocol (binary, big-endian)
@@ -79,3 +79,5 @@ Raw payload is 192 kB/s, about 1.536 Mbit/s before WebSocket overhead. Queues ar
 ## USB pairing link (phone entry point, `AndroidManifest.xml` intent filter `deskctrl://pair`)
 `deskctrl://pair/<token>?usb=1&port=<n>&name=<host>&id=<computerId>` (sent by `adb shell am start -a VIEW -p com.deskctrl.deskctrl -d '<uri>'`).
 The app **ignores** links without `usb=1`; they only add a link to 127.0.0.1. QR codes use `deskctrl://pair/<token>?port=&id=&ip=&bt=`.
+
+Timing (2026-10-26): packet format unchanged. Pulse capture/playback requests 40 ms latency and 10 ms processing. Android starts after 40/60 ms prebuffer (Low/Balanced) with 4/6 application frames, instead of starting empty with 8/20 frames. These are buffering targets, not measured end-to-end latency.

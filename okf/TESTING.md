@@ -1,7 +1,7 @@
 ---
 id: testing
 summary: How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/audio.rs, agent/src/usb.rs]
 ---
 # Testing
@@ -73,3 +73,6 @@ Coordinates (landscape 1640x720 px, rail on the LEFT; mirrored x ≈ 1640-52 whe
 2026-10-23 phone observation: two live computers ("Computer 2" USB + Wi-Fi, "box" Wi-Fi). Before the fix, tapping the computer icon changed the neighbouring USB glyph to Wi-Fi; after the fix, the computer icon changed teal/blue and the link glyph stayed fixed. The original computer was reselected after checking. No keys/clicks were sent to a computer.
 Computers sheet: Add (1370,~102), row ⋮ at x=1332. `am start -n com.deskctrl.deskctrl/.MainActivity` (not `monkey`, it hangs). Rotation: `settings put system user_rotation 1|3` (restore `accelerometer_rotation 1`, `user_rotation 0`).
 Desktop side checks: pointer position via Gdk (`Gdk.Display.get_default().get_default_seat().get_pointer().get_position()`), synthetic clicks via `Atspi.generate_mouse_event`, `wmctrl -a "title"` to switch windows, `xprop`.
+
+## Audio buffering regression (2026-10-26)
+`python3 tools/audio/test_pcm_pump.py` compiles the production `PcmPump.kt` with Gradle-cached Kotlin compiler jars and tests prebuffer-before-play, partial writes without sample loss, 200 continuous frames with only one play call, cancellation and output errors. Passed. Flutter 253 passed; Linux agent 77 passed; Linux/Windows release builds succeeded. Phone is attached; current shell cannot connect to PulseAudio (`Connection refused`), so actual listening/A-V offset is not measured here.

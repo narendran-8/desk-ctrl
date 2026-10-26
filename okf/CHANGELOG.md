@@ -1,11 +1,17 @@
 ---
 id: changelog
 summary: Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: []
 ---
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
+
+## 2026-10-23 · Trackpad Mobile media controls
+- files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
+- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 241 passed; Android release APK built and installed; phone toggle visually checked; analyze only 13 existing style infos
+- note: Android media keys target the active phone media session; browser seek support varies. Brightness adjusts the ViL window, not system-wide brightness.
 
 ## 2026-10-23 · Separate computer switching from the transport glyph
 - files: mobile/lib/main.dart, mobile/test/computer_button_test.dart

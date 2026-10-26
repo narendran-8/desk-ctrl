@@ -7,6 +7,7 @@ import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioTrack
 import android.os.Build
+import android.os.Process
 import java.util.concurrent.ArrayBlockingQueue
 import kotlin.concurrent.thread
 
@@ -14,7 +15,7 @@ import kotlin.concurrent.thread
 class RemoteAudio(private val context: Context) {
     private var track: AudioTrack? = null
     private var worker: Thread? = null
-    private var queue = ArrayBlockingQueue<ByteArray>(20)
+    private var queue = ArrayBlockingQueue<ByteArray>(6)
     @Volatile private var running = false
     private var focus: AudioFocusRequest? = null
 
@@ -22,22 +23,39 @@ class RemoteAudio(private val context: Context) {
         stop()
         val mask = if (channels == 1) AudioFormat.CHANNEL_OUT_MONO else AudioFormat.CHANNEL_OUT_STEREO
         val format = AudioFormat.Builder().setSampleRate(rate).setChannelMask(mask).setEncoding(AudioFormat.ENCODING_PCM_16BIT).build()
-        val min = AudioTrack.getMinBufferSize(rate, mask, AudioFormat.ENCODING_PCM_16BIT).coerceAtLeast(rate / 10)
-        val multiplier = if (latency == "low") 2 else 4
-        val audio = AudioTrack.Builder()
+        val frameBytes = rate * channels * 2 / 50 // 20 ms PCM
+        val min = AudioTrack.getMinBufferSize(rate, mask, AudioFormat.ENCODING_PCM_16BIT)
+        require(min > 0) { "Unsupported remote audio format" }
+        val targetBytes = frameBytes * if (latency == "low") 2 else 3
+        val bufferBytes = maxOf(min, targetBytes)
+        val builder = AudioTrack.Builder()
             .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
-            .setAudioFormat(format).setTransferMode(AudioTrack.MODE_STREAM).setBufferSizeInBytes(min * multiplier).build()
+            .setAudioFormat(format).setTransferMode(AudioTrack.MODE_STREAM).setBufferSizeInBytes(bufferBytes)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
+        }
+        val audio = builder.build()
         requestFocus()
-        queue = ArrayBlockingQueue(if (latency == "low") 8 else 20)
+        val frames = ArrayBlockingQueue<ByteArray>(if (latency == "low") 4 else 6)
+        queue = frames
         track = audio
         running = true
         worker = thread(name = "ViL remote audio") {
-            audio.play()
-            while (running) {
-                try {
-                    val bytes = queue.take()
-                    audio.write(bytes, 0, bytes.size, AudioTrack.WRITE_BLOCKING)
-                } catch (_: InterruptedException) { break }
+            Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
+            try {
+                // Fill the native buffer before starting the clock. Starting empty
+                // immediately underruns and makes network jitter audible.
+                val pump = PcmPump(targetBytes)
+                while (running && track === audio) {
+                    val bytes = frames.take()
+                    if (!pump.write(bytes, { running && track === audio },
+                            { data, offset, count -> audio.write(data, offset, count, AudioTrack.WRITE_BLOCKING) },
+                            { audio.play() })) break
+                }
+            } catch (_: InterruptedException) {
+                // Normal stop.
+            } catch (_: IllegalStateException) {
+                // A concurrent stop released this generation's track.
             }
         }
     }

@@ -1,7 +1,7 @@
 ---
 id: features
 summary: Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, agent/src/audio.rs, agent/src/focus.rs, agent/src/usb.rs]
 ---
 # Features (behaviour as shipped)
@@ -74,3 +74,5 @@ Settings sheet is sectioned and scoped to the current screen ("All settings" for
 Settings > Start-up: **Start the agent when I log in** (XDG autostart file, 5 s delay) and **Start minimised** (on by default when switching autostart on). See AGENT.md.
 
 See `AGENT.md` (dashboard with QR, token, Bluetooth/USB badges, connected devices, Settings panel, Log tab).
+
+Remote Audio smoothness fix (2026-10-26): explicit 10 ms Pulse capture/playback updates with 40 ms requested server latency; Android prebuffers 40/60 ms, uses audio-priority writing, handles partial writes, and limits its application queue to 4/6 frames. This reduces startup underruns and burst/drop/starvation behavior without a multi-second buffer. Update/restart the Linux agent as well as the APK.

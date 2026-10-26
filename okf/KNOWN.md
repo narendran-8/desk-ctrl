@@ -1,7 +1,7 @@
 ---
 id: known
 summary: Limits, unverified items, open problems and ideas. Update when something is fixed or discovered.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: []
 ---
 # Known limits and open items
@@ -46,3 +46,5 @@ Agentless Bluetooth HID mode; send phone name to the agent for the device table;
 - Notch bar (2026-10-19): arranged and tested for 8 camera-hole shapes (centre / corner punch holes, waterdrop, wide, very wide) in dp; NOT seen on a real second phone. On a phone where Android reports no cutout even with `shortEdges`, 'auto' behaves like 'off' (use 'On'). Android < 9 has no cutout API.
 - Flaky: the agent's port tests (`free_port()` race) fail now and then and pass on a rerun.
 - Round-menu Copy / Paste "not working" (reported 2026-10-18, both normal and terminal, Linux, maybe Windows): phone frames (Ctrl+C = 1,0,224 / 1,0,6 ...) and the Linux agent's uinput events (29, 46 ...) were read back and are correct. A Tk test window that held the X focus received Ctrl+V once but later chords reached nothing (stray Alt_L from another source moved the focus), so the test was inconclusive; NOT resolved, investigation interrupted by the owner.
+
+- Remote Audio stutter reported on hardware (2026-10-26): capture batching and Android empty-buffer startup addressed with explicit Pulse timing, short native prebuffer and partial-write handling. No exact end-to-end latency or lip-sync guarantee; listen again using both updated APK and agent.

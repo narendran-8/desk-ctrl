@@ -1,7 +1,7 @@
 ---
 id: operations
 summary: Build, install, publish and run commands; paths; adb tricks; the laptop setup script.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [output/setup_laptop.sh, mobile/pubspec.yaml, agent/Cargo.toml, agent/src/audio.rs]
 ---
 # Operations

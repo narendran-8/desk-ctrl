@@ -1,7 +1,7 @@
 ---
 id: architecture
 summary: Components, data flow, threads, input transports, Remote Audio, and how a computer is represented on the phone.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [agent/src/server.rs, agent/src/audio.rs, agent/src/main.rs, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/main.dart, mobile/lib/remote_audio.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt]
 ---
 # Architecture
@@ -47,3 +47,5 @@ Injection: `inject::Input` (tracks held keys, releases them when a phone disconn
 - **Fail-over**: a link silent > 3.5 s (after heartbeats were seen) is declared dead; traffic moves; held keys are released on the new link.
 - **Remote Audio**: the phone opens `/audio/v1` to the active source and optionally another connected destination. Both authenticate with the existing token. The source captures 48 kHz stereo PCM16 into an eight-frame drop queue; the phone strips the 16-byte header for Android `AudioTrack`, or forwards the whole packet unchanged to the destination agent. Input stays on `/`, so audio backpressure cannot delay key-up or pointer frames. Audio uses USB first, then Wi-Fi; Bluetooth-only audio is reported unavailable.
 - **Audio route change**: the stream records its source/destination endpoint URLs. A USB/Wi-Fi change either closes both sockets and reports a clear stopped/error state, or reconnects after one second to the same source and destination when the setting is enabled. Destination loss never selects a different output silently.
+
+Remote Audio latency (2026-10-26): capture/playback helpers request 40 ms latency and 10 ms processing instead of server defaults. Android writer uses a short 40/60 ms initial prebuffer, audio thread priority, full partial-write handling (`PcmPump`) and a 4/6-frame bounded queue.

@@ -1,7 +1,7 @@
 ---
 id: mobile
 summary: The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [mobile/lib/main.dart, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, mobile/lib/usb_pairing.dart, mobile/lib/motion_cursor.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt]
 ---
 # Mobile app (mobile/, package `deskctrl`, Android only, Flutter 3 / Dart 3.13)
@@ -55,4 +55,4 @@ Channels: `deskctrl/bt` + `deskctrl/bt/events` (RFCOMM per address), `deskctrl/w
 `deskctrl/link` + `/events` (deep link `deskctrl://pair/...`, initial + `onNewIntent`). Manifest: INTERNET, CAMERA, BLUETOOTH perms,
 VIEW intent filter for `deskctrl://pair`, `launchMode=singleTop`.
 
-`RemoteAudio.kt` requests Android media audio focus, creates a streaming PCM16 `AudioTrack` on the current Android media route, and uses an 8-frame Low or 20-frame Balanced queue. A full queue drops the oldest frame to limit latency. Stop interrupts the worker, clears memory, flushes/releases the track, and abandons focus. No audio is written to storage.
+`RemoteAudio.kt` requests Android media audio focus, creates a streaming PCM16 `AudioTrack` on the current Android media route, and uses a 4-frame Low or 6-frame Balanced queue. A full queue drops the oldest frame to limit latency. It preloads 40 ms (Low) or 60 ms (Balanced) before play, requests low-latency performance, uses audio thread priority, and preserves partial AudioTrack writes through `PcmPump.kt`. Stop interrupts the worker, clears memory, flushes/releases the track, and abandons focus. No audio is written to storage.

@@ -1,7 +1,7 @@
 ---
 id: agent
 summary: The Rust desktop agent - every module's job, environment variables, the window design, how to run it.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/inject.rs, agent/src/hid.rs, agent/src/leds.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/usb.rs, agent/src/identity.rs, agent/src/portowner.rs, agent/src/gui.rs, agent/src/look.rs]
 ---
 # Agent (agent/, crate `agent`, binary published as `desk_ctrl_agent`)
@@ -77,3 +77,5 @@ Port-in-use help (stop other agent / sudo hint) shows under the header when stop
 - `start()` binds first; on failure nothing else starts (Start works later). `stop()` joins all threads and removes adb tunnels.
 - Tests (`cfg!(test)`) never poll the cable (`usb_auto` false) - a test once paired a real phone.
 - Bluetooth "UUID already registered" means another agent owns the BlueZ service (normal when two agents run).
+
+Remote Audio timing fix (2026-10-26): `parec` and `pacat` explicitly request `--latency-msec=40 --process-time-msec=10`. Default server batching could deliver more audio at once than the eight-frame queue holds, producing periodic loss followed by starvation. The request reduces capture bursts; actual hardware/server latency may be higher.

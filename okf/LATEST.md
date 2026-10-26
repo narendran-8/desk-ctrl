@@ -1,11 +1,17 @@
 ---
 id: latest
 summary: The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: []
 ---
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
+
+## 2026-10-26 · Reduce Remote Audio burst stutter and playback latency
+- files: agent/src/audio.rs, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PcmPump.kt, tools/audio/PcmPumpTest.kt, tools/audio/test_pcm_pump.py, README.md
+- docs: AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, PROTOCOL, ARCHITECTURE
+- tests: Flutter 253 passed; Linux agent 77 passed; native PCM prebuffer/partial-write/continuity/error tests passed; Android and Linux/Windows release builds passed
+- note: Pulse server unavailable in shell; live listening and exact AV latency not measured; restart updated desktop agent for capture timing fix
 
 ## 2026-10-25 · Add Remote Audio Output
 - files: README.md, agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, mobile/lib/settings.dart, mobile/lib/connection.dart, mobile/lib/main.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, output/setup_laptop.sh, output/README_windows.txt, output/desk_ctrl.apk, output/desk_ctrl_agent, output/desk_ctrl_agent.exe
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, TESTING
 - tests: Flutter 241 passed; Android release APK built and installed; phone showed volume 46% and brightness 95%; analyze only 13 existing style infos
 - note: Brightness percentage is for the ViL window; test adjustments were reversed and Mobile mode left off.
-
-## 2026-10-23 · Trackpad Mobile media controls
-- files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
-- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
-- tests: Flutter 241 passed; Android release APK built and installed; phone toggle visually checked; analyze only 13 existing style infos
-- note: Android media keys target the active phone media session; browser seek support varies. Brightness adjusts the ViL window, not system-wide brightness.
 

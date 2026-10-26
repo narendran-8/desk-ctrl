@@ -149,7 +149,7 @@ The stream stays active while changing ViL modes. Audio uses its own authenticat
 
 Linux uses the current PulseAudio or PipeWire-Pulse desktop monitor through `pactl`, `parec`, and `pacat`. With **Also play on the source computer** off, ViL temporarily routes playback through a private null sink and restores the previous default/output routes when stopped. Windows uses WASAPI loopback through CPAL. Windows currently requires **Also play on the source computer** to be enabled because the agent cannot yet mute the source endpoint safely.
 
-The first implementation sends 48 kHz stereo PCM16 in 20 ms frames, about 1.54 Mbit/s before WebSocket overhead. It is intended for a local Wi-Fi network or USB connection. Audio is held only in bounded memory queues and is never recorded to disk. Video synchronization is best effort; the packet timestamp is reserved for later clock correction.
+The first implementation sends 48 kHz stereo PCM16 in 20 ms frames, about 1.54 Mbit/s before WebSocket overhead. It is intended for a local Wi-Fi network or USB connection. Audio is held only in bounded memory queues and is never recorded to disk. Linux capture/playback requests 10 ms updates with 40 ms server latency. Android prebuffers 40 ms in Low mode or 60 ms in Balanced mode, then writes continuously on an audio-priority thread. Update the desktop agent and APK together for the buffering fix. Video synchronization is best effort; the packet timestamp is reserved for later clock correction.
 
 ## Optional voice control
 

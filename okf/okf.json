@@ -1,12 +1,12 @@
 {
  "project": "DeskCtrl",
- "generated": "2026-10-25",
+ "generated": "2026-10-26",
  "docs": [
   {
    "file": "AGENT.md",
    "id": "agent",
    "summary": "The Rust desktop agent - every module's job, environment variables, the window design, how to run it.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "agent/src/main.rs",
     "agent/src/server.rs",
@@ -23,14 +23,14 @@
     "agent/src/gui.rs",
     "agent/src/look.rs"
    ],
-   "lines": 80,
-   "approx_tokens": 4457
+   "lines": 82,
+   "approx_tokens": 4543
   },
   {
    "file": "ARCHITECTURE.md",
    "id": "architecture",
    "summary": "Components, data flow, threads, input transports, Remote Audio, and how a computer is represented on the phone.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "agent/src/server.rs",
     "agent/src/audio.rs",
@@ -41,17 +41,17 @@
     "mobile/lib/remote_audio.dart",
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt"
    ],
-   "lines": 50,
-   "approx_tokens": 1270
+   "lines": 52,
+   "approx_tokens": 1341
   },
   {
    "file": "CHANGELOG.md",
    "id": "changelog",
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [],
-   "lines": 351,
-   "approx_tokens": 6478
+   "lines": 357,
+   "approx_tokens": 6634
   },
   {
    "file": "DECISIONS.md",
@@ -73,7 +73,7 @@
    "file": "FEATURES.md",
    "id": "features",
    "summary": "Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "mobile/lib/pad_screen.dart",
     "mobile/lib/keyboard_screen.dart",
@@ -87,8 +87,8 @@
     "agent/src/focus.rs",
     "agent/src/usb.rs"
    ],
-   "lines": 77,
-   "approx_tokens": 3962
+   "lines": 79,
+   "approx_tokens": 4063
   },
   {
    "file": "INDEX.md",
@@ -103,25 +103,25 @@
    "file": "KNOWN.md",
    "id": "known",
    "summary": "Limits, unverified items, open problems and ideas. Update when something is fixed or discovered.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [],
-   "lines": 49,
-   "approx_tokens": 1940
+   "lines": 51,
+   "approx_tokens": 2014
   },
   {
    "file": "LATEST.md",
    "id": "latest",
    "summary": "The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 1754
+   "approx_tokens": 1774
   },
   {
    "file": "MOBILE.md",
    "id": "mobile",
    "summary": "The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "mobile/lib/main.dart",
     "mobile/lib/connection.dart",
@@ -138,7 +138,7 @@
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt"
    ],
    "lines": 59,
-   "approx_tokens": 1971
+   "approx_tokens": 2015
   },
   {
    "file": "OKF.md",
@@ -155,7 +155,7 @@
    "file": "OPERATIONS.md",
    "id": "operations",
    "summary": "Build, install, publish and run commands; paths; adb tricks; the laptop setup script.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "output/setup_laptop.sh",
     "mobile/pubspec.yaml",
@@ -169,7 +169,7 @@
    "file": "PROTOCOL.md",
    "id": "protocol",
    "summary": "Input and Remote Audio wire formats, key code space, liveness/fail-over rules, USB pairing link, and framing.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "agent/src/hid.rs",
     "agent/src/server.rs",
@@ -182,27 +182,27 @@
     "mobile/lib/links.dart",
     "mobile/lib/remote_audio.dart"
    ],
-   "lines": 82,
-   "approx_tokens": 1471
+   "lines": 84,
+   "approx_tokens": 1547
   },
   {
    "file": "SETTINGS.md",
    "id": "settings",
    "summary": "Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "mobile/lib/settings.dart",
     "mobile/lib/settings_sheet.dart",
     "mobile/lib/remote_audio.dart"
    ],
    "lines": 91,
-   "approx_tokens": 1877
+   "approx_tokens": 1888
   },
   {
    "file": "TESTING.md",
    "id": "testing",
    "summary": "How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.",
-   "updated": "2026-10-25",
+   "updated": "2026-10-26",
    "sources": [
     "mobile/test/fake_agent.dart",
     "mobile/test/remote_audio_test.dart",
@@ -212,8 +212,8 @@
     "agent/src/audio.rs",
     "agent/src/usb.rs"
    ],
-   "lines": 76,
-   "approx_tokens": 3020
+   "lines": 79,
+   "approx_tokens": 3155
   }
  ]
 }
