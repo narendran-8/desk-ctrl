@@ -134,6 +134,52 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     },
   );
+  testWidgets(
+    'same seek button can be held repeatedly after rebuild and finger drift',
+    (tester) async {
+      final seeks = <int>[];
+      Widget view(int position) => MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 400,
+            child: MediaTimeline(
+              media: NowPlaying(
+                positionMs: position,
+                durationMs: 600000,
+                canSeek: true,
+                seekKey: '1234567890abcdef',
+              ),
+              onSeek: (_, p) => seeks.add(p),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(view(40000));
+      for (final name in [
+        'mediaForward',
+        'mediaForward',
+        'mediaBackward',
+        'mediaBackward',
+      ]) {
+        final before = seeks.length;
+        final center = tester.getCenter(find.byKey(Key(name)));
+        final hold = await tester.startGesture(center);
+        await tester.pump(const Duration(milliseconds: 600));
+        // Small natural finger drift must not cancel a hold on a narrow button.
+        await hold.moveTo(center + const Offset(16, 0));
+        await tester.pumpWidget(view(seeks.last));
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(seeks.length, before + 3);
+        final values = seeks.sublist(before);
+        expect(values[1] - values[0], name == 'mediaForward' ? 10000 : -10000);
+        expect(values[2] - values[1], name == 'mediaForward' ? 10000 : -10000);
+        await hold.up();
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(seeks.length, before + 3);
+      }
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
   testWidgets('drag sends one absolute seek and no mouse/key events', (
     tester,
   ) async {

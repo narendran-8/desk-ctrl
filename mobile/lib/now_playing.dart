@@ -488,33 +488,39 @@ class _SeekRepeatButtonState extends State<_SeekRepeatButton> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onLongPressStart: widget.onStep == null
-        ? null
-        : (_) {
-            _stop();
-            widget.onStep!();
-            _repeat = Timer.periodic(
-              const Duration(milliseconds: 250),
-              (_) => widget.onStep?.call(),
-            );
-          },
-    onLongPressEnd: (_) => _stop(),
-    onLongPressCancel: _stop,
-    onLongPressMoveUpdate: (event) {
-      final p = event.localPosition;
-      if (p.dx < 0 || p.dx > 26 || p.dy < 0 || p.dy > 40) _stop();
-    },
-    child: SizedBox(
-      width: 26,
-      height: 40,
-      child: IconButton(
-        key: Key(widget.name),
-        padding: EdgeInsets.zero,
-        iconSize: 18,
-        color: Colors.white60,
-        onPressed: widget.onStep,
-        icon: Icon(widget.icon),
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: widget.onStep != null,
+    label: widget.name == 'mediaForward' ? 'Seek forward' : 'Seek backward',
+    onTap: widget.onStep,
+    child: GestureDetector(
+      key: Key(widget.name),
+      behavior: HitTestBehavior.opaque,
+      onTap: widget.onStep,
+      onLongPressStart: widget.onStep == null
+          ? null
+          : (_) {
+              _stop();
+              widget.onStep!();
+              _repeat = Timer.periodic(
+                const Duration(milliseconds: 250),
+                (_) => widget.onStep?.call(),
+              );
+            },
+      onLongPressEnd: (_) => _stop(),
+      onLongPressCancel: _stop,
+      onLongPressMoveUpdate: (event) {
+        final p = event.localPosition;
+        if (p.dx < -18 || p.dx > 44 || p.dy < -18 || p.dy > 58) _stop();
+      },
+      child: SizedBox(
+        width: 26,
+        height: 40,
+        child: Icon(
+          widget.icon,
+          size: 18,
+          color: widget.onStep == null ? Colors.white24 : Colors.white60,
+        ),
       ),
     ),
   );

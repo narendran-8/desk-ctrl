@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Fix repeated seek holds cancelling on finger drift
+- files: mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart
+- docs: INDEX, MOBILE, FEATURES, TESTING
+- tests: Flutter 267 passed; timeline 6 passed; repeated-hold regression fails on previous code and passes fixed code; analyzer 12 existing infos; release APK built and installed
+- note: Single gesture owner replaces nested IconButton; 18dp movement tolerance; consecutive forward/backward holds verified across feedback rebuilds; no live computer media input sent
+
 ## 2026-10-26 · Repeat playback seeking while holding forward or rewind
 - files: mobile/lib/now_playing.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, TESTING
 - tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built and installed; portrait/landscape default and swapped layouts checked
 - note: Landscape controls now end before the media strip; portrait punctuation row remained readable and unclipped
-
-## 2026-10-24 · Add punctuation row to Mobile keyboard
-- files: README.md, mobile/lib/keyboard_screen.dart, mobile/test/mobile_screen_test.dart
-- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
-- tests: Flutter 248 passed; focused 5 passed; analyzer 12 existing infos; release APK built
-- note: Only Mobile portrait compact keyboard changed; APK installation and visual check pending because no adb device is attached
 
