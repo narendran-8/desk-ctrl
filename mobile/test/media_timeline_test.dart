@@ -125,41 +125,8 @@ void main() {
     expect(find.text('0:15'), findsOneWidget);
     expect(find.text('1:30'), findsOneWidget);
     agent.received.clear();
-    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
-    for (final (button, usage) in [
-      ('mediaPrevious', 182),
-      ('mediaPlayPause', 205),
-      ('mediaNext', 181),
-    ]) {
-      agent.received.clear();
-      await tester.tap(find.byKey(Key(button)));
-      await tester.runAsync(settle);
-      expect(agent.received, ['1,128,$usage', '2,128,$usage']);
-    }
-    agent.received.clear();
-    for (final (button, expected) in [
-      ('mediaForward', 25000000),
-      ('mediaBackward', 15000000),
-    ]) {
-      await tester.tap(find.byKey(Key(button)));
-      await tester.runAsync(settle);
-      final command = Uint8List.fromList(
-        agent.received.last.split(',').map(int.parse).toList(),
-      );
-      expect(command[0], 7);
-      expect(ByteData.sublistView(command).getUint64(9, Endian.big), expected);
-    }
-    agent.received.clear();
     final rect = tester.getRect(find.byKey(const Key('mediaSeekBar')));
-    final gesture = await tester.startGesture(
-      Offset(rect.left + rect.width * .35, rect.center.dy),
-    );
-    await tester.pump(const Duration(milliseconds: 700));
-    expect(
-      agent.received,
-      isEmpty,
-      reason: 'holding the timeline must not click the computer',
-    );
+    final gesture = await tester.startGesture(rect.center);
     await gesture.moveTo(Offset(rect.right - 30, rect.center.dy));
     await tester.pump();
     await gesture.up();
@@ -187,9 +154,7 @@ void main() {
     expect(positionUs, greaterThan(45000000));
     expect(positionUs, lessThanOrEqualTo(90000000));
     agent.received.clear();
-    final staleDrag = await tester.startGesture(
-      Offset(rect.left + rect.width * .35, rect.center.dy),
-    );
+    final staleDrag = await tester.startGesture(rect.center);
     await staleDrag.moveTo(Offset(rect.right - 30, rect.center.dy));
     report('0000000000000001');
     await tester.runAsync(settle);
@@ -223,8 +188,8 @@ void main() {
       ),
     );
     final timeline = tester.getRect(find.byKey(const Key('mediaTimeline')));
-    expect(timeline.top, 0);
-    expect(timeline.bottom, lessThanOrEqualTo(56));
+    expect(timeline.top, 64);
+    expect(timeline.bottom, lessThanOrEqualTo(110));
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });

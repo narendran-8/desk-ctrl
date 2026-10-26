@@ -223,15 +223,9 @@ String playbackTime(int milliseconds) {
 
 /// A sibling of the raw pointer surface so seeking never moves/clicks the PC mouse.
 class MediaTimeline extends StatefulWidget {
-  const MediaTimeline({
-    super.key,
-    required this.media,
-    required this.onSeek,
-    this.onAction,
-  });
+  const MediaTimeline({super.key, required this.media, required this.onSeek});
   final NowPlaying media;
   final void Function(String trackKey, int positionMs) onSeek;
-  final void Function(String action)? onAction;
   @override
   State<MediaTimeline> createState() => _MediaTimelineState();
 }
@@ -277,43 +271,6 @@ class _MediaTimelineState extends State<MediaTimeline> {
     super.dispose();
   }
 
-  Widget _control(
-    String key,
-    IconData icon,
-    String label,
-    VoidCallback? action,
-  ) => Center(
-    child: SizedBox(
-      width: 28,
-      height: 28,
-      child: Material(
-        color: Theme.of(context).colorScheme.surface,
-        shape: const CircleBorder(),
-        child: IconButton(
-          key: Key(key),
-          tooltip: label,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints.tightFor(width: 28, height: 28),
-          icon: Icon(icon, size: 19),
-          onPressed: action,
-        ),
-      ),
-    ),
-  );
-
-  void _step(int delta) {
-    final m = widget.media;
-    if (!m.seekable) return;
-    final current = _pending ?? m.positionAt(DateTime.now()).toDouble();
-    final target = (current + delta).clamp(0, m.durationMs).round();
-    setState(() => _pending = target.toDouble());
-    widget.onSeek(m.seekKey, target);
-    _pendingTimer?.cancel();
-    _pendingTimer = Timer(const Duration(seconds: 2), () {
-      if (mounted) setState(() => _pending = null);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final m = widget.media;
@@ -324,11 +281,11 @@ class _MediaTimelineState extends State<MediaTimeline> {
         );
     return SizedBox(
       key: const Key('mediaTimeline'),
-      height: 56,
-      child: Stack(
+      height: 44,
+      child: Column(
         children: [
           SizedBox(
-            height: 40,
+            height: 26,
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackHeight: 3,
@@ -343,7 +300,6 @@ class _MediaTimelineState extends State<MediaTimeline> {
               ),
               child: Slider(
                 key: const Key('mediaSeekBar'),
-                allowedInteraction: SliderInteraction.tapAndSlide,
                 min: 0,
                 max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
                 value: m.durationMs > 0 ? position : 0,
@@ -379,73 +335,20 @@ class _MediaTimelineState extends State<MediaTimeline> {
               ),
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            height: 40,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _control(
-                  'mediaPrevious',
-                  Icons.skip_previous,
-                  'Previous track',
-                  widget.onAction == null
-                      ? null
-                      : () => widget.onAction!('previous'),
-                ),
-                _control(
-                  'mediaBackward',
-                  Icons.fast_rewind,
-                  'Back 10 seconds',
-                  m.seekable ? () => _step(-10000) : null,
-                ),
-                _control(
-                  'mediaPlayPause',
-                  m.playing ? Icons.pause : Icons.play_arrow,
-                  m.playing ? 'Pause' : 'Play',
-                  widget.onAction == null
-                      ? null
-                      : () => widget.onAction!('playPause'),
-                ),
-                _control(
-                  'mediaForward',
-                  Icons.fast_forward,
-                  'Forward 10 seconds',
-                  m.seekable ? () => _step(10000) : null,
-                ),
-                _control(
-                  'mediaNext',
-                  Icons.skip_next,
-                  'Next track',
-                  widget.onAction == null
-                      ? null
-                      : () => widget.onAction!('next'),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 40,
-            height: 16,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
-                  key: const Key('mediaElapsed'),
-                  style: const TextStyle(color: Colors.white60, fontSize: 10),
-                ),
-                Text(
-                  m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
-                  key: const Key('mediaDuration'),
-                  style: const TextStyle(color: Colors.white60, fontSize: 10),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
+                key: const Key('mediaElapsed'),
+                style: const TextStyle(color: Colors.white60, fontSize: 10),
+              ),
+              Text(
+                m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
+                key: const Key('mediaDuration'),
+                style: const TextStyle(color: Colors.white60, fontSize: 10),
+              ),
+            ],
           ),
         ],
       ),

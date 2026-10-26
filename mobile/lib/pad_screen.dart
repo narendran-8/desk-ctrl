@@ -833,7 +833,7 @@ class _TouchPadState extends State<TouchPad> {
                         }
                         return Padding(
                           padding: EdgeInsets.only(
-                            top: hasTimeline ? 80 : 64,
+                            top: hasTimeline ? 108 : 64,
                             bottom: 40,
                           ),
                           child: FittedBox(fit: BoxFit.scaleDown, child: hint),
@@ -851,8 +851,6 @@ class _TouchPadState extends State<TouchPad> {
                               : session!.nowPlaying;
                           return EdgeZoneMarks(
                             media: media,
-                            integratedMedia:
-                                media.hasTimeline && box.maxHeight >= 150,
                             top: parseTopEdgeMode(Settings.instance.padTopMode),
                             playing: media.title.isEmpty
                                 ? _playing
@@ -917,22 +915,10 @@ class _TouchPadState extends State<TouchPad> {
                 return Positioned(
                   left: box.maxWidth * .2,
                   right: box.maxWidth * .2,
-                  top: 0,
-                  height: 56,
+                  top: 64,
+                  height: 44,
                   child: MediaTimeline(
                     media: media,
-                    onAction: (action) {
-                      if (Connection.instance.activeId != session!.device.id) {
-                        return;
-                      }
-                      final key = switch (action) {
-                        'previous' => EdgeZones.previousKey,
-                        'next' => EdgeZones.nextKey,
-                        _ => EdgeZones.playPauseKey,
-                      };
-                      Connection.instance.key(key, true);
-                      Connection.instance.key(key, false);
-                    },
                     onSeek: (key, position) => Connection.instance.seekMedia(
                       session!.device.id,
                       key,

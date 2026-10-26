@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Revert integrated playback line update
+- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 265 passed; release APK rebuilt; analyzer has 12 existing style infos
+- note: Reverts b180a8f only; restores separate timeline from 00ed177. APK installation attempted but no Android device was attached.
+
 ## 2026-10-26 · Integrate timeline behind playback controls and fix seek buttons
 - files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, TESTING
 - tests: Flutter 247 passed; focused 4 passed; release APK built and installed; portrait and landscape screenshots checked; analyze 12 existing infos
 - note: Portrait buttons align with the left volume strip; landscape buttons sit side by side at top left
-
-## 2026-10-23 · Fix Mobile media controls and align Mobile buttons
-- files: README.md, mobile/lib/edge_zones.dart, mobile/lib/mobile_screen.dart, mobile/lib/pad_screen.dart, mobile/test/mobile_screen_test.dart, mobile/test/pad_zones_test.dart
-- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
-- tests: Flutter 247 passed; targeted 26 passed; APK built and installed; portrait/landscape visually checked; analyze 12 existing infos
-- note: Real computer media playback was not exercised; routing verified against recording fake agent and Android channel mock
 

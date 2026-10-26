@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Fix Mobile media controls and align Mobile buttons
+- files: README.md, mobile/lib/edge_zones.dart, mobile/lib/mobile_screen.dart, mobile/lib/pad_screen.dart, mobile/test/mobile_screen_test.dart, mobile/test/pad_zones_test.dart
+- docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
+- tests: Flutter 247 passed; targeted 26 passed; APK built and installed; portrait/landscape visually checked; analyze 12 existing infos
+- note: Real computer media playback was not exercised; routing verified against recording fake agent and Android channel mock
+
 ## 2026-10-23 · Fix track-mode skip-button tap on trackpad top strip
 - files: mobile/lib/pad_screen.dart, mobile/test/pad_zones_test.dart
 - docs: MOBILE, TESTING
