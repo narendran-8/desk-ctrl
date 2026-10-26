@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 
 import 'links.dart';
+import 'now_playing.dart';
 import 'scan_screen.dart' show PairInfo;
 import 'settings.dart';
 
@@ -41,6 +42,10 @@ class Session extends ChangeNotifier {
       l.onLeds = _setLeds;
       l.onVoice = (f) => onVoice?.call(f);
       l.onLevels = _setLevels;
+      l.onMedia = (info) {
+        nowPlaying = NowPlaying.fromJson(info);
+        notifyListeners();
+      };
       l.onTextFocus = (t) {
         focusTypeable = t;
         onTextFocus?.call(t);
@@ -50,6 +55,7 @@ class Session extends ChangeNotifier {
   }
 
   Device device;
+  NowPlaying nowPlaying = const NowPlaying();
 
   /// What could not be set up from the information the computer sent over the cable (for
   /// example: its Bluetooth is not paired with this phone). Shown with the links.
@@ -346,6 +352,7 @@ class Session extends ChangeNotifier {
     phase = Phase.idle;
     leds = null;
     levelsKnown = false;
+    nowPlaying = const NowPlaying();
     await Future.wait([wifi.close(), bt.close(), usb.close()]);
     notifyListeners();
   }

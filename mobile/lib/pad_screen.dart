@@ -13,6 +13,7 @@ import 'edge_zones.dart';
 import 'mouse_widgets.dart';
 import 'motion_cursor.dart';
 import 'phone_media.dart';
+import 'now_playing.dart';
 import 'settings.dart';
 
 /// Laptop-style touchpad: a large touch zone, left/right buttons underneath
@@ -223,8 +224,7 @@ class _TouchPadState extends State<TouchPad> {
           _zone == EdgeZone.windows &&
           Settings.instance.padTabSwitch &&
           EdgeZones.isSwitchToggle(e.localPosition, size!);
-      _skip =
-          _zone == EdgeZone.media
+      _skip = _zone == EdgeZone.media
           ? EdgeZones.skipButton(e.localPosition, size!)
           : 0;
       _stopHold();
@@ -802,12 +802,23 @@ class _TouchPadState extends State<TouchPad> {
                 ),
               ),
               if (widget.enabled && Settings.instance.padZones)
-                EdgeZoneMarks(
-                  top: parseTopEdgeMode(Settings.instance.padTopMode),
-                  playing: _playing,
-                  muted: _muted,
-                  windows: Settings.instance.padWindows,
-                  tabs: Settings.instance.tabsMode,
+                ListenableBuilder(
+                  listenable: Connection.instance,
+                  builder: (context, _) {
+                    final session = Connection.instance.active;
+                    final media =
+                        widget.phoneMedia || session?.effective == null
+                        ? const NowPlaying()
+                        : session!.nowPlaying;
+                    return EdgeZoneMarks(
+                      media: media,
+                      top: parseTopEdgeMode(Settings.instance.padTopMode),
+                      playing: media.title.isEmpty ? _playing : media.playing,
+                      muted: _muted,
+                      windows: Settings.instance.padWindows,
+                      tabs: Settings.instance.tabsMode,
+                    );
+                  },
                 ),
               // What the last slide on an edge did (volume, brightness, track).
               if (_hud != null)

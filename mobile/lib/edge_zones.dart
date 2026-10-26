@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'now_playing.dart';
+
 /// Control zones along the edges of the touchpad, like the printed zones on some laptop touchpads:
 ///  - left edge: slide up / down = volume
 ///  - right edge: slide up / down = brightness
@@ -166,6 +168,7 @@ class EdgeZones {
 /// Faint markings along the pad's edges that show where the zones are.
 class EdgeZoneMarks extends StatelessWidget {
   final TopEdgeMode top;
+  final NowPlaying media;
 
   /// Whether the computer is thought to be playing: the middle icon then offers pause,
   /// otherwise play.
@@ -184,6 +187,7 @@ class EdgeZoneMarks extends StatelessWidget {
     this.windows = true,
     this.tabs = false,
     this.top = TopEdgeMode.seek,
+    this.media = const NowPlaying(),
     this.playing = false,
     this.muted = false,
   });
@@ -229,6 +233,7 @@ class EdgeZoneMarks extends StatelessWidget {
         builder: (context, box) {
           final sideTop = box.maxHeight * EdgeZones.sideTopFraction;
           final sideHeight = box.maxHeight - sideTop;
+          final showMedia = media.title.isNotEmpty && sideHeight >= 60;
           return Stack(
             children: [
               Positioned(
@@ -237,7 +242,21 @@ class EdgeZoneMarks extends StatelessWidget {
                 top: sideTop,
                 height: sideHeight,
                 child: Center(
-                  child: _slider(muted ? Icons.volume_off : Icons.volume_up),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: (sideHeight - (showMedia ? 36 : 0)).clamp(
+                          0.0,
+                          110.0,
+                        ),
+                        child: _slider(
+                          muted ? Icons.volume_off : Icons.volume_up,
+                        ),
+                      ),
+                      if (showMedia) NowPlayingBadge(media: media),
+                    ],
+                  ),
                 ),
               ),
               Positioned(

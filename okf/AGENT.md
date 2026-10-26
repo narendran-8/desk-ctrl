@@ -2,7 +2,7 @@
 id: agent
 summary: The Rust desktop agent - every module's job, environment variables, the window design, how to run it.
 updated: 2026-10-26
-sources: [agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/inject.rs, agent/src/hid.rs, agent/src/leds.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/usb.rs, agent/src/identity.rs, agent/src/portowner.rs, agent/src/gui.rs, agent/src/look.rs]
+sources: [agent/src/main.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/inject.rs, agent/src/hid.rs, agent/src/leds.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/usb.rs, agent/src/identity.rs, agent/src/portowner.rs, agent/src/gui.rs, agent/src/look.rs, agent/src/media.rs]
 ---
 # Agent (agent/, crate `agent`, binary published as `desk_ctrl_agent`)
 
@@ -79,3 +79,6 @@ Port-in-use help (stop other agent / sudo hint) shows under the header when stop
 - Bluetooth "UUID already registered" means another agent owns the BlueZ service (normal when two agents run).
 
 Remote Audio timing fix (2026-10-26): `parec` and `pacat` explicitly request `--latency-msec=40 --process-time-msec=10`. Default server batching could deliver more audio at once than the eight-frame queue holds, producing periodic loss followed by starvation. The request reduces capture bursts; actual hardware/server latency may be higher.
+
+## Now-playing media (`media.rs`)
+A separate worker polls the Linux session bus every second using MPRIS. It prefers a Playing session, otherwise keeps a Paused session, reads `xesam:title`, Identity and DesktopEntry, and sends JSON feedback in `0x16` chunks over the existing authenticated Wi-Fi/USB/Bluetooth input connection. Every fourth poll refreshes unchanged metadata for newly connected phones. When the player disappears it sends `{}`. Installed PNG app icons are resolved from desktop entries and icon themes, resized to 24px, and encoded as base64; no website/album artwork is fetched. Missing icons use the phone's music-note fallback. Windows currently sends empty metadata (no native now-playing integration yet).

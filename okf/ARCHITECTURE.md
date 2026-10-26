@@ -49,3 +49,6 @@ Injection: `inject::Input` (tracks held keys, releases them when a phone disconn
 - **Audio route change**: the stream records its source/destination endpoint URLs. A USB/Wi-Fi change either closes both sockets and reports a clear stopped/error state, or reconnects after one second to the same source and destination when the setting is enabled. Destination loss never selects a different output silently.
 
 Remote Audio latency (2026-10-26): capture/playback helpers request 40 ms latency and 10 ms processing instead of server defaults. Android writer uses a short 40/60 ms initial prebuffer, audio thread priority, full partial-write handling (`PcmPump`) and a 4/6-frame bounded queue.
+
+## Now-playing feedback
+Agent `media.rs` polls MPRIS independently of input and Remote Audio. It publishes title/app/status/icon chunks through the normal authenticated feedback paths (event broadcast + Bluetooth). Each phone Link reassembles chunks independently, Session stores the per-computer `NowPlaying`, and the Trackpad badge follows only the active live session. This works without Remote Audio streaming being enabled.

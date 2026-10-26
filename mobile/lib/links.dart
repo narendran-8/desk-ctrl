@@ -41,6 +41,26 @@ abstract class Link extends ChangeNotifier {
 
   static const levelFrame = 0x12;
 
+  void Function(Map<String, dynamic>)? onMedia;
+  static const mediaFrame = 0x16;
+  final List<int> _mediaBytes = [];
+  void receiveMedia(List<int> frame) {
+    if (frame.length < 2) return;
+    if (frame[1] & 1 != 0) _mediaBytes.clear();
+    if (_mediaBytes.length + frame.length > 24000) {
+      _mediaBytes.clear();
+      return;
+    }
+    _mediaBytes.addAll(frame.skip(2));
+    if (frame[1] & 2 != 0) {
+      try {
+        final value = jsonDecode(utf8.decode(_mediaBytes));
+        if (value is Map<String, dynamic>) onMedia?.call(value);
+      } catch (_) {}
+      _mediaBytes.clear();
+    }
+  }
+
   /// The computer says a text field just got the keyboard focus.
   /// The argument says whether it can be typed into (older agents send only "yes").
   void Function(bool typeable)? onTextFocus;
@@ -185,6 +205,10 @@ class WifiLink extends Link {
               m[0] == Link.infoFrame) {
             if (ack.isCompleted)
               onInfo?.call(utf8.decode(m.sublist(1), allowMalformed: true));
+            return;
+          }
+          if (m is List<int> && m.length >= 2 && m[0] == Link.mediaFrame) {
+            if (ack.isCompleted) receiveMedia(m);
             return;
           }
           if (m is List<int> && m.length >= 2 && m[0] == Link.voiceFrame) {
@@ -418,6 +442,8 @@ class BtLink extends Link {
             markHeartbeat();
           } else if (payload.first == Link.ledFrame && payload.length >= 2) {
             onLeds?.call(payload[1]);
+          } else if (payload.first == Link.mediaFrame && payload.length >= 2) {
+            receiveMedia(payload);
           } else if (payload.first == Link.voiceFrame && payload.length >= 2) {
             onVoice?.call(Uint8List.fromList(payload));
           } else if (payload.first == Link.focusFrame) {

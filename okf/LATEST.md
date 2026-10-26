@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Show track title and app icon below trackpad volume
+- files: agent/Cargo.toml, agent/Cargo.lock, agent/src/main.rs, agent/src/server.rs, agent/src/media.rs, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/now_playing_test.dart, README.md
+- docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
+- tests: Flutter 259 passed; focused 6 passed; Linux agent 80 passed; private MPRIS and PNG icon checks passed; analyzer 12 existing infos; Linux/Windows releases and 71.6MB APK built; APK installed
+- note: Metadata currently Linux MPRIS only; PNG app icons with music-note fallback; Windows and Android local-media titles unavailable
+
 ## 2026-10-26 · Reduce Remote Audio burst stutter and playback latency
 - files: agent/src/audio.rs, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PcmPump.kt, tools/audio/PcmPumpTest.kt, tools/audio/test_pcm_pump.py, README.md
 - docs: AGENT, MOBILE, SETTINGS, FEATURES, TESTING, KNOWN, PROTOCOL, ARCHITECTURE
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, MOBILE, SETTINGS, FEATURES, TESTING
 - tests: Flutter 244 passed; APK built and installed; Mobile layout and settings checked on phone; analyze has 12 existing style infos
 - note: Combined screen uses existing touchpad and keyboard controls; old saved mode orders append Mobile.
-
-## 2026-10-23 · Show phone volume and brightness percentages
-- files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
-- docs: FEATURES, MOBILE, TESTING
-- tests: Flutter 241 passed; Android release APK built and installed; phone showed volume 46% and brightness 95%; analyze only 13 existing style infos
-- note: Brightness percentage is for the ViL window; test adjustments were reversed and Mobile mode left off.
 

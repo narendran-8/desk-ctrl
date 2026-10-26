@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Show phone volume and brightness percentages
+- files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 241 passed; Android release APK built and installed; phone showed volume 46% and brightness 95%; analyze only 13 existing style infos
+- note: Brightness percentage is for the ViL window; test adjustments were reversed and Mobile mode left off.
+
 ## 2026-10-23 · Trackpad Mobile media controls
 - files: mobile/lib/pad_screen.dart, mobile/lib/phone_media.dart, mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/test/phone_media_test.dart
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING

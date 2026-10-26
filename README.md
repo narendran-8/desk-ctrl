@@ -132,6 +132,8 @@ The phone provides these main modes:
 - **Mobile** — a touchpad and keyboard on one screen, so you can point and type without changing modes. Tap the swap icon to place either the touchpad or keyboard on top. Portrait uses a compact keyboard with letters, numbers, modifiers, arrows, and a full punctuation row (`- _ = + [ { ] } ; :` and more); tap the rotate icon on the touchpad to switch orientation. Top-edge play/pause and track buttons control the computer by default; tap the phone icon to control media on Android instead. Show or hide the screen in Settings > Screens.
 - **Round action button** — open shortcuts such as copy, paste, terminal actions, refresh, open terminal, close application, and custom keys.
 
+On the Trackpad (including Mobile mode), Linux media players can report the current track/video title and source-app icon beneath the left volume control. Long titles scroll within the volume strip width. This uses MPRIS, so Firefox/player media integration must be enabled. Windows and Android local-media titles are not available yet.
+
 The round button can be edited from the app's Settings. You can add, remove, reorder, and move actions between rows, create custom key actions, choose whether the menu stays open, and configure hold-repeat and idle-close behavior. A row's actions share the row's available arc, so four actions fill the row evenly.
 
 The side connection icon shows the active medium. It changes between Wi-Fi, Bluetooth, and USB during automatic fail-over.

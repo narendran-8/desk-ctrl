@@ -23,6 +23,7 @@ mod hid;
 mod inject;
 mod leds;
 mod levels;
+mod media;
 #[cfg(unix)]
 mod portowner;
 #[cfg(windows)]

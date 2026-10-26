@@ -1,7 +1,7 @@
 ---
 id: decisions
 summary: Design decisions with the reason, and the mistakes/gotchas that shaped the rules. Read before changing connection, pairing, auto-keyboard, menus or tests.
-updated: 2026-10-25
+updated: 2026-10-26
 sources: [mobile/lib/connection.dart, agent/src/usb.rs, agent/src/focus.rs, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, agent/src/server.rs]
 ---
 # Decisions and lessons (why it is like this)

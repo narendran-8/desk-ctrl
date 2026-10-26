@@ -2,7 +2,7 @@
 id: protocol
 summary: Input and Remote Audio wire formats, key code space, liveness/fail-over rules, USB pairing link, and framing.
 updated: 2026-10-26
-sources: [agent/src/hid.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/identity.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/leds.rs, mobile/lib/links.dart, mobile/lib/remote_audio.dart]
+sources: [agent/src/hid.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/identity.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/leds.rs, mobile/lib/links.dart, mobile/lib/remote_audio.dart, agent/src/media.rs, mobile/lib/now_playing.dart]
 ---
 # Input/control protocol (binary, big-endian)
 
@@ -81,3 +81,6 @@ Raw payload is 192 kB/s, about 1.536 Mbit/s before WebSocket overhead. Queues ar
 The app **ignores** links without `usb=1`; they only add a link to 127.0.0.1. QR codes use `deskctrl://pair/<token>?port=&id=&ip=&bt=`.
 
 Timing (2026-10-26): packet format unchanged. Pulse capture/playback requests 40 ms latency and 10 ms processing. Android starts after 40/60 ms prebuffer (Low/Balanced) with 4/6 application frames, instead of starting empty with 8/20 frames. These are buffering targets, not measured end-to-end latency.
+
+## Now-playing feedback (`0x16`)
+Agent -> phone, over all existing input transports: `[0x16, flags, ...UTF-8 JSON chunk]`. `flags & 1` begins a fresh message, `flags & 2` ends it; a one-frame message uses `3`. Payload chunks are <=240 bytes, so total frames are <=242 bytes and fit RFCOMM. Joined JSON is `{title, app, playing, icon}`; `icon` is base64 PNG of the installed source-app icon (24px), never album art. `{}` clears the current media. Each Link assembles its own bounded 24KB message before Session updates; UTF-8 is decoded only after joining. Wi-Fi event broadcast capacity is 256 frames so one icon update fits without displacing its own chunks. Old apps ignore this new frame; existing frame meanings are unchanged. Reports repeat every four seconds and update on a one-second poll when changed.

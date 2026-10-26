@@ -2,7 +2,7 @@
 id: mobile
 summary: The Flutter app - file map, key classes, conventions (theme access, guards, overlays), Kotlin bridge.
 updated: 2026-10-26
-sources: [mobile/lib/main.dart, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, mobile/lib/usb_pairing.dart, mobile/lib/motion_cursor.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt]
+sources: [mobile/lib/main.dart, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, mobile/lib/usb_pairing.dart, mobile/lib/motion_cursor.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt, mobile/lib/now_playing.dart]
 ---
 # Mobile app (mobile/, package `deskctrl`, Android only, Flutter 3 / Dart 3.13)
 
@@ -56,3 +56,6 @@ Channels: `deskctrl/bt` + `deskctrl/bt/events` (RFCOMM per address), `deskctrl/w
 VIEW intent filter for `deskctrl://pair`, `launchMode=singleTop`.
 
 `RemoteAudio.kt` requests Android media audio focus, creates a streaming PCM16 `AudioTrack` on the current Android media route, and uses a 4-frame Low or 6-frame Balanced queue. A full queue drops the oldest frame to limit latency. It preloads 40 ms (Low) or 60 ms (Balanced) before play, requests low-latency performance, uses audio thread priority, and preserves partial AudioTrack writes through `PcmPump.kt`. Stop interrupts the worker, clears memory, flushes/releases the track, and abandons focus. No audio is written to storage.
+
+## Now-playing trackpad badge
+`now_playing.dart` defines `NowPlaying` (title, app, playing, PNG bytes), `NowPlayingBadge`, and a clipped automatic marquee. `links.dart` reassembles bounded `0x16` JSON chunks independently per transport; `Session.nowPlaying` holds each computer's report. The Trackpad listens to Connection and shows the active live computer's app icon and title below the volume marks within exactly 40dp. Long titles pause 1.2 seconds then scroll at 18dp/s; short titles stay centered and reduced-motion disables animation. The icon is 16dp and the title 10sp. Compact combined Mobile layouts reserve space below the scaled volume marks; extremely short pads omit the badge. It is display-only and does not intercept trackpad gestures. Desktop metadata is hidden when Phone media mode is selected, and no live link means no stale badge. Known playback state also drives the top play/pause icon.

@@ -2,13 +2,13 @@
 id: testing
 summary: How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.
 updated: 2026-10-26
-sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/audio.rs, agent/src/usb.rs]
+sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/audio.rs, agent/src/usb.rs, mobile/test/now_playing_test.dart, agent/src/media.rs]
 ---
 # Testing
 
 Tray integration: `xvfb-run -a dbus-run-session -- /usr/bin/python3 tools/tray_smoke.py agent/target/release/agent`. Uses an isolated config, bus, tray host and desktop; verifies registration, startup minimized hides the window, Show restores it, window close hides without exiting, Show restores again and Close application exits. USB and voice are disabled. Windows cross-compiles; native notification-area behavior still needs a Windows PC.
 
-State: phone 253 tests pass; agent has 77 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
+State: phone 259 tests pass; agent has 80 Linux tests (32 Windows tests under Wine at last check). Run: `cd mobile && flutter test` (~3 min) · `cd agent && cargo test`.
 
 ## Phone tests (mobile/test/*_test.dart)
 Helpers in `fake_agent.dart`: `FakeAgent.start(token)` = WebSocket server on 127.0.0.1 (records frames as `"1,0,42"` strings in `received`, sends heartbeat,
@@ -76,3 +76,6 @@ Desktop side checks: pointer position via Gdk (`Gdk.Display.get_default().get_de
 
 ## Audio buffering regression (2026-10-26)
 `python3 tools/audio/test_pcm_pump.py` compiles the production `PcmPump.kt` with Gradle-cached Kotlin compiler jars and tests prebuffer-before-play, partial writes without sample loss, 200 continuous frames with only one play call, cancellation and output errors. Passed. Flutter 253 passed; Linux agent 77 passed; Linux/Windows release builds succeeded. Phone is attached; current shell cannot connect to PulseAudio (`Connection refused`), so actual listening/A-V offset is not measured here.
+
+## Now-playing tests (2026-10-26)
+`media.rs`: Unicode/chunk framing roundtrip, path-traversal rejection for app identity, and an isolated real D-Bus fake MPRIS service verifying title/identity/play state and removal. `now_playing_test.dart`: six tests for UTF-8 reassembly/reset, invalid-icon fallback, 40dp clipped marquee geometry/movement at full and compact sizes, no-media hiding, and live fake-agent updates across selected computers/local-phone mode. Full suite: 259 mobile / 80 Linux tests. Analyzer retains 12 existing style infos. Windows cross-build remains compatible; native Windows metadata is not implemented.

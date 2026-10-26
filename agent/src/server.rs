@@ -169,6 +169,7 @@ pub struct Server {
     level_thread: Option<JoinHandle<()>>,
     event_tx: broadcast::Sender<Vec<u8>>,
     focus_thread: Option<JoinHandle<()>>,
+    media_thread: Option<JoinHandle<()>>,
     /// Find and connect phones plugged in with a USB cable (see usb.rs).
     pub usb_auto: Arc<AtomicBool>,
     usb_thread: Option<JoinHandle<()>>,
@@ -187,8 +188,9 @@ impl Server {
             led_thread: None,
             level_tx: watch::channel(levels::NOTHING).0,
             level_thread: None,
-            event_tx: broadcast::channel(16).0,
+            event_tx: broadcast::channel(256).0,
             focus_thread: None,
+            media_thread: None,
             // Off in tests: servers started there must not go looking for a real phone.
             // DESK_NO_USB=1 turns it off from the start (for tests and demos).
             usb_auto: Arc::new(AtomicBool::new(!cfg!(test) && std::env::var_os("DESK_NO_USB").is_none())),
@@ -252,6 +254,11 @@ impl Server {
             port,
             self.usb_auto.clone(),
         ));
+        let (ev, send_bt) = (self.event_tx.clone(), Mutex::new(bt.broadcaster()));
+        self.media_thread = Some(crate::media::spawn(self.led_stop.clone(), move |frame| {
+            let _ = ev.send(frame.to_vec());
+            (send_bt.lock().unwrap())(frame);
+        }));
         self.bt = Some(bt);
         self.rt.spawn(accept_loop(listener, self.shared.clone(), input, rx, self.led_tx.subscribe(), self.level_tx.subscribe(), self.event_tx.clone()));
     }
@@ -278,6 +285,7 @@ impl Server {
         if let Some(t) = self.focus_thread.take() {
             let _ = t.join();
         }
+        if let Some(t) = self.media_thread.take() { let _ = t.join(); }
         if let Some(t) = self.usb_thread.take() {
             let _ = t.join();
         }
