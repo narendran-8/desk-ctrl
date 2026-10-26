@@ -913,12 +913,16 @@ class _TouchPadState extends State<TouchPad> {
                   return const SizedBox.shrink();
                 }
                 return Positioned(
-                  left: box.maxWidth * .2,
-                  right: box.maxWidth * .2,
-                  top: 64,
-                  height: 44,
+                  left: EdgeZones.edge,
+                  right: EdgeZones.edge,
+                  top: 0,
+                  height: 40,
                   child: MediaTimeline(
                     media: media,
+                    onControl: (hid) {
+                      Connection.instance.key(hid, true);
+                      Connection.instance.key(hid, false);
+                    },
                     onSeek: (key, position) => Connection.instance.seekMedia(
                       session!.device.id,
                       key,

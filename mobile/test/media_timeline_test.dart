@@ -126,8 +126,10 @@ void main() {
     expect(find.text('1:30'), findsOneWidget);
     agent.received.clear();
     final rect = tester.getRect(find.byKey(const Key('mediaSeekBar')));
-    final gesture = await tester.startGesture(rect.center);
-    await gesture.moveTo(Offset(rect.right - 30, rect.center.dy));
+    final gesture = await tester.startGesture(
+      Offset(rect.left + 12, rect.center.dy),
+    );
+    await gesture.moveTo(Offset(rect.right - 12, rect.center.dy));
     await tester.pump();
     await gesture.up();
     await tester.runAsync(settle);
@@ -154,8 +156,18 @@ void main() {
     expect(positionUs, greaterThan(45000000));
     expect(positionUs, lessThanOrEqualTo(90000000));
     agent.received.clear();
-    final staleDrag = await tester.startGesture(rect.center);
-    await staleDrag.moveTo(Offset(rect.right - 30, rect.center.dy));
+    await tester.tap(find.byKey(const Key('mediaForward')));
+    await tester.runAsync(settle);
+    expect(agent.received.single.startsWith('7,'), isTrue);
+    agent.received.clear();
+    await tester.tap(find.byKey(const Key('mediaPlayPause')));
+    await tester.runAsync(settle);
+    expect(agent.received, ['1,128,205', '2,128,205']);
+    agent.received.clear();
+    final staleDrag = await tester.startGesture(
+      Offset(rect.left + 12, rect.center.dy),
+    );
+    await staleDrag.moveTo(Offset(rect.right - 12, rect.center.dy));
     report('0000000000000001');
     await tester.runAsync(settle);
     await tester.pump();
@@ -188,8 +200,12 @@ void main() {
       ),
     );
     final timeline = tester.getRect(find.byKey(const Key('mediaTimeline')));
-    expect(timeline.top, 64);
-    expect(timeline.bottom, lessThanOrEqualTo(110));
+    expect(timeline.top, 0);
+    expect(timeline.bottom, 40);
+    expect(
+      tester.getCenter(find.byKey(const Key("mediaElapsed"))).dy,
+      tester.getCenter(find.byKey(const Key("mediaDuration"))).dy,
+    );
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });

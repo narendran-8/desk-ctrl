@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Align Mobile controls by orientation
+- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
+- docs: FEATURES, MOBILE, TESTING
+- tests: Flutter 247 passed; focused 4 passed; release APK built and installed; portrait and landscape screenshots checked; analyze 12 existing infos
+- note: Portrait buttons align with the left volume strip; landscape buttons sit side by side at top left
+
 ## 2026-10-23 · Fix Mobile media controls and align Mobile buttons
 - files: README.md, mobile/lib/edge_zones.dart, mobile/lib/mobile_screen.dart, mobile/lib/pad_screen.dart, mobile/test/mobile_screen_test.dart, mobile/test/pad_zones_test.dart
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING

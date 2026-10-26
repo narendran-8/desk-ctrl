@@ -223,9 +223,15 @@ String playbackTime(int milliseconds) {
 
 /// A sibling of the raw pointer surface so seeking never moves/clicks the PC mouse.
 class MediaTimeline extends StatefulWidget {
-  const MediaTimeline({super.key, required this.media, required this.onSeek});
+  const MediaTimeline({
+    super.key,
+    required this.media,
+    required this.onSeek,
+    this.onControl,
+  });
   final NowPlaying media;
   final void Function(String trackKey, int positionMs) onSeek;
+  final void Function(int hid)? onControl;
   @override
   State<MediaTimeline> createState() => _MediaTimelineState();
 }
@@ -279,76 +285,155 @@ class _MediaTimelineState extends State<MediaTimeline> {
           0.0,
           m.durationMs > 0 ? m.durationMs.toDouble() : double.infinity,
         );
+    Widget button(String name, IconData icon, VoidCallback? action) => SizedBox(
+      width: 26,
+      height: 40,
+      child: IconButton(
+        key: Key(name),
+        padding: EdgeInsets.zero,
+        iconSize: 18,
+        color: Colors.white60,
+        onPressed: action,
+        icon: Icon(icon),
+      ),
+    );
+    void skip(int delta) {
+      if (!m.seekable) return;
+      final target = (position.round() + delta).clamp(0, m.durationMs);
+      setState(() => _pending = target.toDouble());
+      widget.onSeek(m.seekKey, target);
+      _pendingTimer?.cancel();
+      _pendingTimer = Timer(const Duration(seconds: 2), () {
+        if (mounted) setState(() => _pending = null);
+      });
+    }
+
+    Widget time(String value, String key) => SizedBox(
+      width: 44,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          value,
+          key: Key(key),
+          style: const TextStyle(color: Colors.white60, fontSize: 10),
+        ),
+      ),
+    );
     return SizedBox(
       key: const Key('mediaTimeline'),
-      height: 44,
-      child: Column(
+      height: 40,
+      child: Row(
         children: [
-          SizedBox(
-            height: 26,
-            child: SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                trackHeight: 3,
-                activeTrackColor: Colors.red,
-                inactiveTrackColor: Colors.grey.shade700,
-                thumbColor: Colors.red,
-                disabledActiveTrackColor: Colors.red,
-                disabledInactiveTrackColor: Colors.grey.shade700,
-                disabledThumbColor: Colors.red,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
-              ),
-              child: Slider(
-                key: const Key('mediaSeekBar'),
-                min: 0,
-                max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
-                value: m.durationMs > 0 ? position : 0,
-                label: playbackTime(position.round()),
-                onChangeStart: m.seekable
-                    ? (value) {
-                        _dragKey = m.seekKey;
-                        setState(() => _drag = value);
-                      }
-                    : null,
-                onChanged: m.seekable
-                    ? (value) => setState(() => _drag = value)
-                    : null,
-                onChangeEnd: m.seekable
-                    ? (value) {
-                        final key = _dragKey;
-                        _dragKey = null;
-                        if (key != m.seekKey) {
-                          setState(() => _drag = null);
-                          return;
-                        }
-                        setState(() {
-                          _drag = null;
-                          _pending = value;
-                        });
-                        widget.onSeek(key!, value.round());
-                        _pendingTimer?.cancel();
-                        _pendingTimer = Timer(const Duration(seconds: 2), () {
-                          if (mounted) setState(() => _pending = null);
-                        });
-                      }
-                    : null,
-              ),
+          time(
+            m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
+            'mediaElapsed',
+          ),
+          button(
+            'mediaPrevious',
+            Icons.skip_previous,
+            widget.onControl == null ? null : () => widget.onControl!(0x80B6),
+          ),
+          button(
+            'mediaBackward',
+            Icons.fast_rewind,
+            m.seekable ? () => skip(-10000) : null,
+          ),
+          Expanded(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: 40,
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      activeTrackColor: Colors.red,
+                      inactiveTrackColor: Colors.grey.shade700,
+                      thumbColor: Colors.red,
+                      disabledActiveTrackColor: Colors.red,
+                      disabledInactiveTrackColor: Colors.grey.shade700,
+                      disabledThumbColor: Colors.red,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 5,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 10,
+                      ),
+                    ),
+                    child: Slider(
+                      key: const Key('mediaSeekBar'),
+                      min: 0,
+                      max: m.durationMs > 0 ? m.durationMs.toDouble() : 1,
+                      value: m.durationMs > 0 ? position : 0,
+                      label: playbackTime(position.round()),
+                      onChangeStart: m.seekable
+                          ? (value) {
+                              _dragKey = m.seekKey;
+                              setState(() => _drag = value);
+                            }
+                          : null,
+                      onChanged: m.seekable
+                          ? (value) => setState(() => _drag = value)
+                          : null,
+                      onChangeEnd: m.seekable
+                          ? (value) {
+                              final key = _dragKey;
+                              _dragKey = null;
+                              if (key != m.seekKey) {
+                                setState(() => _drag = null);
+                                return;
+                              }
+                              setState(() {
+                                _drag = null;
+                                _pending = value;
+                              });
+                              widget.onSeek(key!, value.round());
+                              _pendingTimer?.cancel();
+                              _pendingTimer = Timer(
+                                const Duration(seconds: 2),
+                                () {
+                                  if (mounted) setState(() => _pending = null);
+                                },
+                              );
+                            }
+                          : null,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: Material(
+                    color: const Color(0xFF151A20),
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      key: const Key('mediaPlayPause'),
+                      padding: EdgeInsets.zero,
+                      iconSize: 22,
+                      color: Colors.white70,
+                      onPressed: widget.onControl == null
+                          ? null
+                          : () => widget.onControl!(0x80CD),
+                      icon: Icon(m.playing ? Icons.pause : Icons.play_arrow),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                m.positionMs >= 0 ? playbackTime(position.round()) : '--:--',
-                key: const Key('mediaElapsed'),
-                style: const TextStyle(color: Colors.white60, fontSize: 10),
-              ),
-              Text(
-                m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
-                key: const Key('mediaDuration'),
-                style: const TextStyle(color: Colors.white60, fontSize: 10),
-              ),
-            ],
+          button(
+            'mediaForward',
+            Icons.fast_forward,
+            m.seekable ? () => skip(10000) : null,
+          ),
+          button(
+            'mediaNext',
+            Icons.skip_next,
+            widget.onControl == null ? null : () => widget.onControl!(0x80B5),
+          ),
+          time(
+            m.durationMs > 0 ? playbackTime(m.durationMs) : 'LIVE',
+            'mediaDuration',
           ),
         ],
       ),

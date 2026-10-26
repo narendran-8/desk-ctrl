@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Arrange playback controls and times in one row
+- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 265 passed; focused media 12 passed; compact row rendered; analyzer 12 existing style infos; release APK built and installed
+- note: Elapsed | previous rewind seek-line/play-pause forward next | duration, all aligned at y=0..40; title below; +/-10s seek requires existing Linux MPRIS capability; protocol unchanged
+
 ## 2026-10-26 · Revert integrated playback line update
 - files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: MOBILE, FEATURES, TESTING
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: FEATURES, MOBILE, TESTING
 - tests: Flutter 247 passed; focused 4 passed; release APK built and installed; landscape and portrait screenshots checked; analyzer 12 existing infos
 - note: Landscape uses 28 dp controls with 14 dp icons; portrait layout unchanged
-
-## 2026-10-23 · Align Mobile controls by orientation
-- files: mobile/lib/mobile_screen.dart, mobile/test/mobile_screen_test.dart
-- docs: FEATURES, MOBILE, TESTING
-- tests: Flutter 247 passed; focused 4 passed; release APK built and installed; portrait and landscape screenshots checked; analyze 12 existing infos
-- note: Portrait buttons align with the left volume strip; landscape buttons sit side by side at top left
 
