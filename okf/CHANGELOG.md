@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-23 · Fix track-mode skip-button tap on trackpad top strip
+- files: mobile/lib/pad_screen.dart, mobile/test/pad_zones_test.dart
+- docs: MOBILE, TESTING
+- tests: Flutter 246 passed
+- note: In track mode the _skip flag was never set so tapping the skip_previous/skip_next icons did nothing; removing the TopEdgeMode.seek guard fixes it for both modes
+
 ## 2026-10-23 · Support portrait in combined Mobile mode
 - files: mobile/lib/mobile_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/test/mobile_screen_test.dart, README.md
 - docs: INDEX, MOBILE, FEATURES, TESTING

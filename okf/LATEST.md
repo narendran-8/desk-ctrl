@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-26 · Integrate timeline behind playback controls and fix seek buttons
+- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 265 passed; focused media 12 passed; direct forward/back seek, 700ms hold-drag, previous/play/next packets and pointer isolation passed; analyzer 12 existing infos; release APK built
+- note: Progress line behind controls at y=0; times below, centered title at y=56; +/-10s absolute seeks need existing Linux media capability; protocol unchanged
+
 ## 2026-10-26 · Add playback time and draggable media timeline
 - files: agent/src/media.rs, agent/src/server.rs, agent/src/bluetooth.rs, mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: INDEX, AGENT, MOBILE, FEATURES, PROTOCOL, ARCHITECTURE, TESTING, KNOWN
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: INDEX, FEATURES, MOBILE, SETTINGS, TESTING
 - tests: Flutter 247 passed; targeted 26 passed; APK built and installed; portrait/landscape visually checked; analyze 12 existing infos
 - note: Real computer media playback was not exercised; routing verified against recording fake agent and Android channel mock
-
-## 2026-10-23 · Fix track-mode skip-button tap on trackpad top strip
-- files: mobile/lib/pad_screen.dart, mobile/test/pad_zones_test.dart
-- docs: MOBILE, TESTING
-- tests: Flutter 246 passed
-- note: In track mode the _skip flag was never set so tapping the skip_previous/skip_next icons did nothing; removing the TopEdgeMode.seek guard fixes it for both modes
 

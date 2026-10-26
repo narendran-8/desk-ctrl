@@ -169,6 +169,7 @@ class EdgeZones {
 class EdgeZoneMarks extends StatelessWidget {
   final TopEdgeMode top;
   final NowPlaying media;
+  final bool integratedMedia;
 
   /// Whether the computer is thought to be playing: the middle icon then offers pause,
   /// otherwise play.
@@ -188,6 +189,7 @@ class EdgeZoneMarks extends StatelessWidget {
     this.tabs = false,
     this.top = TopEdgeMode.seek,
     this.media = const NowPlaying(),
+    this.integratedMedia = false,
     this.playing = false,
     this.muted = false,
   });
@@ -284,52 +286,53 @@ class EdgeZoneMarks extends StatelessWidget {
                 Positioned(
                   left: box.maxWidth * EdgeZones.topFrom,
                   right: box.maxWidth * (1 - EdgeZones.topTo),
-                  top: EdgeZones.edge,
+                  top: integratedMedia ? 56 : EdgeZones.edge,
                   height: 24,
                   child: NowPlayingBadge(media: media),
                 ),
-              Positioned(
-                left: box.maxWidth * EdgeZones.topFrom,
-                right: box.maxWidth * (1 - EdgeZones.topTo),
-                top: 0,
-                height: EdgeZones.edge,
-                // Each icon sits in a box as wide as its touch area, so the skip buttons
-                // (outer boxes) never overlap the seek ends (inner boxes).
-                child: Row(
-                  children: [
-                    if (top == TopEdgeMode.seek && box.maxWidth >= 450)
-                      _box(Icons.skip_previous, 22, Colors.white38),
-                    _box(
-                      top == TopEdgeMode.seek
-                          ? (box.maxWidth < 450
-                                ? Icons.skip_previous
-                                : Icons.fast_rewind)
-                          : Icons.skip_previous,
-                      18,
-                      _c,
-                    ),
-                    _line,
-                    // One icon: play, and after a tap pause (and back).
-                    Icon(
-                      playing ? Icons.pause : Icons.play_arrow,
-                      size: 22,
-                      color: Colors.white38,
-                    ),
-                    _line,
-                    _box(
-                      top == TopEdgeMode.seek
-                          ? (box.maxWidth < 450
-                                ? Icons.skip_next
-                                : Icons.fast_forward)
-                          : Icons.skip_next,
-                      18,
-                      _c,
-                    ),
-                    if (top == TopEdgeMode.seek && box.maxWidth >= 450)
-                      _box(Icons.skip_next, 22, Colors.white38),
-                  ],
+              if (!integratedMedia)
+                Positioned(
+                  left: box.maxWidth * EdgeZones.topFrom,
+                  right: box.maxWidth * (1 - EdgeZones.topTo),
+                  top: 0,
+                  height: EdgeZones.edge,
+                  // Each icon sits in a box as wide as its touch area, so the skip buttons
+                  // (outer boxes) never overlap the seek ends (inner boxes).
+                  child: Row(
+                    children: [
+                      if (top == TopEdgeMode.seek && box.maxWidth >= 450)
+                        _box(Icons.skip_previous, 22, Colors.white38),
+                      _box(
+                        top == TopEdgeMode.seek
+                            ? (box.maxWidth < 450
+                                  ? Icons.skip_previous
+                                  : Icons.fast_rewind)
+                            : Icons.skip_previous,
+                        18,
+                        _c,
+                      ),
+                      _line,
+                      // One icon: play, and after a tap pause (and back).
+                      Icon(
+                        playing ? Icons.pause : Icons.play_arrow,
+                        size: 22,
+                        color: Colors.white38,
+                      ),
+                      _line,
+                      _box(
+                        top == TopEdgeMode.seek
+                            ? (box.maxWidth < 450
+                                  ? Icons.skip_next
+                                  : Icons.fast_forward)
+                            : Icons.skip_next,
+                        18,
+                        _c,
+                      ),
+                      if (top == TopEdgeMode.seek && box.maxWidth >= 450)
+                        _box(Icons.skip_next, 22, Colors.white38),
+                    ],
+                  ),
                 ),
-              ),
             ],
           );
         },
