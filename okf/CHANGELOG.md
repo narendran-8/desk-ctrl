@@ -1,11 +1,17 @@
 ---
 id: changelog
 summary: Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: []
 ---
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
+
+## 2026-10-26 · Integrate timeline behind playback controls and fix seek buttons
+- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 265 passed; focused media 12 passed; direct forward/back seek, 700ms hold-drag, previous/play/next packets and pointer isolation passed; analyzer 12 existing infos; release APK built
+- note: Progress line behind controls at y=0; times below, centered title at y=56; +/-10s absolute seeks need existing Linux media capability; protocol unchanged
 
 ## 2026-10-26 · Add playback time and draggable media timeline
 - files: agent/src/media.rs, agent/src/server.rs, agent/src/bluetooth.rs, mobile/lib/connection.dart, mobile/lib/now_playing.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md

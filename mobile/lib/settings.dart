@@ -255,6 +255,7 @@ class Settings extends ChangeNotifier {
   bool remoteAudioEnabled = true;
   bool remoteAudioAutoReconnect = false;
   bool remoteAudioPlaySource = false;
+  String remoteAudioSource = 'computer';
   String remoteAudioLatency = 'balanced';
   String remoteAudioLastDestination = 'phone';
 
@@ -304,6 +305,9 @@ class Settings extends ChangeNotifier {
     remoteAudioEnabled = _p.getBool('remoteAudioEnabled') ?? true;
     remoteAudioAutoReconnect = _p.getBool('remoteAudioAutoReconnect') ?? false;
     remoteAudioPlaySource = _p.getBool('remoteAudioPlaySource') ?? false;
+    remoteAudioSource = _p.getString('remoteAudioSource') == 'phone'
+        ? 'phone'
+        : 'computer';
     remoteAudioLatency = _p.getString('remoteAudioLatency') ?? 'balanced';
     if (!const ['low', 'balanced'].contains(remoteAudioLatency)) {
       remoteAudioLatency = 'balanced';
@@ -407,6 +411,7 @@ class Settings extends ChangeNotifier {
     _p.setBool('remoteAudioEnabled', remoteAudioEnabled);
     _p.setBool('remoteAudioAutoReconnect', remoteAudioAutoReconnect);
     _p.setBool('remoteAudioPlaySource', remoteAudioPlaySource);
+    _p.setString('remoteAudioSource', remoteAudioSource);
     _p.setString('remoteAudioLatency', remoteAudioLatency);
     _p.setString('remoteAudioLastDestination', remoteAudioLastDestination);
     _p.setString('notchBar', notchBar);

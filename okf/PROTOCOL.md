@@ -1,7 +1,7 @@
 ---
 id: protocol
 summary: Input and Remote Audio wire formats, key code space, liveness/fail-over rules, USB pairing link, and framing.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: [agent/src/hid.rs, agent/src/server.rs, agent/src/audio.rs, agent/src/bluetooth.rs, agent/src/identity.rs, agent/src/levels.rs, agent/src/focus.rs, agent/src/leds.rs, mobile/lib/links.dart, mobile/lib/remote_audio.dart, agent/src/media.rs, mobile/lib/now_playing.dart]
 ---
 # Input/control protocol (binary, big-endian)
@@ -92,3 +92,5 @@ Phone -> agent opcode `0x07`: exactly 17 bytes: byte0=7, bytes1..8=seekKey as un
 Audio socket liveness: phone sends standard WebSocket Ping every 15 seconds (existing agents already answer Pong). No PCM or command opcodes change. Audio session identity guards and route pinning are entirely client-side.
 
 Seek fingerprint stabilization: seekKey hashes player bus name, track id, title and source URL, excluding duration. mediaUrl is an additive 0x16 field; opcode 0x07 and its safety validation remain unchanged. Older clients treat keys as opaque.
+
+Phone source uses the same `sink`/`gain`/`stop` operations and v1 PCM headers, no new opcode or desktop upgrade. Android produces 3840-byte stereo PCM16 blocks at 48kHz; Dart adds a sequence and modulo-u32 Unix-ms timestamp. The phone opens no agent source socket in this direction.

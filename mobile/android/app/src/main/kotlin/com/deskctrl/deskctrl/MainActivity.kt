@@ -47,6 +47,7 @@ class MainActivity : FlutterActivity() {
     private var pendingMic: MethodChannel.Result? = null
     private var micSink: EventChannel.EventSink? = null
     private val mic = Mic { bytes -> main.post { micSink?.success(bytes) } }
+    private var playbackCapture: PlaybackCaptureBridge? = null
     private val remoteAudio by lazy { RemoteAudio(this) }
 
     // deskctrl://pair/... links (sent by the agent over the USB cable)
@@ -75,6 +76,7 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         val messenger = flutterEngine.dartExecutor.binaryMessenger
+        playbackCapture = PlaybackCaptureBridge(this, messenger)
 
         MethodChannel(messenger, "deskctrl/remote_audio").setMethodCallHandler { call, result ->
             try {
@@ -243,6 +245,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        playbackCapture?.destroy()
         remoteAudio.stop()
         mic.stop()
         conns.keys.toList().forEach { closeConn(it) }
@@ -280,7 +283,13 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PlaybackCaptureBridge.PROJECTION) playbackCapture?.activityResult(resultCode, data)
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == PlaybackCaptureBridge.PERMISSION) playbackCapture?.permissionResult(grantResults)
         if (requestCode == REQ_MIC) {
             // The person asked for the microphone by pressing the button: start it once allowed.
             val ok = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED

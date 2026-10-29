@@ -1,12 +1,12 @@
 ---
 id: index
 summary: Start here. What DeskCtrl is, where things are, which file to read for which task, the update rules.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: []
 ---
 # DeskCtrl - OKF index (read this first; then read only what the task needs)
 
-**What it is**: the phone (Flutter, Android) becomes keyboard + trackpad + mouse and a remote audio output for Linux or Windows computers.
+**What it is**: the phone (Flutter, Android) becomes keyboard + trackpad + mouse and streams media audio between Android and Linux or Windows computers.
 A desktop **agent** (Rust) receives input over **Wi-Fi** (WebSocket), **Bluetooth** (Linux RFCOMM) or a **USB cable**
 (adb reverse tunnel), then injects it through `/dev/uinput` or Windows `SendInput`. Remote Audio uses a separate authenticated WebSocket over Wi-Fi/USB. Input links fail over automatically.
 
@@ -15,7 +15,7 @@ A desktop **agent** (Rust) receives input over **Wi-Fi** (WebSocket), **Bluetoot
 
 **Brand**: display names are ViL (phone) and ViL Agent (desktop). Approved artwork and generated icon files live in `branding/`; regenerate with `tools/prepare_branding.py`. Internal package/config/pairing identifiers and output filenames retain DeskCtrl for upgrade compatibility.
 
-**State now**: phone tests 275, agent tests 82 on Linux (32 run the Windows build under Wine), all passing. Newest changes: `LATEST.md` (read it second, it is short).
+**State now**: phone tests 279, agent tests 82 on Linux (32 run the Windows build under Wine), all passing. Newest changes: `LATEST.md` (read it second, it is short).
 
 ## Which file for which task
 | Task | Read |

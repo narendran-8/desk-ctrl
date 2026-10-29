@@ -1,7 +1,7 @@
 ---
 id: known
 summary: Limits, unverified items, open problems and ideas. Update when something is fixed or discovered.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: []
 ---
 # Known limits and open items
@@ -58,3 +58,5 @@ Audio interruption recovery (2026-10-26): opt-in auto-reconnect now covers unexp
 Playback timing dropout fix: last valid duration is retained per identified video when Firefox temporarily omits timing after a seek. This cannot invent a total for media that never supplies one. Install updated APK and reopen rebuilt Linux agent to use URL-based, duration-independent seek fingerprints. Actual phone reproduction and post-fix checks used a recording test source; real Firefox control input was not injected.
 
 Post-seek source position may remain stale in Firefox. ViL now explicitly marks `~` estimated elapsed time and advances from the requested seek rather than silently reverting to stale zero after five seconds. The estimate clears when matching feedback returns or the video changes. If the source rejects the seek or another controller seeks while feedback is stale, estimated time may differ; the app cannot infer authoritative playback time from a permanently incorrect MPRIS Position property.
+
+- Phone-source Remote Audio requires Android10+ and MediaProjection/RECORD_AUDIO approval. Only playback apps permitting capture in the same profile are supported; calls/DRM/opt-out audio cannot be captured. Playback capture copies sound and cannot guarantee muting the phone exclusively without silencing the captured stream. Locking the screen may end Android projection; fresh consent is manual. No new physical Windows listening test was performed for this client-only addition.

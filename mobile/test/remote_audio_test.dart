@@ -59,7 +59,13 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(home: Scaffold(body: RemoteAudioSheet())),
     );
-    expect(find.text('This phone'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('audioDestination-phone')),
+        matching: find.text('This phone'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Studio PC — USB headphones'), findsOneWidget);
     await tester.tap(find.byKey(const Key('audioDestination-pc|headphones')));
     await tester.pump();

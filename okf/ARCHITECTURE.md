@@ -1,7 +1,7 @@
 ---
 id: architecture
 summary: Components, data flow, threads, input transports, Remote Audio, and how a computer is represented on the phone.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: [agent/src/server.rs, agent/src/audio.rs, agent/src/main.rs, mobile/lib/connection.dart, mobile/lib/links.dart, mobile/lib/main.dart, mobile/lib/remote_audio.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt]
 ---
 # Architecture
@@ -54,3 +54,5 @@ Remote Audio latency (2026-10-26): capture/playback helpers request 40 ms latenc
 Agent `media.rs` polls MPRIS independently of input and Remote Audio. It publishes title/app/status/icon chunks through the normal authenticated feedback paths (event broadcast + Bluetooth). Each phone Link reassembles chunks independently, Session stores the per-computer `NowPlaying`, and the Trackpad badge follows only the active live session. This works without Remote Audio streaming being enabled.
 
 Playback timeline: MPRIS timing travels in the same per-computer feedback. The phone interpolates report timestamps locally and sends a single absolute seek on release. Wi-Fi/USB and Bluetooth both route the new seek opcode to a bounded media-worker queue before HID handling; the worker validates the track and calls SetPosition. The timeline is overlaid outside the raw touchpad Listener to isolate pointer events.
+
+Reverse Remote Audio: Android playback capture (activity consent + foreground audio-only service) supplies20ms PCM blocks to Flutter; Flutter frames existing v1 packets and sends them over a dedicated token-authenticated sink WebSocket to the chosen Linux/Windows output. No desktop capture socket is opened in this direction. Input connections and mode switching remain independent; Android revocation stops sharing rather than automatically requesting consent.

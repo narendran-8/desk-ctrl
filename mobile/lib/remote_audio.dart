@@ -111,6 +111,38 @@ class RemoteAudio extends ChangeNotifier {
   }
   static final RemoteAudio instance = RemoteAudio._();
   static const _native = MethodChannel('deskctrl/remote_audio');
+  static const _capture = MethodChannel('deskctrl/playback_capture');
+  static const _captureEvents = EventChannel('deskctrl/playback_capture/audio');
+  bool get phoneSource => Settings.instance.remoteAudioSource == 'phone';
+  String get sourceLabel => phoneSource
+      ? 'This phone'
+      : Settings.instance
+                .deviceById(
+                  (active || phase == RemoteAudioPhase.connecting
+                          ? _sourceId
+                          : Connection.instance.activeId) ??
+                      '',
+                )
+                ?.title ??
+            'No source computer';
+
+  Future<void> chooseSource(String value) async {
+    if (active ||
+        phase == RemoteAudioPhase.connecting ||
+        phase == RemoteAudioPhase.discovering) {
+      return;
+    }
+    Settings.instance.update(
+      () => Settings.instance.remoteAudioSource = value == 'phone'
+          ? 'phone'
+          : 'computer',
+    );
+    await discover();
+  }
+
+  Future<void> _stopCapture() async {
+    if (phoneSource) await _capture.invokeMethod('stop').catchError((_) {});
+  }
 
   RemoteAudioPhase phase = RemoteAudioPhase.idle;
   String? message;
@@ -124,12 +156,13 @@ class RemoteAudio extends ChangeNotifier {
   String? _destinationUrl;
   _AudioSocket? _source;
   _AudioSocket? _sink;
-  StreamSubscription<Uint8List>? _audioSub;
+  StreamSubscription<dynamic>? _audioSub;
   bool _closing = false;
   Timer? _reconnect;
   Future<void>? _recoveryCleanup;
   bool _wanted = false;
   int _generation = 0, _retryCount = 0;
+  int _captureSequence = 0;
   final _statusSubs = <StreamSubscription<String>>[];
 
   bool get active => phase == RemoteAudioPhase.active;
@@ -175,17 +208,18 @@ class RemoteAudio extends ChangeNotifier {
     notifyListeners();
     final sourceId = Connection.instance.activeId;
     final found = <RemoteAudioDestination>[
-      const RemoteAudioDestination(
-        key: 'phone',
-        computerId: '',
-        computerName: '',
-        outputId: 'android',
-        outputName: 'Android media output',
-        phone: true,
-      ),
+      if (!phoneSource)
+        const RemoteAudioDestination(
+          key: 'phone',
+          computerId: '',
+          computerName: '',
+          outputId: 'android',
+          outputName: 'Android media output',
+          phone: true,
+        ),
     ];
     for (final id in Connection.instance.connectedDeviceIds) {
-      if (id == sourceId) continue;
+      if (!phoneSource && id == sourceId) continue;
       final endpoint = _endpoint(id);
       if (endpoint == null) continue;
       _AudioSocket? socket;
@@ -216,7 +250,9 @@ class RemoteAudio extends ChangeNotifier {
     }
     destinations = found;
     final remembered = Settings.instance.remoteAudioLastDestination;
-    selected = found.any((d) => d.key == remembered) ? remembered : 'phone';
+    selected = found.any((d) => d.key == remembered)
+        ? remembered
+        : found.firstOrNull?.key ?? '';
     phase = RemoteAudioPhase.idle;
     notifyListeners();
   }
@@ -237,13 +273,13 @@ class RemoteAudio extends ChangeNotifier {
     final destination = destinations
         .where((d) => d.key == selected)
         .firstOrNull;
-    if (sourceId == null || sourceEndpoint == null) {
+    if (!phoneSource && (sourceId == null || sourceEndpoint == null)) {
       return _startFailed(
         'Connect the source computer by Wi-Fi or USB.',
         retry,
       );
     }
-    if (destination == null) {
+    if (destination == null || (phoneSource && destination.phone)) {
       return _startFailed('Choose an available audio destination.', retry);
     }
     _sourceId = sourceId;
@@ -288,49 +324,96 @@ class RemoteAudio extends ChangeNotifier {
       if (!current()) return;
       _sink = sink;
       _destinationUrl = destinationUrl;
-      final source = await _AudioSocket.open(sourceEndpoint);
-      if (!current()) {
-        await source.close();
-        return;
-      }
-      _source = source;
-      await source.command({
-        'op': 'source',
-        'playSource': Settings.instance.remoteAudioPlaySource,
-      });
-      if (!current()) return;
-      _sourceUrl = sourceEndpoint.url;
-      _audioSub = source.binary.listen(
-        (frame) {
-          if (frame.length < 16 || frame[0] != 1 || frame[1] != 1) return;
-          if (destination.phone) {
-            _native
-                .invokeMethod('write', Uint8List.sublistView(frame, 16))
-                .catchError((Object e) {
-                  _streamEnded('Phone audio output failed: $e', generation);
-                  return null;
-                });
-          } else {
+      if (phoneSource) {
+        _captureSequence = 0;
+        _audioSub = _captureEvents.receiveBroadcastStream().listen(
+          (dynamic data) {
+            if (!current() || data is! Uint8List || data.length != 3840) return;
+            final frame = Uint8List(16 + data.length);
+            frame.setAll(0, [1, 1, 2, 1]);
+            final header = ByteData.sublistView(frame);
+            header.setUint32(4, 48000, Endian.little);
+            header.setUint32(8, _captureSequence++ & 0xffffffff, Endian.little);
+            header.setUint32(
+              12,
+              DateTime.now().millisecondsSinceEpoch & 0xffffffff,
+              Endian.little,
+            );
+            frame.setAll(16, data);
             try {
               sink?.socket.add(frame);
             } catch (e) {
               _streamEnded('Destination audio send failed: $e', generation);
             }
-          }
-        },
-        onError: (Object e) =>
-            _streamEnded('Audio stream failed: $e', generation),
-        onDone: () =>
-            _streamEnded('The source audio connection ended.', generation),
-      );
-      source.closed.then(
+          },
+          onError: (Object e) {
+            // Revoked consent must never reopen an Android dialog automatically.
+            if (!currentGeneration(generation) || !_wanted) return;
+            _wanted = false;
+            if (currentGeneration(generation)) {
+              stop().then((_) {
+                if (!_wanted && phase == RemoteAudioPhase.idle) {
+                  _fail(
+                    'Phone audio capture stopped: $e. Tap Start to allow capture again.',
+                  );
+                }
+              });
+            }
+          },
+        );
+        await _capture.invokeMethod('start', {'allowConsent': !retry});
+        if (!current()) {
+          await _stopCapture();
+          return;
+        }
+      }
+      final source = phoneSource
+          ? null
+          : await _AudioSocket.open(sourceEndpoint!);
+      if (!current()) {
+        await source?.close();
+        return;
+      }
+      _source = source;
+      await source?.command({
+        'op': 'source',
+        'playSource': Settings.instance.remoteAudioPlaySource,
+      });
+      if (!current()) return;
+      _sourceUrl = phoneSource ? null : sourceEndpoint!.url;
+      if (source != null) {
+        _audioSub = source.binary.listen(
+          (frame) {
+            if (frame.length < 16 || frame[0] != 1 || frame[1] != 1) return;
+            if (destination.phone) {
+              _native
+                  .invokeMethod('write', Uint8List.sublistView(frame, 16))
+                  .catchError((Object e) {
+                    _streamEnded('Phone audio output failed: $e', generation);
+                    return null;
+                  });
+            } else {
+              try {
+                sink?.socket.add(frame);
+              } catch (e) {
+                _streamEnded('Destination audio send failed: $e', generation);
+              }
+            }
+          },
+          onError: (Object e) =>
+              _streamEnded('Audio stream failed: $e', generation),
+          onDone: () =>
+              _streamEnded('The source audio connection ended.', generation),
+        );
+      }
+      source?.closed.then(
         (_) => _streamEnded('The source audio connection ended.', generation),
       );
       sink?.closed.then(
         (_) =>
             _streamEnded('The destination audio connection ended.', generation),
       );
-      for (final socket in [source, ?sink]) {
+      for (final socket in [?source, ?sink]) {
         _statusSubs.add(
           socket.text.listen(
             (text) {
@@ -357,6 +440,12 @@ class RemoteAudio extends ChangeNotifier {
       if (!current()) return;
       await _closeSockets();
       await _native.invokeMethod('stop').catchError((_) {});
+      if (e is PlatformException && e.code == 'capture_consent_required') {
+        retry = false;
+      }
+      if (!retry || !Settings.instance.remoteAudioAutoReconnect) {
+        await _stopCapture();
+      }
       if (_wanted) {
         _startFailed(e.toString().replaceFirst('Exception: ', ''), retry);
       }
@@ -368,6 +457,7 @@ class RemoteAudio extends ChangeNotifier {
       _scheduleRetry(why);
     } else {
       _wanted = false;
+      _stopCapture();
       _fail(why);
     }
   }
@@ -379,6 +469,7 @@ class RemoteAudio extends ChangeNotifier {
     _closing = true;
     await _closeSockets();
     await _native.invokeMethod('stop').catchError((_) {});
+    await _stopCapture();
     _closing = false;
     phase = RemoteAudioPhase.idle;
     message = null;
@@ -443,6 +534,7 @@ class RemoteAudio extends ChangeNotifier {
       _scheduleRetry(why);
     } else {
       _wanted = false;
+      _stopCapture();
       _fail(why);
     }
   }
@@ -460,6 +552,7 @@ class RemoteAudio extends ChangeNotifier {
           !Settings.instance.remoteAudioAutoReconnect) {
         if (_wanted) {
           _wanted = false;
+          _stopCapture();
           _fail('Automatic audio reconnection is disabled.');
         }
         return;
@@ -470,8 +563,10 @@ class RemoteAudio extends ChangeNotifier {
   }
 
   void _connectionChanged() {
-    if (!active || _closing || _sourceId == null) return;
-    final source = _endpoint(_sourceId!, preferred: _sourceUrl);
+    if (!active || _closing || (!phoneSource && _sourceId == null)) return;
+    final source = phoneSource
+        ? null
+        : _endpoint(_sourceId!, preferred: _sourceUrl);
     final destination = destinations
         .where((d) => d.key == selected)
         .firstOrNull;
@@ -481,6 +576,8 @@ class RemoteAudio extends ChangeNotifier {
     if (source?.url == _sourceUrl && dest?.url == _destinationUrl) return;
     _streamEnded('The audio connection changed.');
   }
+
+  bool currentGeneration(int generation) => generation == _generation;
 
   void _fail(String text) {
     phase = RemoteAudioPhase.error;

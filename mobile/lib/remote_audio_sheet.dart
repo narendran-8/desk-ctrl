@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'connection.dart';
 import 'remote_audio.dart';
 import 'settings.dart';
 
@@ -58,8 +57,7 @@ class RemoteAudioSheet extends StatelessWidget {
     listenable: RemoteAudio.instance,
     builder: (context, _) {
       final a = RemoteAudio.instance;
-      final source =
-          Connection.instance.active?.device.title ?? 'No source computer';
+      final source = a.sourceLabel;
       return Padding(
         padding: EdgeInsets.fromLTRB(
           16,
@@ -108,11 +106,42 @@ class RemoteAudioSheet extends StatelessWidget {
                       ),
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.computer),
+                        leading: Icon(
+                          a.phoneSource ? Icons.phone_android : Icons.computer,
+                        ),
                         title: const Text('Source'),
                         subtitle: Text(source),
                         trailing: _StateChip(a.phase),
                       ),
+                      SegmentedButton<String>(
+                        key: const Key('remoteAudioSource'),
+                        segments: const [
+                          ButtonSegment(
+                            value: 'computer',
+                            label: Text('Computer'),
+                            icon: Icon(Icons.computer),
+                          ),
+                          ButtonSegment(
+                            value: 'phone',
+                            label: Text('This phone'),
+                            icon: Icon(Icons.phone_android),
+                          ),
+                        ],
+                        selected: {Settings.instance.remoteAudioSource},
+                        onSelectionChanged:
+                            a.active ||
+                                a.phase == RemoteAudioPhase.connecting ||
+                                a.phase == RemoteAudioPhase.discovering
+                            ? null
+                            : (values) => a.chooseSource(values.first),
+                      ),
+                      if (a.phoneSource)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            'Android 10+: approve sharing (Entire screen for all apps). Only media audio is captured, with no microphone or screen images. Apps can block capture. Phone playback remains audible; volume controls the computer stream.',
+                          ),
+                        ),
                       if (a.message != null)
                         Container(
                           key: const Key('remoteAudioMessage'),
@@ -148,8 +177,14 @@ class RemoteAudioSheet extends StatelessWidget {
                                   for (final d in a.destinations)
                                     ListTile(
                                       key: Key('audioDestination-${d.key}'),
-                                      enabled: !a.active,
-                                      onTap: a.active
+                                      enabled:
+                                          !a.active &&
+                                          a.phase !=
+                                              RemoteAudioPhase.connecting,
+                                      onTap:
+                                          a.active ||
+                                              a.phase ==
+                                                  RemoteAudioPhase.connecting
                                           ? null
                                           : () => a.select(d.key),
                                       leading: Icon(

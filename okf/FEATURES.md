@@ -1,7 +1,7 @@
 ---
 id: features
 summary: Everything the product does, behaviour per feature, and which setting / file owns it. Check here before building something.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/lib/main.dart, mobile/lib/edit_menu.dart, mobile/lib/edge_zones.dart, mobile/lib/connection.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, agent/src/audio.rs, agent/src/focus.rs, agent/src/usb.rs]
 ---
 # Features (behaviour as shipped)
@@ -17,7 +17,7 @@ sources: [mobile/lib/pad_screen.dart, mobile/lib/keyboard_screen.dart, mobile/li
 
 ## Remote Audio Output
 - The speaker icon sits directly before/above the mode-switch control in both top-bar and notch-rail layouts. It is hidden when `remoteAudioEnabled` is off, uses the accent colour while streaming, and the error colour after a failure. The installed-phone landscape check confirmed its rail position above the green mode button.
-- Tapping opens **Audio Output**. The active computer is the source. Destinations are **This phone** plus every reported output of another currently connected ViL Agent computer. The selected output has a checked radio mark. Discovery failure on one computer does not hide the phone or other computers.
+- Tapping opens **Audio Output**. Source selects **Computer** or **This phone**. Computer source uses the active computer and lists the phone plus outputs on other connected computers. Phone source lists every connected computer’s reported outputs, including the active input computer. The selected output has a checked radio mark. Discovery failure on one computer does not hide the phone or other computers.
 - Start authenticates separate `/audio/v1` source and optional sink sockets with the already-paired token. Phone playback uses Android's current media output. Computer playback uses the exact selected sink/endpoint. The panel exposes Start/Stop, Mute, a 0-100% stream-volume slider, Refresh, source/status, and clear connecting/active/stopped/error messages.
 - Audio continues while the user changes Keyboard/Trackpad/Mouse/Voice/Mobile mode. The source is pinned when Start is pressed, so switching the input target does not redirect a running stream. Stopping, source loss, destination loss, or a selected output failure closes both sides and stops Android playback. ViL never silently selects another output.
 - USB is preferred and Wi-Fi is next. Bluetooth-only control still works, but audio reports unavailable because RFCOMM is deliberately not used for the 1.54 Mbit/s PCM stream. When a USB/Wi-Fi endpoint changes, the default behavior stops with a message. Optional auto-reconnect closes the old sockets and resumes the same source/destination after one second.
@@ -92,3 +92,5 @@ After seeking, stale browser position-zero reports no longer reset the timeline 
 The progress playhead remains visible on the two line halves: 0-50% on the left, 50-100% on the right. The gap is reserved for play/pause; dragging across it still seeks along the same video. Current/total labels and track controls keep their positions.
 
 Track-name row: `<<  source app icon + track name  >>` sits beneath the progress controls. Tap or hold the end buttons to seek; swipe right on the name for forward 10 seconds and left for backward 10 seconds. Small touches and track changes cancel safely without mouse input.
+
+Phone-source audio: Android 10+ AudioPlaybackCapture copies permitted MEDIA/GAME/UNKNOWN playback into the existing authenticated desktop sink. It requires RECORD_AUDIO permission and Android MediaProjection consent, with a foreground notification and Stop action. No microphone or screen pixels are captured; no storage is used. Apps may block capture; calls/protected content are unavailable. Phone playback remains audible and computer stream gain does not change phone volume. Wi-Fi/USB recovery retains the approved capture session; revocation requires manual Start/consent, never an automatic permission prompt.

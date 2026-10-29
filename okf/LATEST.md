@@ -1,11 +1,17 @@
 ---
 id: latest
 summary: The 12 newest updates, newest first (what changed, files, tests, caveats). Read this to know the current state of work.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: []
 ---
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
+
+## 2026-10-29 · Stream phone media to connected computer speakers
+- files: mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/settings.dart, mobile/android/app/src/main/AndroidManifest.xml, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureBridge.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureService.kt, mobile/test/phone_audio_source_test.dart, mobile/test/remote_audio_test.dart, README.md
+- docs: INDEX, ARCHITECTURE, MOBILE, FEATURES, SETTINGS, PROTOCOL, TESTING, KNOWN
+- tests: Flutter 279 passed with 1 opt-in soak skipped; focused phone-source 4 passed; Linux agent 82 passed; analyzer 12 existing infos; release APK built/installed; actual Android Chrome tone: 14402 PCM frames, 5034 nonzero; Stop removed service
+- note: Android10+ permission/MediaProjection consent; capture-allowing apps only, no microphone/screen images/storage. Phone may remain audible. Uses existing desktop sink protocol, no agent upgrade. Physical Windows listening and precise latency unmeasured. Test pairing/tunnel/receiver removed; Computer2 restored.
 
 ## 2026-10-26 · Move seek buttons to track title and add title swipes
 - files: mobile/lib/now_playing.dart, mobile/lib/pad_screen.dart, mobile/lib/edge_zones.dart, mobile/test/media_timeline_test.dart, README.md
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: MOBILE, FEATURES, TESTING
 - tests: Flutter 265 passed; release APK rebuilt; analyzer has 12 existing style infos
 - note: Reverts b180a8f only; restores separate timeline from 00ed177. APK installation attempted but no Android device was attached.
-
-## 2026-10-26 · Integrate timeline behind playback controls and fix seek buttons
-- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
-- docs: MOBILE, FEATURES, TESTING
-- tests: Flutter 265 passed; focused media 12 passed; direct forward/back seek, 700ms hold-drag, previous/play/next packets and pointer isolation passed; analyzer 12 existing infos; release APK built
-- note: Progress line behind controls at y=0; times below, centered title at y=56; +/-10s absolute seeks need existing Linux media capability; protocol unchanged
 

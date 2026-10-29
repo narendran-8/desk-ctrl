@@ -1,7 +1,7 @@
 ---
 id: settings
 summary: Every saved setting - key, default, meaning, where it is used - plus the Device record and where each switch appears in the settings sheet.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: [mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart]
 ---
 # Settings (`Settings` singleton, SharedPreferences keys)
@@ -34,9 +34,10 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 |---|---|---|
 | `remoteAudioEnabled` | true | shows the speaker button and permits Remote Audio discovery/streaming; turning it off stops an active stream |
 | `remoteAudioAutoReconnect` | false | after a stream/socket or USB/Wi-Fi endpoint loss, retry the same source and selected output after 1/2/4/8 seconds (capped); Stop cancels retries, off stops with a clear message. Also exposed in Audio Output panel |
-| `remoteAudioPlaySource` | false | also leave playback audible at the source; Linux off uses a temporary null sink, while Windows currently requires this to be true |
+| `remoteAudioPlaySource` | false | computer capture only: also leave playback audible at the source; Linux off uses a temporary null sink, while Windows currently requires this to be true |
 | `remoteAudioLatency` | `balanced` | `low` = 40 ms prebuffer / 4 queued frames, `balanced` = 60 ms prebuffer / 6 queued frames; invalid saved values reset to balanced |
-| `remoteAudioLastDestination` | `phone` | `phone` or `<deviceId>|<outputId>`; used only if discovery confirms it still exists, otherwise selection returns to the phone |
+| `remoteAudioSource` | `computer` | `computer` = existing desktop capture; `phone` = Android10+ permitted playback sent to a connected computer output; cannot change while running |
+| `remoteAudioLastDestination` | `phone` | `phone` or `<deviceId>|<outputId>`; used only if discovery confirms it still exists, otherwise first valid destination (phone for computer source, first computer output for phone source) |
 
 ## Keyboard
 | Key | Default | Meaning |

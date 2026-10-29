@@ -140,12 +140,22 @@ The side connection icon shows the active medium. It changes between Wi-Fi, Blue
 
 ## Remote Audio Output
 
-Remote Audio sends the active computer's desktop/media playback to this Android phone or to a specific output on another connected ViL Agent computer.
+Remote Audio can send computer playback to the phone/another computer, or send **phone media playback to a connected computer’s speakers**. Choose the direction under **Source** in Audio Output.
 
 1. Connect the source computer and, for computer-to-computer playback, the destination computer.
 2. Tap the speaker icon directly above the Keyboard/Trackpad/Mouse mode button.
-3. Select **This phone** or one of the named output devices on another computer.
+3. Select **Computer** as the source, then **This phone** or a named output on another computer as the destination.
 4. Tap **Start**. The panel provides Stop, Mute, and stream Volume controls and shows connecting, active, unavailable, and error states.
+
+For **phone → computer speakers**:
+
+1. Connect the destination computer through Wi-Fi or USB.
+2. Open Audio Output and select **This phone** under Source.
+3. Select the computer and its speaker/headphone/HDMI output, then tap **Start**.
+4. Approve Android’s audio permission and system sharing prompt (choose **Entire screen** to share playback across apps). Play media in a compatible phone app. ViL captures audio only; it does not capture screen pixels or microphone sound.
+5. Use ViL’s Stop/Mute/Volume controls for the computer stream. You can also stop sharing from Android’s ongoing ViL notification.
+
+Phone capture requires Android 10+. The media app must allow playback capture; calls, protected content, other user profiles, and apps that block capture are unavailable. Android copies playback: phone sound can remain audible, and ViL does not change the phone’s volume or promise exclusive computer playback. The **Also play on source computer** setting applies only to computer capture. Auto-reconnect reuses a still-approved capture session; if Android revokes it, press Start and grant fresh consent. Android may stop sharing when the phone locks. Existing Linux/Windows audio-capable agents receive phone audio without a protocol upgrade.
 
 The stream stays active while changing ViL modes. Audio uses its own authenticated WebSocket, so it cannot delay keyboard or pointer traffic. USB is preferred when starting; an established healthy audio route is kept when another link becomes available. Bluetooth-only control connections remain usable for input, but Remote Audio requires USB or Wi-Fi. Enable **Reconnect automatically** in the Audio Output panel (also available in Settings > Remote Audio Output) to resume the same source and selected output after a temporary stream or route drop. Retries wait 1, 2, 4, then at most 8 seconds; Stop cancels them. With reconnection disabled, a drop stops playback with a message. It never silently chooses another speaker.
 
