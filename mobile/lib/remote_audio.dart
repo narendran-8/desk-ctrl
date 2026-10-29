@@ -140,6 +140,23 @@ class RemoteAudio extends ChangeNotifier {
     await discover();
   }
 
+  Future<void> setPlayPhone(bool enabled) async {
+    if (phase == RemoteAudioPhase.connecting) return;
+    if (phoneSource && active) {
+      try {
+        await _capture.invokeMethod('playPhone', {'enabled': enabled});
+      } catch (e) {
+        await stop();
+        _fail('Could not change phone playback: $e');
+        return;
+      }
+    }
+    Settings.instance.update(
+      () => Settings.instance.remoteAudioPlayPhone = enabled,
+    );
+    notifyListeners();
+  }
+
   Future<void> _stopCapture() async {
     if (phoneSource) await _capture.invokeMethod('stop').catchError((_) {});
   }
@@ -361,7 +378,10 @@ class RemoteAudio extends ChangeNotifier {
             }
           },
         );
-        await _capture.invokeMethod('start', {'allowConsent': !retry});
+        await _capture.invokeMethod('start', {
+          'allowConsent': !retry,
+          'playPhone': Settings.instance.remoteAudioPlayPhone,
+        });
         if (!current()) {
           await _stopCapture();
           return;

@@ -36,6 +36,7 @@ Change with `Settings.instance.update(() => s.x = v)`. UI: `settings_sheet.dart`
 | `remoteAudioAutoReconnect` | false | after a stream/socket or USB/Wi-Fi endpoint loss, retry the same source and selected output after 1/2/4/8 seconds (capped); Stop cancels retries, off stops with a clear message. Also exposed in Audio Output panel |
 | `remoteAudioPlaySource` | false | computer capture only: also leave playback audible at the source; Linux off uses a temporary null sink, while Windows currently requires this to be true |
 | `remoteAudioLatency` | `balanced` | `low` = 40 ms prebuffer / 4 queued frames, `balanced` = 60 ms prebuffer / 6 queued frames; invalid saved values reset to balanced |
+| `remoteAudioPlayPhone` | false | phone capture only: off silences phone media volume while forwarding audio to the computer; on plays both. Live switch in Audio Output and Settings. Saved media volume restored on Stop/error/revocation; interrupted-process recovery on app launch |
 | `remoteAudioSource` | `computer` | `computer` = existing desktop capture; `phone` = Android10+ permitted playback sent to a connected computer output; cannot change while running |
 | `remoteAudioLastDestination` | `phone` | `phone` or `<deviceId>|<outputId>`; used only if discovery confirms it still exists, otherwise first valid destination (phone for computer source, first computer output for phone source) |
 

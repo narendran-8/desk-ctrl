@@ -1,6 +1,7 @@
 package com.deskctrl.deskctrl
 
 fun main() {
+    testPhoneVolumeLease()
     val received = ArrayList<Byte>()
     var starts = 0
     val pump = PcmPump(8)

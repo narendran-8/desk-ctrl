@@ -1,7 +1,7 @@
 ---
 id: decisions
 summary: Design decisions with the reason, and the mistakes/gotchas that shaped the rules. Read before changing connection, pairing, auto-keyboard, menus or tests.
-updated: 2026-10-26
+updated: 2026-10-29
 sources: [mobile/lib/connection.dart, agent/src/usb.rs, agent/src/focus.rs, mobile/lib/edit_menu.dart, mobile/lib/settings_sheet.dart, agent/src/server.rs]
 ---
 # Decisions and lessons (why it is like this)
@@ -55,3 +55,5 @@ sources: [mobile/lib/connection.dart, agent/src/usb.rs, agent/src/focus.rs, mobi
 | Windows keys by virtual-key code through SendInput | follows the PC's keyboard layout (a US-layout scancode table would not) |
 | Notch bar is automatic ('auto') and the app always draws into the notch area unless 'off' | Android only reports the notch (display features) when the window may use it; the layout then keeps clear of it by itself (matrix test: 8 hole shapes x portrait / both landscapes / both bars) |
 | Window: wgpu first, OpenGL second on Windows | a failed wgpu start (old driver, VM) must not leave the user without a window; measured under Wine/Xvfb |
+
+Phone-source exclusive playback (2026-10-29): public AudioPlaybackCapture duplicates PCM independently of local media speaker gain (AOSP remote-submix volume policy). Silence STREAM_MUSIC with a saved/restorable lease instead of unsupported hidden routing APIs or microphone capture. Actual Android zero-volume/nonzero-capture check passed. Also-play-phone is explicit and off by default; desktop source routing is unchanged.

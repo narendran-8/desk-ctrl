@@ -136,10 +136,23 @@ class RemoteAudioSheet extends StatelessWidget {
                             : (values) => a.chooseSource(values.first),
                       ),
                       if (a.phoneSource)
+                        SwitchListTile(
+                          key: const Key('remoteAudioPlayPhone'),
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Also play on this phone'),
+                          subtitle: const Text(
+                            'Off: computer speaker only. Phone media volume is restored when sharing stops.',
+                          ),
+                          value: Settings.instance.remoteAudioPlayPhone,
+                          onChanged: a.phase == RemoteAudioPhase.connecting
+                              ? null
+                              : a.setPlayPhone,
+                        ),
+                      if (a.phoneSource)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            'Android 10+: approve sharing (Entire screen for all apps). Only media audio is captured, with no microphone or screen images. Apps can block capture. Phone playback remains audible; volume controls the computer stream.',
+                            'Android 10+: approve sharing (Entire screen for all apps). Only media audio is captured, with no microphone or screen images. Apps can block capture. Volume controls the computer stream.',
                           ),
                         ),
                       if (a.message != null)

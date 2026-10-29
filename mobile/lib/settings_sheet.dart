@@ -631,12 +631,11 @@ class SettingsSheet extends StatelessWidget {
                   _Section(
                     icon: Icons.speaker_group_outlined,
                     title: 'Remote Audio Output',
-                    summary:
-                        'Play computer audio on this phone or another computer',
+                    summary: 'Stream audio between this phone and computers',
                     children: [
                       _switch(
                         'Remote Audio Output',
-                        'Show the audio button and allow desktop playback to be streamed',
+                        'Show the audio button and allow media audio streaming',
                         s.remoteAudioEnabled,
                         (v) {
                           s.remoteAudioEnabled = v;
@@ -649,6 +648,16 @@ class SettingsSheet extends StatelessWidget {
                         s.remoteAudioAutoReconnect,
                         (v) => s.remoteAudioAutoReconnect = v,
                         enabled: s.remoteAudioEnabled,
+                      ),
+                      _switch(
+                        'Also play on this phone',
+                        'Phone audio source only. Off plays through the computer speaker and restores phone media volume on Stop.',
+                        s.remoteAudioPlayPhone,
+                        (v) => RemoteAudio.instance.setPlayPhone(v),
+                        enabled:
+                            s.remoteAudioEnabled &&
+                            RemoteAudio.instance.phase !=
+                                RemoteAudioPhase.connecting,
                       ),
                       _switch(
                         'Also play on the source computer',

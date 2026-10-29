@@ -22,11 +22,14 @@ void main() {
   test(
     'phone audio source setting persists and invalid values fall back',
     () async {
-      Settings.instance.update(
-        () => Settings.instance.remoteAudioSource = 'phone',
-      );
+      expect(Settings.instance.remoteAudioPlayPhone, isFalse);
+      Settings.instance.update(() {
+        Settings.instance.remoteAudioSource = 'phone';
+        Settings.instance.remoteAudioPlayPhone = true;
+      });
       await Settings.instance.load();
       expect(Settings.instance.remoteAudioSource, 'phone');
+      expect(Settings.instance.remoteAudioPlayPhone, isTrue);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('remoteAudioSource', 'invalid');
       await Settings.instance.load();
@@ -47,6 +50,16 @@ void main() {
     );
     expect(find.byKey(const Key('remoteAudioSource')), findsOneWidget);
     expect(find.textContaining('Apps can block capture'), findsOneWidget);
+    expect(
+      (tester.widget(
+        find.byKey(const Key('remoteAudioPlayPhone')),
+      ) as SwitchListTile).value,
+      isFalse,
+    );
+    await tester.ensureVisible(find.byKey(const Key('remoteAudioPlayPhone')));
+    await tester.tap(find.byKey(const Key('remoteAudioPlayPhone')));
+    await tester.pump();
+    expect(Settings.instance.remoteAudioPlayPhone, isTrue);
     expect(tester.takeException(), isNull);
     expect(
       tester.getBottomRight(find.byKey(const Key('remoteAudioStartStop'))).dy,
@@ -116,6 +129,16 @@ void main() {
       expect(audio.selected, 'speaker|default');
       await tester.runAsync(audio.start);
       expect(audio.active, isTrue, reason: audio.message);
+      expect(captureCalls.last.arguments, {
+        'allowConsent': true,
+        'playPhone': false,
+      });
+      await tester.runAsync(() => audio.setPlayPhone(true));
+      expect(captureCalls.last.method, 'playPhone');
+      expect(captureCalls.last.arguments, {'enabled': true});
+      expect(settings.remoteAudioPlayPhone, isTrue);
+      await tester.runAsync(() => audio.setPlayPhone(false));
+      expect(captureCalls.last.arguments, {'enabled': false});
       frames!.success(Uint8List.fromList(List.generate(3840, (i) => i % 256)));
       frames!.success(Uint8List(3840));
       frames!.success(Uint8List(4));
@@ -156,6 +179,7 @@ void main() {
       expect(audio.selected, 'speaker|default');
       expect(captureCalls.where((c) => c.method == 'start').last.arguments, {
         'allowConsent': false,
+        'playPhone': false,
       });
       frames!.success(Uint8List(3840));
       await tester.pump();

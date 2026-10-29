@@ -2,7 +2,7 @@
 id: testing
 summary: How to run and write tests (phone + agent), the helpers, pitfalls, and the safe recipe for testing on the real phone.
 updated: 2026-10-29
-sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobile/test/phone_audio_source_test.dart, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/audio.rs, agent/src/usb.rs, mobile/test/now_playing_test.dart, agent/src/media.rs]
+sources: [mobile/test/fake_agent.dart, mobile/test/remote_audio_test.dart, mobile/test/phone_audio_source_test.dart, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneVolumeLease.kt, tools/audio/PhoneVolumeLeaseTest.kt, mobile/test/usb_test.dart, mobile/test/edit_menu_test.dart, mobile/test/pad_motion_test.dart, agent/src/audio.rs, agent/src/usb.rs, mobile/test/now_playing_test.dart, agent/src/media.rs]
 ---
 # Testing
 
@@ -114,3 +114,7 @@ Track-row results: full 275 tests passed with one opt-in soak skipped; focused m
 Phone-source audio verification (2026-10-29): `phone_audio_source_test.dart` covers source persistence/invalid fallback, landscape layout, discovery including active computer, phone-destination exclusion, real authenticated fake-sink PCM headers/payload/sequence, gain/mute, no desktop-source command or phone AudioTrack echo, source-switch lock, sink-drop reconnect without new consent, Android revocation (no automatic prompt), denial cleanup and Stop during pending consent. Flutter 279 passed with one opt-in soak skipped; Linux agent82 passed. Real Android consent approved, generated Chrome440Hz loop sent 14,402 valid PCM20ms packets (5,034 nonzero test-tone frames) while ViL backgrounded; no personal audio saved and receiver never injected input. Physical Windows speaker listening/latency not measured.
 
 Final cleanup: Stop removed the Android capture service (`dumpsys activity services` empty); test pairing/tunnel/receiver removed and Computer2 restored. Final release APK rebuilt and installed. Analyzer retains only12 pre-existing style infos; focused phone-source4 passed. No new desktop binary needed.
+
+Computer-only phone audio (2026-10-29): `remoteAudioPlayPhone` defaults off and persists; phone-source widget tests verify its panel switch, start/reconnect argument and live on/off native calls. `python3 tools/audio/test_pcm_pump.py` now compiles production PhoneVolumeLease plus its JVM tests: durable-save-before-mute, idempotent retries, restoration/toggle, initial zero, killed-process recovery, manual external adjustment, fixed-volume failure and persistence failure, alongside existing PCM tests. Real phone: original STREAM_MUSIC15/15 ->0 during sharing; Chrome-generated440Hz audio still reached authenticated fake receiver (3476 frames,1705 nonzero); Stop restored15/15 and dumpsys showed no capture service. Existing desktop binaries/protocol unchanged.
+
+Final computer-only validation: Flutter279 passed with1 opt-in soak skipped using `--concurrency=1`; the first concurrent build/test run had3 timing failures in existing pointer/media tests, all passed in the serial rerun. Analyzer12 existing style infos; native volume/PCM JVM tests passed; release APK built and installed. Test pairing/tunnel/receiver removed; original Computer2 restored.

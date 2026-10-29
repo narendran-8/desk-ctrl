@@ -31,6 +31,7 @@ class PlaybackCaptureService : Service() {
         var ready: ((String?) -> Unit)? = null
     }
     private val main = Handler(Looper.getMainLooper())
+    private val phoneVolume by lazy { PhoneMediaVolume(this) }
     private var projection: MediaProjection? = null
     private var recorder: AudioRecord? = null
     private var worker: Thread? = null
@@ -81,6 +82,7 @@ class PlaybackCaptureService : Service() {
             check(audio.state == AudioRecord.STATE_INITIALIZED) { "Phone audio capture could not initialize." }
             audio.startRecording()
             check(audio.recordingState == AudioRecord.RECORDSTATE_RECORDING) { "Phone audio capture could not start." }
+            setPlayPhone(intent.getBooleanExtra("playPhone", false))
             running = true
             ready?.invoke(null); ready = null
             worker = thread(name = "ViL phone playback capture") {
@@ -113,6 +115,8 @@ class PlaybackCaptureService : Service() {
         return START_NOT_STICKY
     }
 
+    fun setPlayPhone(enabled: Boolean) { phoneVolume.setPlayPhone(enabled) }
+
     private fun fail(message: String) {
         ready?.invoke(message); ready = null
         events?.error("playback_capture", message, null)
@@ -128,6 +132,7 @@ class PlaybackCaptureService : Service() {
         if (stopped) return
         stopped = true
         running = false
+        try { phoneVolume.restore() } catch (_: Exception) { /* Saved recovery is retried on next app launch. */ }
         try { recorder?.stop() } catch (_: Exception) {}
         worker?.join(500)
         recorder?.release(); recorder = null

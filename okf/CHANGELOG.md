@@ -7,6 +7,12 @@ sources: []
 # Changelog (older updates; append-only)
 Entries move here from LATEST.md automatically (`okf.py log`). Day granularity for 10-12 and 10-13 is approximate.
 
+## 2026-10-26 · Revert integrated playback line update
+- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
+- docs: MOBILE, FEATURES, TESTING
+- tests: Flutter 265 passed; release APK rebuilt; analyzer has 12 existing style infos
+- note: Reverts b180a8f only; restores separate timeline from 00ed177. APK installation attempted but no Android device was attached.
+
 ## 2026-10-26 · Integrate timeline behind playback controls and fix seek buttons
 - files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
 - docs: MOBILE, FEATURES, TESTING

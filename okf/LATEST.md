@@ -7,6 +7,12 @@ sources: []
 # Latest updates (newest first; older ones are in CHANGELOG.md)
 Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entries with `python3 okf/okf.py log ...`.
 
+## 2026-10-29 · Silence phone media during computer-only audio sharing
+- files: mobile/lib/settings.dart, mobile/lib/settings_sheet.dart, mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/android/app/src/main/AndroidManifest.xml, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureBridge.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureService.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneMediaVolume.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneVolumeLease.kt, mobile/test/phone_audio_source_test.dart, tools/audio/PhoneVolumeLeaseTest.kt, tools/audio/PcmPumpTest.kt, tools/audio/test_pcm_pump.py, README.md
+- docs: ARCHITECTURE, MOBILE, FEATURES, SETTINGS, TESTING, KNOWN, DECISIONS
+- tests: Flutter279 passed with1 opt-in soak skipped (serial rerun); analyzer12 existing infos; Kotlin volume-lease/PCM tests passed; APK built/installed; actual phone media volume15 ->0 with1705 nonzero test-tone frames ->15 on Stop; capture service removed
+- note: Also play on this phone defaults off (computer only), switch on for both. Previous media volume restored on Stop/error/revocation; interrupted-process recovery on next launch. Calls/alarms/ringer unchanged. Desktop/protocol unchanged. First build-concurrent run3 existing timing failures, serial full suite passed. Test pairing/tunnel/receiver removed, Computer2 restored.
+
 ## 2026-10-29 · Stream phone media to connected computer speakers
 - files: mobile/lib/remote_audio.dart, mobile/lib/remote_audio_sheet.dart, mobile/lib/settings.dart, mobile/android/app/src/main/AndroidManifest.xml, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/MainActivity.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureBridge.kt, mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureService.kt, mobile/test/phone_audio_source_test.dart, mobile/test/remote_audio_test.dart, README.md
 - docs: INDEX, ARCHITECTURE, MOBILE, FEATURES, SETTINGS, PROTOCOL, TESTING, KNOWN
@@ -72,10 +78,4 @@ Entry format: `## date · title` + `files:` `docs:` `tests:` `note:`. Add entrie
 - docs: MOBILE, FEATURES, TESTING
 - tests: Flutter 265 passed; focused media 12 passed; compact row rendered; analyzer 12 existing style infos; release APK built and installed
 - note: Elapsed | previous rewind seek-line/play-pause forward next | duration, all aligned at y=0..40; title below; +/-10s seek requires existing Linux MPRIS capability; protocol unchanged
-
-## 2026-10-26 · Revert integrated playback line update
-- files: mobile/lib/now_playing.dart, mobile/lib/edge_zones.dart, mobile/lib/pad_screen.dart, mobile/test/media_timeline_test.dart, README.md
-- docs: MOBILE, FEATURES, TESTING
-- tests: Flutter 265 passed; release APK rebuilt; analyzer has 12 existing style infos
-- note: Reverts b180a8f only; restores separate timeline from 00ed177. APK installation attempted but no Android device was attached.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test the production Android PCM writer on the JVM using Gradle's cached Kotlin compiler."""
+"""Test the production Android PCM writer and phone-volume lease with cached Kotlin on the JVM."""
 from pathlib import Path
 import os
 import subprocess
@@ -21,5 +21,7 @@ with tempfile.TemporaryDirectory(prefix='vil-pcm-test-') as dest:
     subprocess.run(['java', '-cp', cp, 'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler', '-no-stdlib', '-no-reflect',
                     '-classpath', cp, '-d', dest,
                     str(root / 'mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PcmPump.kt'),
+                    str(root / 'mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneVolumeLease.kt'),
+                    str(root / 'tools/audio/PhoneVolumeLeaseTest.kt'),
                     str(root / 'tools/audio/PcmPumpTest.kt')], check=True)
     subprocess.run(['java', '-cp', dest + os.pathsep + cp, 'com.deskctrl.deskctrl.PcmPumpTestKt'], check=True)

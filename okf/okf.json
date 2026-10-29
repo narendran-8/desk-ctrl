@@ -42,8 +42,8 @@
     "mobile/lib/remote_audio.dart",
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/RemoteAudio.kt"
    ],
-   "lines": 59,
-   "approx_tokens": 1669
+   "lines": 61,
+   "approx_tokens": 1757
   },
   {
    "file": "CHANGELOG.md",
@@ -51,14 +51,14 @@
    "summary": "Full history, newest first, reconstructed from the development sessions. Older than LATEST.md. Exact days before 2026-10-12 were not tracked.",
    "updated": "2026-10-29",
    "sources": [],
-   "lines": 453,
-   "approx_tokens": 8998
+   "lines": 459,
+   "approx_tokens": 9111
   },
   {
    "file": "DECISIONS.md",
    "id": "decisions",
    "summary": "Design decisions with the reason, and the mistakes/gotchas that shaped the rules. Read before changing connection, pairing, auto-keyboard, menus or tests.",
-   "updated": "2026-10-26",
+   "updated": "2026-10-29",
    "sources": [
     "mobile/lib/connection.dart",
     "agent/src/usb.rs",
@@ -67,8 +67,8 @@
     "mobile/lib/settings_sheet.dart",
     "agent/src/server.rs"
    ],
-   "lines": 58,
-   "approx_tokens": 1663
+   "lines": 60,
+   "approx_tokens": 1770
   },
   {
    "file": "FEATURES.md",
@@ -89,7 +89,7 @@
     "agent/src/usb.rs"
    ],
    "lines": 97,
-   "approx_tokens": 5143
+   "approx_tokens": 5199
   },
   {
    "file": "INDEX.md",
@@ -107,7 +107,7 @@
    "updated": "2026-10-29",
    "sources": [],
    "lines": 63,
-   "approx_tokens": 2661
+   "approx_tokens": 2700
   },
   {
    "file": "LATEST.md",
@@ -116,7 +116,7 @@
    "updated": "2026-10-29",
    "sources": [],
    "lines": 82,
-   "approx_tokens": 2219
+   "approx_tokens": 2465
   },
   {
    "file": "MOBILE.md",
@@ -140,10 +140,12 @@
     "mobile/lib/now_playing.dart",
     "mobile/lib/split_media_seek_bar.dart",
     "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureBridge.kt",
-    "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureService.kt"
+    "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PlaybackCaptureService.kt",
+    "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneMediaVolume.kt",
+    "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneVolumeLease.kt"
    ],
-   "lines": 80,
-   "approx_tokens": 4041
+   "lines": 82,
+   "approx_tokens": 4264
   },
   {
    "file": "OKF.md",
@@ -202,8 +204,8 @@
     "mobile/lib/settings_sheet.dart",
     "mobile/lib/remote_audio.dart"
    ],
-   "lines": 92,
-   "approx_tokens": 1974
+   "lines": 93,
+   "approx_tokens": 2045
   },
   {
    "file": "TESTING.md",
@@ -214,6 +216,8 @@
     "mobile/test/fake_agent.dart",
     "mobile/test/remote_audio_test.dart",
     "mobile/test/phone_audio_source_test.dart",
+    "mobile/android/app/src/main/kotlin/com/deskctrl/deskctrl/PhoneVolumeLease.kt",
+    "tools/audio/PhoneVolumeLeaseTest.kt",
     "mobile/test/usb_test.dart",
     "mobile/test/edit_menu_test.dart",
     "mobile/test/pad_motion_test.dart",
@@ -222,8 +226,8 @@
     "mobile/test/now_playing_test.dart",
     "agent/src/media.rs"
    ],
-   "lines": 117,
-   "approx_tokens": 5678
+   "lines": 121,
+   "approx_tokens": 5996
   }
  ]
 }
